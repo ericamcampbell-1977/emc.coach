@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activation &amp; Conflict Pattern Inventories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2ede2;
+  --panel:#faf6ee;
+  --panel-hi:#fffdf8;
+  --ink:#1f1c17;
+  --muted:#6b6355;
+  --faint:#948a78;
+  --line:#d9d0be;
+  --track:#e6dfd0;
+  --brick:#8c3b2e;
+  --sage:#5f6b52;
+  --gold:#b08d3f;
+  --slate:#3f4a58;
+  --tag-low:#5f6b52;
+  --tag-mod:#a9842f;
+  --tag-high:#8c3b2e;
+  --accent:#9c4436;
+  --accent-soft:#efdcd4;
+  --accent-ink:#fbf7f0;
+  --r:3px;
+}
+/* ---- per-instrument accent, light ---- */
+body[data-accent="arp"]{--accent:#9c4436;--accent-soft:#f0ddd5}
+body[data-accent="cci"]{--accent:#8c3b4a;--accent-soft:#eed9dd}
+body[data-accent="ces"]{--accent:#3f5668;--accent-soft:#d9e1e9}
+body[data-accent="crc"]{--accent:#4f6b53;--accent-soft:#dce6dc}
+body[data-accent="syn"]{--accent:#9a6a1f;--accent-soft:#eee0c8}
+
+/* ---- dark theme: shared base ---- */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1b1715; --panel:#241f1c; --panel-hi:#2e2823; --ink:#ede5d9;
+  --muted:#a99c91; --faint:#867a6e; --line:#3b332e; --track:#312a25;
+  --brick:#e0a090; --sage:#93bba0; --gold:#d9a75a; --slate:#9fb6c8;
+  --tag-low:#93bba0; --tag-mod:#d9a75a; --tag-high:#e0a090;
+  --accent:#e0a090; --accent-soft:#3a2823; --accent-ink:#1b1715;
+  color-scheme:dark;
+}
+:root:not([data-theme="light"]) body[data-accent="arp"]{--accent:#e0a090;--accent-soft:#3a2722}
+:root:not([data-theme="light"]) body[data-accent="cci"]{--accent:#e09aa6;--accent-soft:#3a262b}
+:root:not([data-theme="light"]) body[data-accent="ces"]{--accent:#9fb6c8;--accent-soft:#243039}
+:root:not([data-theme="light"]) body[data-accent="crc"]{--accent:#93bba0;--accent-soft:#25352b}
+:root:not([data-theme="light"]) body[data-accent="syn"]{--accent:#d9a75a;--accent-soft:#3a2f1c}
+}
+/* ---- dark theme: manual lock ---- */
+:root[data-theme="dark"]{
+  --bg:#1b1715; --panel:#241f1c; --panel-hi:#2e2823; --ink:#ede5d9;
+  --muted:#a99c91; --faint:#867a6e; --line:#3b332e; --track:#312a25;
+  --brick:#e0a090; --sage:#93bba0; --gold:#d9a75a; --slate:#9fb6c8;
+  --tag-low:#93bba0; --tag-mod:#d9a75a; --tag-high:#e0a090;
+  --accent:#e0a090; --accent-soft:#3a2823; --accent-ink:#1b1715;
+  color-scheme:dark;
+}
+:root[data-theme="dark"] body[data-accent="arp"]{--accent:#e0a090;--accent-soft:#3a2722}
+:root[data-theme="dark"] body[data-accent="cci"]{--accent:#e09aa6;--accent-soft:#3a262b}
+:root[data-theme="dark"] body[data-accent="ces"]{--accent:#9fb6c8;--accent-soft:#243039}
+:root[data-theme="dark"] body[data-accent="crc"]{--accent:#93bba0;--accent-soft:#25352b}
+:root[data-theme="dark"] body[data-accent="syn"]{--accent:#d9a75a;--accent-soft:#3a2f1c}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:0 22px 90px}
+
+/* ---------- masthead ---------- */
+header.masthead{padding:40px 0 26px;border-bottom:1px solid var(--line)}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--faint);margin:0
+}
+.themeToggle{
+  appearance:none;background:none;border:1px solid var(--line);border-radius:var(--r);
+  color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;padding:6px 11px;cursor:pointer;transition:border-color .16s,color .16s
+}
+.themeToggle:hover{border-color:var(--accent);color:var(--accent)}
+.themeToggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1{
+  font-family:'Fraunces',Georgia,serif;font-weight:300;
+  font-size:clamp(30px,5.4vw,46px);line-height:1.08;letter-spacing:-.015em;margin:0 0 14px
+}
+h1 em{font-style:italic;color:var(--accent)}
+.standfirst{color:var(--muted);font-size:16.5px;max-width:60ch;margin:0}
+
+/* ---------- tabs ---------- */
+nav.tabs{
+  display:flex;flex-wrap:wrap;gap:2px;margin:0 0 34px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20
+}
+nav.tabs button{
+  appearance:none;background:none;border:0;border-bottom:2px solid transparent;
+  font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;letter-spacing:.03em;
+  color:var(--faint);padding:14px 13px;cursor:pointer;transition:color .16s,border-color .16s
+}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible{outline:2px solid var(--slate);outline-offset:-2px}
+
+/* ---------- panels ---------- */
+.panel{display:none}
+.panel.active{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+h2{
+  font-family:'Fraunces',Georgia,serif;font-weight:400;
+  font-size:clamp(23px,3.8vw,30px);line-height:1.2;margin:0 0 6px;letter-spacing:-.01em
+}
+h3{
+  font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:19px;
+  margin:34px 0 10px;letter-spacing:-.005em
+}
+.subtitle{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint);margin:0 0 20px
+}
+p{margin:0 0 15px}
+.lede{font-size:17px;color:var(--muted);max-width:62ch}
+ul.plain{margin:0 0 18px;padding-left:19px;color:var(--muted);font-size:15px}
+ul.plain li{margin-bottom:7px}
+
+.note{
+  border-left:2px solid var(--line);padding:2px 0 2px 16px;
+  color:var(--muted);font-size:14.5px;margin:20px 0
+}
+
+/* ---------- start card ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--accent);
+  border-radius:var(--r);padding:24px 26px 24px;margin:26px 0
+}
+.metaRow{
+  display:flex;flex-wrap:wrap;gap:26px;margin:20px 0 4px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--faint)
+}
+.metaRow b{display:block;color:var(--ink);font-weight:500;font-size:15px;font-family:'Inter',sans-serif;letter-spacing:0}
+
+button.action{
+  appearance:none;background:var(--accent);color:var(--accent-ink);border:0;border-radius:var(--r);
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:500;letter-spacing:.02em;
+  padding:12px 26px;cursor:pointer;transition:filter .16s
+}
+button.action:hover{filter:brightness(0.92)}
+button.action:focus-visible{outline:2px solid var(--slate);outline-offset:3px}
+button.ghost{
+  appearance:none;background:none;color:var(--muted);border:1px solid var(--line);
+  border-radius:var(--r);font-family:'Inter',sans-serif;font-size:13px;
+  padding:9px 18px;cursor:pointer;transition:border-color .16s,color .16s
+}
+button.ghost:hover{border-color:var(--faint);color:var(--ink)}
+button.ghost:focus-visible{outline:2px solid var(--slate);outline-offset:2px}
+.btnRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:22px}
+
+/* ---------- quiz ---------- */
+.progressWrap{margin:6px 0 30px}
+.progressBar{height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.progressFill{height:100%;background:var(--accent);width:0;transition:width .28s ease}
+.progressMeta{
+  display:flex;justify-content:space-between;
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+  color:var(--faint);margin-top:9px;text-transform:uppercase
+}
+.stem{
+  font-family:'Fraunces',Georgia,serif;font-weight:300;
+  font-size:clamp(21px,3.6vw,28px);line-height:1.34;margin:16px 0 32px;
+  min-height:2.6em;letter-spacing:-.008em
+}
+.scale{display:flex;flex-direction:column;gap:7px}
+.opt{
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:13px 16px;cursor:pointer;font-family:'Inter',sans-serif;font-size:14.5px;
+  color:var(--ink);transition:border-color .13s,background .13s
+}
+.opt:hover{border-color:var(--accent);background:var(--panel-hi)}
+.opt:focus-visible{outline:2px solid var(--slate);outline-offset:2px}
+.opt .num{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);
+  border:1px solid var(--line);border-radius:2px;width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;flex:none
+}
+.opt:hover .num{border-color:var(--accent);color:var(--accent)}
+.quizFoot{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:26px;padding-top:16px;border-top:1px solid var(--line)
+}
+.kbdHint{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);letter-spacing:.06em}
+
+/* ---------- results ---------- */
+.bandRow{margin:0 0 17px}
+.bandHead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:5px}
+.bandName{font-size:14.5px;font-weight:500}
+.bandVal{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)}
+.bandTrack{height:9px;background:var(--track);border-radius:2px;overflow:hidden;position:relative}
+.bandFill{height:100%;width:0;transition:width .6s cubic-bezier(.2,.7,.3,1)}
+.bandDesc{font-size:13.5px;color:var(--muted);margin-top:5px}
+.tag{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.13em;
+  text-transform:uppercase;padding:2px 7px;border-radius:2px;border:1px solid currentColor
+}
+.t-low{color:var(--tag-low)} .t-mod{color:var(--tag-mod)} .t-high{color:var(--tag-high)}
+
+figure.sig{margin:30px 0 8px;padding:0}
+figure.sig svg{width:100%;height:auto;display:block}
+figcaption{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;
+  color:var(--faint);text-align:center;margin-top:12px;text-transform:uppercase
+}
+
+.careNote{
+  border:1px solid var(--accent);border-left-width:3px;border-radius:var(--r);background:var(--accent-soft);
+  padding:18px 20px;margin:28px 0;font-size:14.5px;color:var(--ink)
+}
+.careNote b{display:block;font-family:'Fraunces',serif;font-weight:400;font-size:16.5px;margin-bottom:6px}
+
+table.psy{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0 8px}
+table.psy th,table.psy td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+table.psy th{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--faint);font-weight:400
+}
+table.psy td.n{font-family:'IBM Plex Mono',monospace;color:var(--muted)}
+
+details.appendix{margin:34px 0 0;border-top:1px solid var(--line);padding-top:18px}
+details.appendix summary{
+  cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--faint);list-style:none
+}
+details.appendix summary::-webkit-details-marker{display:none}
+details.appendix summary:before{content:"+ ";color:var(--accent)}
+details.appendix[open] summary:before{content:"− "}
+details.appendix summary:focus-visible{outline:2px solid var(--slate);outline-offset:3px}
+
+.synthCard{
+  background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:var(--r);padding:18px 20px;margin:16px 0
+}
+.synthCard h4{
+  font-family:'Fraunces',serif;font-weight:400;font-size:17px;margin:0 0 7px
+}
+.synthCard p{font-size:14.5px;color:var(--muted);margin:0}
+.empty{color:var(--faint);font-size:15px;font-style:italic}
+
+footer.foot{
+  margin-top:56px;padding-top:22px;border-top:1px solid var(--line)
+}
+footer.foot .discTitle{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--faint);margin:0 0 10px
+}
+footer.foot p{
+  font-size:11.5px;line-height:1.6;color:var(--faint);margin:0 0 9px;max-width:70ch
+}
+footer.foot p b{color:var(--muted);font-weight:600}
+@media (max-width:560px){
+  nav.tabs button{padding:12px 9px;font-size:11.5px}
+  .card{padding:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="topbar">
+    <p class="eyebrow">Pattern Inventories · Series IV</p>
+    <button class="themeToggle" id="themeToggle" type="button" aria-label="Toggle light or dark theme">Theme</button>
+  </div>
+  <h1>When you get <em>activated</em>,<br>what do you actually do?</h1>
+  <p class="standfirst">Four self-report instruments covering the survival response you default to, the communication patterns that show up in conflict, the strategy you use to handle disagreement, and the regulation capacity you can access while it's happening.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="arp">Activation Response</button>
+  <button role="tab" aria-selected="false" data-tab="cci">Conflict Communication</button>
+  <button role="tab" aria-selected="false" data-tab="ces">Engagement Style</button>
+  <button role="tab" aria-selected="false" data-tab="crc">Regulation Capacity</button>
+  <button role="tab" aria-selected="false" data-tab="syn">Synthesis</button>
+</nav>
+
+<section class="panel active" id="p-arp"></section>
+<section class="panel" id="p-cci"></section>
+<section class="panel" id="p-ces"></section>
+<section class="panel" id="p-crc"></section>
+<section class="panel" id="p-syn"></section>
+
+<footer class="foot">
+  <p class="discTitle">Disclaimer</p>
+  <p><b>Not a diagnostic or clinical instrument.</b> These four inventories are educational self-reflection tools. They describe tendencies you report about yourself; they do not identify, diagnose, screen for, or rule out any mental-health condition, disorder, or impairment, and a high or low score is not a clinical finding.</p>
+  <p><b>Not clinically validated or normed.</b> The inventories are modeled on published research frameworks but have not been validated, normed, or tested for reliability in any human sample. The reliability figures shown are from computer simulation of the item structure only and do not describe performance with real respondents. Results have no established predictive, diagnostic, or comparative meaning.</p>
+  <p><b>Not professional advice, and no substitute for it.</b> Nothing here is medical, psychological, psychiatric, or therapeutic advice, and use of these tools creates no therapist–client, clinician–patient, or other professional relationship. For any concern about your mental health, relationships, or safety, consult a qualified, licensed professional. If you may be in crisis or at risk of harm, contact your local emergency services or a crisis line in your area.</p>
+  <p><b>Use at your own discretion.</b> The inventories are provided "as is," without warranty of any kind. The author accepts no liability for any decision made or action taken in reliance on them. The underlying frameworks remain the intellectual property of their respective authors; all items here are original wordings written independently and are not reproductions of any published scale.</p>
+</footer>
+</div>
+
+<script>
+/* ============================================================
+   SCALE
+   ============================================================ */
+const ANCHORS = [
+  [1,"Never true of me"],
+  [2,"Rarely true of me"],
+  [3,"Occasionally true of me"],
+  [4,"Often true of me"],
+  [5,"Usually true of me"],
+  [6,"Almost always true of me"]
+];
+
+/* Simulated internal consistency (Monte Carlo, N = 1,200 synthetic
+   respondents, single-factor congeneric model per subscale, loadings
+   ~N(0.72,0.07), reverse-worded item modeled with negative loading and
+   a 0.13 method-effect penalty, reverse scoring applied before alpha). */
+const ALPHA = {
+  Fight:0.793, Flight:0.795, Freeze:0.792, Fawn:0.795,
+  Criticism:0.791, Contempt:0.793, Defensiveness:0.793,
+  Stonewalling:0.788, Flooding:0.791, Repair:0.791,
+  Integrating:0.794, Obliging:0.796, Dominating:0.789,
+  Avoiding:0.793, Compromising:0.796,
+  Clarity:0.795, Impulse:0.794, Strategies:0.795, Goals:0.795, Acceptance:0.795
+};
+
+/* ============================================================
+   INSTRUMENT 1 — ARP · Activation Response Profile (Walker 4F)
+   ============================================================ */
+const ARP = {
+  id:"arp", key:"ARP",
+  title:"Activation Response Profile",
+  sub:"24 items · four survival responses · profile scoring",
+  frame:"Pete Walker's 4F typology — fight, flight, freeze, fawn — describes the defensive structures that form around repeated threat. Everyone has all four. The question is which one your nervous system reaches for first, and whether you can still get to the others.",
+  bullets:[
+    "Answer for how you are in <em>close, charged</em> situations — with a partner, family, a boss, someone whose opinion lands.",
+    "There is no midpoint. Pick the side you lean toward.",
+    "This is a profile, not a severity score. A high number is not a worse number."
+  ],
+  type:"profile",
+  subscales:{
+    Fight:{label:"Fight", color:"#8c3b2e",
+      blurb:"Sympathetic activation aimed outward. Threat is met with confrontation, control, or force. In balance this is healthy assertion and clean boundaries; over-relied on, it becomes attack."},
+    Flight:{label:"Flight", color:"#b08d3f",
+      blurb:"Sympathetic activation aimed away. Threat is met with exit, motion, or productive escape. In balance this is knowing when to disengage; over-relied on, it becomes chronic outrunning."},
+    Freeze:{label:"Freeze", color:"#3f4a58",
+      blurb:"Dorsal vagal immobilization. Threat is met with stillness, blankness, or dissociation. In balance this is stopping a futile struggle; over-relied on, it becomes collapse and disappearance."},
+    Fawn:{label:"Fawn", color:"#5f6b52",
+      blurb:"The social engagement system recruited for safety rather than connection. Threat is met with appeasement and merging. In balance this is genuine listening and compromise; over-relied on, it becomes self-erasure."}
+  },
+  items:[
+    ["Fight","When I feel threatened in a conversation, my first impulse is to push back hard.",0],
+    ["Fight","I raise my voice when I feel I'm not being heard.",0],
+    ["Fight","I get sharp and cutting with people when I feel cornered.",0],
+    ["Fight","When I feel wronged, I stay measured rather than going after the other person.",1],
+    ["Fight","When someone criticizes me, I take it in before I respond rather than going on the offensive.",1],
+    ["Fight","When something strikes me as unfair, I can name it calmly instead of bracing to confront it.",1],
+
+    ["Flight","When tension builds, I find a reason to leave the room.",0],
+    ["Flight","I end conversations early once they start to feel too intense.",0],
+    ["Flight","When conflict starts, I look for the exit before I look for a resolution.",0],
+    ["Flight","When things get uncomfortable, I stay in the room and see it through.",1],
+    ["Flight","When something upsets me, I let myself feel it rather than burying it in tasks.",1],
+    ["Flight","When a relationship gets difficult, my first thought is how to work on it, not how to get out.",1],
+
+    ["Freeze","When I'm confronted, my mind goes blank and empties out.",0],
+    ["Freeze","Under pressure I feel heavy and unable to act.",0],
+    ["Freeze","When I'm overwhelmed, I disappear into zoning out.",0],
+    ["Freeze","When I'm put on the spot, I can still reach my thoughts and say what I mean.",1],
+    ["Freeze","During conflict I stay present in my body rather than watching from outside it.",1],
+    ["Freeze","When someone is upset with me, I stay engaged rather than going still and waiting it out.",1],
+
+    ["Fawn","When someone is angry with me, I immediately work to make them feel better.",0],
+    ["Fawn","I apologize for things that aren't my fault just to end the tension.",0],
+    ["Fawn","When there's a disagreement, I abandon my position rather than hold it.",0],
+    ["Fawn","I can hold my own position even when the other person is displeased with me.",1],
+    ["Fawn","I say what I actually think even when it might not keep the peace.",1],
+    ["Fawn","I can stay aware of my own feelings even when someone near me is upset.",1]
+  ]
+};
+
+/* ============================================================
+   INSTRUMENT 2 — CCI · Conflict Communication Inventory (Gottman)
+   ============================================================ */
+const CCI = {
+  id:"cci", key:"CCI",
+  title:"Conflict Communication Inventory",
+  sub:"36 items · six patterns · frequency bands",
+  frame:"Gottman's research found that happy and unhappy couples argue about the same amount. What separates them is <em>how</em>. Five of these subscales measure the corrosive patterns — the Four Horsemen plus physiological flooding. The sixth measures the thing that offsets them: repair.",
+  bullets:[
+    "Answer for what you do, not what you intend or wish you did.",
+    "Rate the pattern across relationships, not one bad fight.",
+    "Repair is scored as a capacity. On that scale, higher is better."
+  ],
+  type:"severity",
+  skillSubscales:["Repair"],
+  subscales:{
+    Criticism:{label:"Criticism", color:"#8c3b2e",
+      blurb:"A complaint targets a behavior; criticism targets character. The tell is the shift from \"you did\" to \"you are,\" and the arrival of <em>always</em> and <em>never</em>."},
+    Contempt:{label:"Contempt", color:"#7a2d22",
+      blurb:"Criticism delivered from a position of superiority — mockery, disgust, condescension. Gottman identified this as the single strongest predictor of dissolution, and the one that has to go to zero."},
+    Defensiveness:{label:"Defensiveness", color:"#a05a34",
+      blurb:"Warding off a complaint by countering it, excusing it, or reframing yourself as the wronged party. It reads as a refusal to accept any share, which escalates the other person rather than settling them."},
+    Stonewalling:{label:"Stonewalling", color:"#3f4a58",
+      blurb:"Withdrawing from the interaction while it's still happening — silence, one-word answers, turning away, leaving. It usually isn't indifference. It's what a flooded nervous system does when engagement has become unsurvivable."},
+    Flooding:{label:"Flooding", color:"#5c6472",
+      blurb:"Diffuse physiological arousal: heart rate climbing, thinking narrowing, nothing getting through. Flooding is the physical event that produces stonewalling, which is why willpower alone rarely stops the shutdown."},
+    Repair:{label:"Repair capacity", color:"#5f6b52",
+      blurb:"Attempts to de-escalate mid-conflict and reconnect after it, and the willingness to let the other person's attempts land. This is the strongest single protective factor in the model."}
+  },
+  items:[
+    ["Criticism","When I'm upset, what comes out is about who they are rather than what they did.",0],
+    ["Criticism","I use words like \"always\" and \"never\" when I raise a problem.",0],
+    ["Criticism","I bring up a single incident as proof of a larger pattern of their failings.",0],
+    ["Criticism","When something bothers me, I name the specific behavior rather than judging their character.",1],
+    ["Criticism","When I raise a problem, I start from how I feel rather than from what's wrong with them.",1],
+    ["Criticism","I keep a complaint to the issue at hand instead of turning it into a verdict on the person.",1],
+
+    ["Contempt","During arguments I speak to the other person as though they're beneath me.",0],
+    ["Contempt","I mock or imitate the other person when I'm angry with them.",0],
+    ["Contempt","I roll my eyes or sigh at what the other person is saying.",0],
+    ["Contempt","Even when I'm angry, I speak to the other person as an equal.",1],
+    ["Contempt","When I'm frustrated, I still treat the other person's view as worth taking seriously.",1],
+    ["Contempt","I can be in conflict with someone without feeling disgust toward them.",1],
+
+    ["Defensiveness","When someone raises a concern, I explain why it isn't my fault.",0],
+    ["Defensiveness","I answer a complaint by pointing out something they did.",0],
+    ["Defensiveness","My first move when confronted is to defend my intentions.",0],
+    ["Defensiveness","When someone raises a concern, I can find the part of it that's fair and say so.",1],
+    ["Defensiveness","When I'm criticized, I look for what's true in it before I react to feeling attacked.",1],
+    ["Defensiveness","I try to hear the point of a complaint rather than hunting for where it's inaccurate.",1],
+
+    ["Stonewalling","In the middle of an argument I go silent and stop responding.",0],
+    ["Stonewalling","I give one-word answers to end a conversation I don't want to have.",0],
+    ["Stonewalling","I withdraw from someone for hours or days after a conflict.",0],
+    ["Stonewalling","When I need a break from an argument, I say so and name when I'll come back.",1],
+    ["Stonewalling","When a conversation gets hard, I stay responsive rather than turning away from it.",1],
+    ["Stonewalling","When I've had enough, I tell the other person I'm stepping away instead of just walking out.",1],
+
+    ["Flooding","During conflict I can feel my heart pounding in my chest.",0],
+    ["Flooding","Past a certain point in an argument, nothing the other person says gets through.",0],
+    ["Flooding","I feel physically overwhelmed within the first few minutes of a hard conversation.",0],
+    ["Flooding","Even in a heated conversation, my body stays settled enough for me to think.",1],
+    ["Flooding","After a conflict ends, my body settles again fairly quickly.",1],
+    ["Flooding","When I'm upset, I can still hold onto what I actually wanted to say.",1],
+
+    ["Repair","I circle back after a fight and try to make things right.",0],
+    ["Repair","I can apologize without attaching an excuse to it.",0],
+    ["Repair","I ask what the other person needs after a rupture.",0],
+    ["Repair","Once a conflict is over I'd rather never speak of it again than repair it.",1],
+    ["Repair","When the other person tries to lighten things mid-conflict, I stay shut down rather than letting it land.",1],
+    ["Repair","I tend to let a rupture sit rather than naming when I've gone too far.",1]
+  ]
+};
+
+/* ============================================================
+   INSTRUMENT 3 — CES · Conflict Engagement Styles (dual concern)
+   ============================================================ */
+const CES = {
+  id:"ces", key:"CES",
+  title:"Conflict Engagement Styles",
+  sub:"30 items · five styles · dual-concern profile",
+  frame:"The dual-concern model behind Rahim's ROCI-II and the Thomas-Kilmann modes maps conflict strategy onto two axes: how much weight you give your own outcome, and how much you give the other person's. Five styles fall out of the grid. None is correct everywhere — the question is whether you have range.",
+  bullets:[
+    "Answer for how you handle a real disagreement where you actually want something.",
+    "Think across contexts — work and personal both count.",
+    "A flat profile across all five usually means good range, not indecision."
+  ],
+  type:"profile",
+  subscales:{
+    Integrating:{label:"Integrating", color:"#5f6b52",
+      blurb:"High concern for self, high concern for the other. Open exchange of information, working the problem jointly, looking for the answer neither party arrived with. Costly in time; best where the stakes and the relationship both matter."},
+    Obliging:{label:"Obliging", color:"#7d8a6b",
+      blurb:"Low concern for self, high concern for the other. Accommodation and de-emphasis of the difference. Useful when you're wrong or the issue is trivial to you; corrosive when it's your default."},
+    Dominating:{label:"Dominating", color:"#8c3b2e",
+      blurb:"High concern for self, low concern for the other. Win-lose. Appropriate in emergencies and against bad-faith actors; expensive with people you have to keep."},
+    Avoiding:{label:"Avoiding", color:"#3f4a58",
+      blurb:"Low concern for both. Withdrawal, sidestepping, letting it sit. Reasonable when the issue is trivial or the moment is wrong; it becomes a problem when the issue never stops mattering."},
+    Compromising:{label:"Compromising", color:"#b08d3f",
+      blurb:"Middling on both. Trading concessions to reach something workable. Efficient under time pressure; it can also stop you from finding the answer that would have satisfied both of you."}
+  },
+  items:[
+    ["Integrating","I try to find a solution that genuinely works for both of us.",0],
+    ["Integrating","I put the relevant information on the table so we can solve it together.",0],
+    ["Integrating","I look for the answer neither of us had thought of yet.",0],
+    ["Integrating","I'd rather resolve a conflict quickly than dig into what's actually driving it.",1],
+    ["Integrating","I treat a disagreement more as a contest to win than a problem to solve together.",1],
+    ["Integrating","I'd rather settle on my own fix than work the problem out jointly.",1],
+
+    ["Obliging","I give in to the other person's wishes to keep things smooth.",0],
+    ["Obliging","I set my own needs aside in order to satisfy theirs.",0],
+    ["Obliging","I let the other person have their way to avoid friction.",0],
+    ["Obliging","I state what I want even when it's inconvenient for the other person.",1],
+    ["Obliging","I hold to my own preference rather than automatically going along with theirs.",1],
+    ["Obliging","I say what I actually want rather than quietly accommodating.",1],
+
+    ["Dominating","I use whatever leverage I have to get my position accepted.",0],
+    ["Dominating","I press my point until the other person concedes.",0],
+    ["Dominating","I use my authority or standing to settle a disagreement in my favor.",0],
+    ["Dominating","I'm willing to let the other person's position win when theirs is the better one.",1],
+    ["Dominating","I hold my aim loosely enough to change it when what they want makes sense.",1],
+    ["Dominating","I'd rather reach a decision together than decide it and expect them to fall in line.",1],
+
+    ["Avoiding","I keep my disagreements to myself rather than raising them.",0],
+    ["Avoiding","I let issues sit unaddressed and hope they resolve on their own.",0],
+    ["Avoiding","I pretend not to notice a problem rather than name it.",0],
+    ["Avoiding","I raise a problem directly with the person it concerns.",1],
+    ["Avoiding","I'm willing to be put on the spot about where I stand.",1],
+    ["Avoiding","I bring up a tense topic rather than steering the conversation away from it.",1],
+
+    ["Compromising","I look for a middle position that both of us can live with.",0],
+    ["Compromising","I trade concessions in order to reach an agreement.",0],
+    ["Compromising","I propose splitting the difference when we're stuck.",0],
+    ["Compromising","I hold out for the full outcome I want rather than meeting in the middle.",1],
+    ["Compromising","I'd rather get my whole position than give up part of it to settle.",1],
+    ["Compromising","I push for the ideal outcome rather than a workable one.",1]
+  ]
+};
+
+/* ============================================================
+   INSTRUMENT 4 — CRC · Conflict Regulation Capacity (DERS-anchored)
+   ============================================================ */
+const CRC = {
+  id:"crc", key:"CRC",
+  title:"Conflict Regulation Capacity",
+  sub:"30 items · five capacities · skill bands",
+  frame:"Gratz and Roemer's model treats emotion regulation as several separable capacities rather than one skill. Two people can be equally upset and differ entirely in what they can still do about it. These five are the ones that decide what happens in the room.",
+  bullets:[
+    "Answer for yourself at your most activated, not at your calmest.",
+    "Every subscale is scored as a capacity — higher is more.",
+    "Two people with the same total can have opposite profiles. The shape is the finding."
+  ],
+  type:"skill",
+  subscales:{
+    Clarity:{label:"Emotional clarity", color:"#5f6b52",
+      blurb:"Knowing what you're feeling while you're feeling it, and being able to tell one state from another. Without it, everything arrives as undifferentiated intensity, and you can't act on information you don't have."},
+    Impulse:{label:"Impulse control", color:"#4a7a63",
+      blurb:"Keeping behavior under your own direction when feeling is running high. Not the absence of the urge — the gap between the urge and the act."},
+    Strategies:{label:"Access to strategies", color:"#3f4a58",
+      blurb:"Believing there is something you can do about your state, and having something that actually works. The reverse of this is the conviction that once you're upset, you simply have to wait it out."},
+    Goals:{label:"Goal-directed capacity", color:"#b08d3f",
+      blurb:"Staying oriented to what you came for while distressed — holding the topic, hearing them, remembering what you actually wanted out of the conversation."},
+    Acceptance:{label:"Emotional acceptance", color:"#6b5b74",
+      blurb:"Gratz and Roemer's nonacceptance construct, inverted: whether you can be angry, hurt, or afraid without a second layer of judgment landing on top of the first feeling. Low acceptance is what turns a manageable emotion into an unmanageable one, and it tends to be invisible to the person who lacks it — the shame arrives fused to the feeling rather than after it."}
+  },
+  items:[
+    ["Clarity","In the middle of an argument, I know what I'm actually feeling.",0],
+    ["Clarity","I can name the emotion driving my reaction while it's still happening.",0],
+    ["Clarity","I know what set me off, not just that something did.",0],
+    ["Clarity","When I'm activated, my feelings are a blur I can't sort out.",1],
+    ["Clarity","When I'm upset, I can't tell whether I'm hurt or angry.",1],
+    ["Clarity","When I'm distressed, I struggle to put my internal state into words.",1],
+
+    ["Impulse","When I'm angry, I can stop myself before saying the thing I'll regret.",0],
+    ["Impulse","I stay in charge of my behavior even when feeling is running high.",0],
+    ["Impulse","When I'm activated, I choose my next move rather than react with it.",0],
+    ["Impulse","When I'm upset enough, my behavior gets away from me.",1],
+    ["Impulse","When I feel the urge to lash out, I often act on it before I can stop.",1],
+    ["Impulse","When a message makes me angry, I fire back before I've cooled down.",1],
+
+    ["Strategies","I have things I do that reliably bring me down from activation.",0],
+    ["Strategies","When I'm overwhelmed, I know how to get myself back to steady.",0],
+    ["Strategies","I use my body — breath, movement, getting outside — to shift my state.",0],
+    ["Strategies","Once I'm upset there's nothing I can do but wait it out.",1],
+    ["Strategies","When I take a break during conflict, I can't actually settle during it.",1],
+    ["Strategies","When distress hits, I doubt there's anything that will bring it down.",1],
+
+    ["Goals","Even when I'm upset, I can stay on the actual topic.",0],
+    ["Goals","I keep track of what I want out of the conversation while it's happening.",0],
+    ["Goals","I can hold my own point and hear theirs at the same time.",0],
+    ["Goals","When I'm distressed, I lose the thread of what we were even discussing.",1],
+    ["Goals","When I'm distressed, I can't take in what the other person is saying.",1],
+    ["Goals","Being upset enough stops me from doing what the situation requires.",1],
+
+    ["Acceptance","I can be angry without deciding there's something wrong with me for it.",0],
+    ["Acceptance","When I'm hurt, I let myself be hurt without talking myself out of it.",0],
+    ["Acceptance","I can feel something intensely and still consider my reaction legitimate.",0],
+    ["Acceptance","When I get upset, I feel ashamed of myself for having reacted at all.",1],
+    ["Acceptance","I take my own strong feelings as evidence that I'm being weak.",1],
+    ["Acceptance","After I've been emotional with someone, I'm angrier at myself than at them.",1]
+  ]
+};
+
+const INSTRUMENTS = {arp:ARP, cci:CCI, ces:CES, crc:CRC};
+const RESULTS = {};   /* session store, keyed by instrument id */
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function interleave(items){
+  const byKey = {};
+  items.forEach(it=>{ (byKey[it[0]] = byKey[it[0]] || []).push(it); });
+  const keys = Object.keys(byKey);
+  const out = [];
+  let i = 0, remaining = items.length;
+  while(remaining > 0){
+    keys.forEach(k=>{
+      if(byKey[k][i]){ out.push(byKey[k][i]); remaining--; }
+    });
+    i++;
+  }
+  return out;
+}
+function band(mean){
+  if(mean < 3.0) return "low";
+  if(mean < 4.25) return "mod";
+  return "high";
+}
+function bandLabel(b, type){
+  if(type === "skill") return {low:"Developing", mod:"Moderate", high:"Strong"}[b];
+  if(type === "profile") return {low:"Background", mod:"Active", high:"Primary"}[b];
+  return {low:"Low frequency", mod:"Moderate frequency", high:"High frequency"}[b];
+}
+function esc(s){ return String(s).replace(/&(?!\w+;)/g,"&amp;").replace(/</g,"&lt;"); }
+
+/* ============================================================
+   RENDER — START SCREEN
+   ============================================================ */
+function renderStart(inst){
+  const panel = document.getElementById("p"+"-"+inst.id);
+  const n = inst.items.length;
+  const nSub = Object.keys(inst.subscales).length;
+  panel.innerHTML = `
+    <h2>${inst.title}</h2>
+    <p class="subtitle">${inst.sub}</p>
+    <p class="lede">${inst.frame}</p>
+    <div class="card">
+      <ul class="plain">${inst.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>
+      <div class="metaRow">
+        <div><b>${n}</b>items</div>
+        <div><b>${nSub}</b>subscales</div>
+        <div><b>6-point</b>forced choice</div>
+        <div><b>~${Math.ceil(n/8)}</b>minutes</div>
+      </div>
+      <div class="btnRow">
+        <button class="action" data-start="${inst.id}">Begin</button>
+        <span class="kbdHint">Keys 1–6 to answer · Backspace to go back</span>
+      </div>
+    </div>
+    <p class="note">Subscale labels are hidden during administration and items are presented in interleaved order, so the factor structure isn't visible while you answer. Some items are reverse-keyed.</p>`;
+  panel.querySelector("[data-start]").addEventListener("click", ()=>startQuiz(inst));
+}
+
+/* ============================================================
+   RENDER — QUIZ
+   ============================================================ */
+const STATE = {};
+function startQuiz(inst){
+  STATE[inst.id] = { order: interleave(inst.items), idx: 0, answers: [] };
+  renderItem(inst);
+}
+function renderItem(inst){
+  const st = STATE[inst.id];
+  const panel = document.getElementById("p"+"-"+inst.id);
+  if(st.idx >= st.order.length){ score(inst); return; }
+  const it = st.order[st.idx];
+  const pct = (st.idx / st.order.length) * 100;
+  panel.innerHTML = `
+    <h2>${inst.title}</h2>
+    <div class="progressWrap">
+      <div class="progressBar"><div class="progressFill" style="width:${pct}%"></div></div>
+      <div class="progressMeta">
+        <span>Item ${st.idx+1} of ${st.order.length}</span>
+        <span>${Math.round(pct)}%</span>
+      </div>
+    </div>
+    <p class="stem">${it[1]}</p>
+    <div class="scale">
+      ${ANCHORS.map(a=>`<button class="opt" data-v="${a[0]}"><span class="num">${a[0]}</span>${a[1]}</button>`).join("")}
+    </div>
+    <div class="quizFoot">
+      <button class="ghost" data-back ${st.idx===0?'disabled style="opacity:.4;cursor:default"':""}>Back</button>
+      <span class="kbdHint">1–6 to answer · Backspace to go back</span>
+    </div>`;
+  panel.querySelectorAll(".opt").forEach(b=>{
+    b.addEventListener("click", ()=>answer(inst, +b.dataset.v));
+  });
+  const back = panel.querySelector("[data-back]");
+  if(st.idx > 0) back.addEventListener("click", ()=>{ st.idx--; st.answers.pop(); renderItem(inst); });
+  const first = panel.querySelector(".opt");
+  if(first) first.focus({preventScroll:true});
+  window.scrollTo({top:0,behavior:"instant"});
+}
+function answer(inst, v){
+  const st = STATE[inst.id];
+  st.answers[st.idx] = v;
+  st.idx++;
+  renderItem(inst);
+}
+document.addEventListener("keydown", e=>{
+  const active = document.querySelector(".panel.active");
+  if(!active) return;
+  const id = active.id.replace("p-","");
+  const inst = INSTRUMENTS[id];
+  if(!inst || !STATE[id]) return;
+  const st = STATE[id];
+  if(st.idx >= st.order.length) return;
+  if(e.key >= "1" && e.key <= "6"){ e.preventDefault(); answer(inst, +e.key); }
+  else if(e.key === "Backspace" && st.idx > 0){
+    e.preventDefault(); st.idx--; st.answers.pop(); renderItem(inst);
+  }
+});
+
+/* ============================================================
+   SCORING
+   ============================================================ */
+function score(inst){
+  const st = STATE[inst.id];
+  const sums = {}, counts = {};
+  Object.keys(inst.subscales).forEach(k=>{ sums[k]=0; counts[k]=0; });
+  st.order.forEach((it,i)=>{
+    const raw = st.answers[i];
+    const val = it[2] ? (7 - raw) : raw;      /* hidden reverse scoring */
+    sums[it[0]] += val; counts[it[0]]++;
+  });
+  const means = {};
+  Object.keys(sums).forEach(k=> means[k] = sums[k]/counts[k]);
+  RESULTS[inst.id] = { means, type: inst.type, key: inst.key, title: inst.title };
+  renderResults(inst, means);
+  renderSynthesis();
+}
+
+/* ============================================================
+   SIGNATURE VISUAL 1 — 4F quadrant on Walker's two spectrums
+   ============================================================ */
+function quadrantSVG(m){
+  const x = m.Fight - m.Fawn;      /* −5 … +5 */
+  const y = m.Flight - m.Freeze;   /* −5 … +5 */
+  const W = 460, H = 460, P = 54, S = W - P*2, C = P + S/2;
+  const px = C + (x/5) * (S/2) * 0.9;
+  const py = C - (y/5) * (S/2) * 0.9;
+  const grid = [];
+  for(let i=1;i<=4;i++){
+    const r = (S/2) * (i/4) * 0.9;
+    grid.push(`<rect x="${C-r}" y="${C-r}" width="${r*2}" height="${r*2}" fill="none" stroke="var(--line)" stroke-width="1"/>`);
+  }
+  const lbl = (tx,ty,t,anchor)=>`<text x="${tx}" y="${ty}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.4" fill="var(--faint)">${t}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Position on the fawn-to-fight and freeze-to-flight spectrums">
+    <rect x="${P}" y="${P}" width="${S}" height="${S}" fill="var(--panel)" stroke="var(--line)"/>
+    ${grid.join("")}
+    <line x1="${P}" y1="${C}" x2="${P+S}" y2="${C}" stroke="var(--faint)" stroke-width="1"/>
+    <line x1="${C}" y1="${P}" x2="${C}" y2="${P+S}" stroke="var(--faint)" stroke-width="1"/>
+    ${lbl(C, P-20, "FLIGHT", "middle")}
+    ${lbl(C, P+S+32, "FREEZE", "middle")}
+    ${lbl(P-12, C+4, "FAWN", "end")}
+    ${lbl(P+S+12, C+4, "FIGHT", "start")}
+    <circle cx="${px}" cy="${py}" r="17" fill="var(--accent)" opacity="0.16"/>
+    <circle cx="${px}" cy="${py}" r="6.5" fill="var(--accent)"/>
+    <circle cx="${px}" cy="${py}" r="6.5" fill="none" stroke="var(--panel)" stroke-width="1.6"/>
+  </svg>`;
+}
+
+/* ============================================================
+   SIGNATURE VISUAL 2 — dual-concern grid
+   ============================================================ */
+function dualConcernSVG(m){
+  const self  = (m.Dominating + m.Integrating)/2;
+  const other = (m.Obliging + m.Integrating)/2;
+  const W=460,H=460,P=56,S=W-P*2;
+  const px = P + ((other-1)/5)*S;
+  const py = P + S - ((self-1)/5)*S;
+  const zone = (zx,zy,t)=>`<text x="${zx}" y="${zy}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="var(--faint)">${t}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Position on the concern for self and concern for others grid">
+    <rect x="${P}" y="${P}" width="${S}" height="${S}" fill="var(--panel)" stroke="var(--line)"/>
+    <line x1="${P}" y1="${P+S/2}" x2="${P+S}" y2="${P+S/2}" stroke="var(--line)"/>
+    <line x1="${P+S/2}" y1="${P}" x2="${P+S/2}" y2="${P+S}" stroke="var(--line)"/>
+    ${zone(P+S*0.24, P+S*0.16, "Dominating")}
+    ${zone(P+S*0.76, P+S*0.16, "Integrating")}
+    ${zone(P+S*0.24, P+S*0.86, "Avoiding")}
+    ${zone(P+S*0.76, P+S*0.86, "Obliging")}
+    ${zone(P+S*0.5,  P+S*0.52, "Compromising")}
+    <text x="${P-14}" y="${P+S/2}" text-anchor="middle" transform="rotate(-90 ${P-14} ${P+S/2})" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1.3" fill="var(--faint)">CONCERN FOR SELF →</text>
+    <text x="${P+S/2}" y="${P+S+30}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1.3" fill="var(--faint)">CONCERN FOR OTHERS →</text>
+    <circle cx="${px}" cy="${py}" r="17" fill="var(--accent)" opacity="0.16"/>
+    <circle cx="${px}" cy="${py}" r="6.5" fill="var(--accent)"/>
+    <circle cx="${px}" cy="${py}" r="6.5" fill="none" stroke="var(--panel)" stroke-width="1.6"/>
+  </svg>`;
+}
+
+/* ============================================================
+   RENDER — RESULTS
+   ============================================================ */
+function renderResults(inst, m){
+  const panel = document.getElementById("p"+"-"+inst.id);
+  const keys = Object.keys(inst.subscales);
+  const ordered = inst.type === "severity" ? keys : keys.slice().sort((a,b)=>m[b]-m[a]);
+
+  const bars = ordered.map(k=>{
+    const sc = inst.subscales[k];
+    const isSkill = inst.type === "skill" || (inst.skillSubscales||[]).includes(k);
+    const b = band(m[k]);
+    const tone = isSkill ? {low:"t-high",mod:"t-mod",high:"t-low"}[b] : {low:"t-low",mod:"t-mod",high:"t-high"}[b];
+    const type = isSkill ? "skill" : inst.type;
+    return `<div class="bandRow">
+      <div class="bandHead">
+        <span class="bandName">${sc.label}</span>
+        <span class="bandVal"><span class="tag ${tone}">${bandLabel(b,type)}</span> &nbsp;${m[k].toFixed(2)} / 6.00</span>
+      </div>
+      <div class="bandTrack"><div class="bandFill" style="background:${sc.color}" data-w="${((m[k]-1)/5)*100}"></div></div>
+      <p class="bandDesc">${sc.blurb}</p>
+    </div>`;
+  }).join("");
+
+  let sig = "", sigCap = "";
+  if(inst.id === "arp"){
+    sig = quadrantSVG(m);
+    sigCap = "Walker's two spectrums · fawn ↔ fight and freeze ↔ flight";
+  } else if(inst.id === "ces"){
+    sig = dualConcernSVG(m);
+    sigCap = "Dual-concern position · derived from your five style scores";
+  }
+
+  const top = ordered[0];
+  let read = "";
+  if(inst.type === "profile"){
+    const second = ordered[1];
+    const gap = m[top] - m[second];
+    read = gap < 0.4
+      ? `<p><strong>${inst.subscales[top].label}</strong> and <strong>${inst.subscales[second].label}</strong> came out effectively tied. Walker notes that most people are hybrids rather than pure types, and a close pairing is the common finding.</p>`
+      : `<p>Your highest scale is <strong>${inst.subscales[top].label}</strong>, ahead of ${inst.subscales[second].label} by ${gap.toFixed(2)}. That's the response your system reaches for first — not the only one available to you, but the one that arrives before you've decided anything.</p>`;
+    if(inst.id === "arp"){
+      const lowest = ordered[ordered.length-1];
+      read += `<p>Your least-accessible response is <strong>${inst.subscales[lowest].label}</strong> (${m[lowest].toFixed(2)}). In Walker's framing, the recovery direction isn't away from your primary — it's toward whatever you can't currently reach. All four have a healthy form.</p>`;
+    }
+  } else if(inst.type === "skill"){
+    const lowest = ordered[ordered.length-1];
+    read = `<p>Your strongest capacity is <strong>${inst.subscales[top].label}</strong> (${m[top].toFixed(2)}); your thinnest is <strong>${inst.subscales[lowest].label}</strong> (${m[lowest].toFixed(2)}). The gap between them usually matters more than the average — it tells you which capacity gives out first when the pressure rises.</p>`;
+  } else {
+    const horsemen = ["Criticism","Contempt","Defensiveness","Stonewalling"];
+    const highH = horsemen.filter(k=>band(m[k])==="high");
+    const ratio = m.Repair - (horsemen.reduce((s,k)=>s+m[k],0)/4);
+    read = `<p>Across the four horsemen your mean is ${(horsemen.reduce((s,k)=>s+m[k],0)/4).toFixed(2)}, against a repair capacity of ${m.Repair.toFixed(2)} — a margin of ${ratio>=0?"+":""}${ratio.toFixed(2)} in ${ratio>=0?"repair's":"the horsemen's"} favor. In Gottman's model that balance predicts more than any single pattern does.</p>`;
+    if(highH.length) read += `<p>In the high-frequency band: <strong>${highH.map(k=>inst.subscales[k].label).join(", ")}</strong>.</p>`;
+  }
+
+  /* care notes */
+  let care = "";
+  if(inst.id === "cci"){
+    if(band(m.Contempt) === "high"){
+      care = `<div class="careNote"><b>On the contempt score</b>Contempt is the one pattern in this model with no useful form and no acceptable baseline. A high score here is worth taking seriously on its own, independent of everything else on the page — and it responds better to structured couples work than to private resolve.</div>`;
+    } else if(band(m.Flooding) === "high" && band(m.Repair) === "low"){
+      care = `<div class="careNote"><b>Flooding without repair</b>High flooding paired with low repair capacity is the combination that tends to compound: the body shuts the conversation down, and nothing afterward reopens it. Flooding is physiological, so the intervention is physiological first — a named break of at least twenty minutes, taken before the shutdown rather than after.</div>`;
+    }
+  }
+  if(inst.id === "arp"){
+    const anyHigh = keys.filter(k=>band(m[k])==="high");
+    if(anyHigh.length){
+      care = `<div class="careNote"><b>A note on what this measures</b>These are survival responses. A high score describes something that worked at some point — usually somewhere it was the only thing that worked. It's information about your history, not a verdict on your character. If any of it is landing heavily, that's worth taking to someone trained in trauma-informed work rather than sitting with alone.</div>`;
+    }
+  }
+  if(inst.id === "crc"){
+    const lows = keys.filter(k=>band(m[k])==="low");
+    if(lows.length >= 2){
+      care = `<div class="careNote"><b>On the low bands</b>Two or more capacities in the developing range means the regulation load is landing on whatever's left, which is why conflict may feel disproportionately costly. These are trainable — clarity and impulse control in particular respond well to structured practice, and a therapist working in DBT or somatic modalities does this specific work.</div>`;
+    }
+  }
+
+  const alphas = keys.map(k=>`<tr><td>${inst.subscales[k].label}</td><td class="n">${inst.items.filter(i=>i[0]===k).length}</td><td class="n">${inst.items.filter(i=>i[0]===k && i[2]).length}</td><td class="n">${ALPHA[k].toFixed(3)}</td></tr>`).join("");
+
+  panel.innerHTML = `
+    <h2>${inst.title}</h2>
+    <p class="subtitle">Results · ${Object.keys(inst.subscales).length} subscales</p>
+    ${sig ? `<figure class="sig">${sig}<figcaption>${sigCap}</figcaption></figure>` : ""}
+    <div style="margin-top:${sig?"34px":"22px"}">${bars}</div>
+    <h3>Reading it</h3>
+    ${read}
+    ${care}
+    <details class="appendix">
+      <summary>Psychometric appendix</summary>
+      <p style="margin-top:16px;font-size:14px;color:var(--muted)">Items are scored on a 6-point forced-choice scale with no neutral midpoint. Reverse-keyed items are recoded as 7 minus the raw response before aggregation. Subscale scores are item means, so all scales share a 1.00–6.00 range regardless of item count. Bands: below 3.00, 3.00–4.24, and 4.25 and above. Every subscale is balanced three forward / three reverse, so uniform responding — answering every item the same — lands at the 3.50 midpoint on every scale rather than inflating the score. This zeroes out acquiescence bias at the cost of roughly 0.03 of alpha relative to an all-forward design, a trade this suite takes everywhere.</p>
+      <table class="psy">
+        <thead><tr><th>Subscale</th><th>Items</th><th>Reverse</th><th>α (sim.)</th></tr></thead>
+        <tbody>${alphas}</tbody>
+      </table>
+      <p style="font-size:13px;color:var(--faint)">Alpha values are from a Monte Carlo simulation (N = 1,400 synthetic respondents averaged over 60 replications per subscale; single-factor congeneric model; loadings drawn from N(0.72, 0.07); the three reverse-worded items per subscale modeled with a negative loading plus a 0.13 method-effect penalty; reverse scoring applied before computation). They describe the structural adequacy of the item design, not empirical reliability in a human sample. Items were written independently rather than reproduced from the published instruments they are modeled on.</p>
+    </details>
+    <div class="btnRow">
+      <button class="ghost" data-retake="${inst.id}">Retake</button>
+      <button class="ghost" data-goto="syn">See synthesis</button>
+    </div>`;
+
+  requestAnimationFrame(()=>{
+    panel.querySelectorAll(".bandFill").forEach(f=> f.style.width = f.dataset.w + "%");
+  });
+  panel.querySelector("[data-retake]").addEventListener("click", ()=>renderStart(inst));
+  panel.querySelector("[data-goto]").addEventListener("click", ()=>selectTab("syn"));
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+/* ============================================================
+   SYNTHESIS
+   ============================================================ */
+function renderSynthesis(){
+  const panel = document.getElementById("p-syn");
+  const done = Object.keys(RESULTS);
+  let body;
+  if(!done.length){
+    body = `<p class="empty">Nothing to synthesize yet. Complete any of the four instruments and the cross-readings will appear here.</p>`;
+  } else {
+    const cards = [];
+    const R = id => RESULTS[id] && RESULTS[id].means;
+    const a = R("arp"), c = R("cci"), s = R("ces"), r = R("crc");
+
+    const topOf = m => Object.keys(m).sort((x,y)=>m[y]-m[x])[0];
+
+    if(a && c){
+      const t = topOf(a);
+      const map = {
+        Freeze:["Freeze → Stonewalling","Stonewalling",`A freeze-primary system produces stonewalling that isn't chosen. Your freeze score is ${a.Freeze.toFixed(2)} and your stonewalling score is ${c.Stonewalling.toFixed(2)}. If those track together, the useful intervention isn't "stay engaged" — it's getting a break named out loud before the shutdown lands, since a dorsal-vagal drop can't be willed away mid-conversation.`],
+        Fight:["Fight → Criticism and contempt","Criticism",`Fight-primary systems tend to route through criticism and, at the sharp end, contempt. Your fight score is ${a.Fight.toFixed(2)}; criticism sits at ${c.Criticism.toFixed(2)} and contempt at ${c.Contempt.toFixed(2)}. The distinction worth holding is between a complaint about behavior and a verdict about character — the first is assertion, the second is the horseman.`],
+        Fawn:["Fawn → Repair, or the appearance of it","Repair",`Fawn-primary systems often score well on repair, but the two aren't the same thing. Your fawn score is ${a.Fawn.toFixed(2)} and repair is ${c.Repair.toFixed(2)}. Real repair requires that you still be in the room with your own position; appeasement ends the conflict by removing one of the parties from it. Worth checking which one you're doing.`],
+        Flight:["Flight → Withdrawal that looks like composure","Stonewalling",`Flight-primary systems exit early, and it can read as being the calm one. Your flight score is ${a.Flight.toFixed(2)} against stonewalling at ${c.Stonewalling.toFixed(2)}. The question is whether your exits are announced and time-bound, or whether the conversation simply stops happening.`]
+      };
+      if(map[t]) cards.push({h:map[t][0], p:map[t][2]});
+    }
+    if(a && s){
+      const t = topOf(a);
+      const pairs = {Fight:"Dominating", Fawn:"Obliging", Flight:"Avoiding", Freeze:"Avoiding"};
+      const p = pairs[t];
+      cards.push({h:`Reflex and strategy`, p:`Your primary activation response is <strong>${t}</strong>, and the style theory would predict <strong>${p}</strong> as its strategic expression. Yours came in at ${s[p].toFixed(2)}, against an integrating score of ${s.Integrating.toFixed(2)}. Where integrating is comfortably higher, it suggests you've built a deliberate strategy that overrides the reflex — which is exactly the gap that training targets.`});
+    }
+    if(a && r){
+      const t = topOf(a);
+      cards.push({h:`The second layer`, p:`Your acceptance score is ${r.Acceptance.toFixed(2)}, against a ${t.toLowerCase()} response of ${a[t].toFixed(2)}. Nonacceptance is the judgment that lands on top of the feeling rather than after it — which is what converts a survival response into a shame cycle, since the response itself becomes further evidence against you. Where acceptance runs low and any 4F score runs high, the reaction and the self-attack are usually arriving together.`});
+    }
+    if(c && r){
+      cards.push({h:`Capacity against pattern`, p:`Flooding sits at ${c.Flooding.toFixed(2)} while your access to regulation strategies is ${r.Strategies.toFixed(2)} and impulse control is ${r.Impulse.toFixed(2)}. Flooding is the load; those two are the brakes. When the load exceeds the brakes, the horsemen show up — which is why the more tractable target is usually the capacity side, not the pattern side.`});
+    }
+    if(r && !c){
+      cards.push({h:`Where it gives out first`, p:`Your thinnest capacity is <strong>${Object.keys(r).sort((x,y)=>r[x]-r[y])[0]}</strong>. Completing the Conflict Communication inventory would show which patterns that gap is producing in the room.`});
+    }
+    if(!cards.length){
+      cards.push({h:`One instrument so far`, p:`Cross-readings need at least two. The pairings that produce the most useful signal are Activation Response with Conflict Communication, and Conflict Communication with Regulation Capacity.`});
+    }
+    body = cards.map(x=>`<div class="synthCard"><h4>${x.h}</h4><p>${x.p}</p></div>`).join("")
+      + `<p class="note" style="margin-top:26px">Completed this session: ${done.map(d=>RESULTS[d].title).join(" · ")}. Results are held in memory only — reloading the page clears them.</p>`;
+  }
+  panel.innerHTML = `
+    <h2>Synthesis</h2>
+    <p class="subtitle">Cross-instrument readings</p>
+    <p class="lede">Each instrument measures a different layer of the same event: the reflex, the behavior it produces, the strategy laid over it, and the capacity available to interrupt it. The interesting findings usually live between them rather than inside any one.</p>
+    ${body}`;
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+function selectTab(id){
+  document.querySelectorAll("nav.tabs button").forEach(b=>{
+    b.setAttribute("aria-selected", b.dataset.tab === id ? "true" : "false");
+  });
+  document.querySelectorAll(".panel").forEach(p=>{
+    p.classList.toggle("active", p.id === "p"+"-"+id);
+  });
+  document.body.setAttribute("data-accent", id);   /* active-instrument accent */
+  window.scrollTo({top:0,behavior:"instant"});
+}
+document.querySelectorAll("nav.tabs button").forEach(b=>{
+  b.addEventListener("click", ()=>selectTab(b.dataset.tab));
+});
+
+/* ============================================================
+   THEME TOGGLE  (cycles system → light → dark; per-viewer only)
+   ============================================================ */
+(function(){
+  const root = document.documentElement;
+  let saved = null;
+  try{ saved = localStorage.getItem("cap-theme"); }catch(e){}
+  if(saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
+  const btn = document.getElementById("themeToggle");
+  if(btn) btn.addEventListener("click", ()=>{
+    const cur = root.getAttribute("data-theme");
+    const prefDark = window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches;
+    // from current effective state, flip to the opposite explicit theme
+    let next;
+    if(cur === "dark") next = "light";
+    else if(cur === "light") next = "dark";
+    else next = prefDark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try{ localStorage.setItem("cap-theme", next); }catch(e){}
+  });
+})();
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.body.setAttribute("data-accent", "arp");
+Object.values(INSTRUMENTS).forEach(renderStart);
+renderSynthesis();
+</script>
+</body>
+</html>

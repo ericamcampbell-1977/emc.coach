@@ -360,3 +360,35 @@ h3 { font-size: clamp(1.6rem, 2.4vw, 2rem); line-height: 1.15; }
 /* a little invisible bridge so moving the mouse from Menu down into the dropdown doesn't close it */
 @media (max-width: 62rem) { .mobile-nav::before { content: ""; position: absolute; left: 0; right: 0; top: -1rem; height: 1rem; } }
 .nav-toggle { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+/* Credential badge image in footer (replaces the Credly embed) */
+.badge-img { display: inline-block; margin-top: .5rem; line-height: 0; }
+.badge-img img { width: 110px; height: auto; display: block; }
+
+/* Disclaimer box (Books, Tests, and every book or test page) */
+.elc-disclaimer { border: 1px solid var(--edge); border-left: 3px solid var(--rose); border-radius: 14px; background: rgba(68, 23, 78, .45); padding: 1.1rem 1.35rem; margin: 0 0 2.5rem; font-size: .95rem; line-height: 1.6; color: var(--text); }
+.elc-disclaimer b { color: var(--cream); font-weight: 600; }
+.elc-disclaimer p { margin: 0 0 .5rem; }
+.elc-disclaimer p:last-child { margin: 0; }
+
+/* Books and Tests pages */
+.subpage { padding: 9rem 0 5rem; min-height: 70vh; }
+.subpage h1 { font-size: clamp(2.6rem, 6vw, 4rem); line-height: 1.05; margin-bottom: 1.5rem; }
+.shelf { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.shelf a { display: block; text-decoration: none; border: 1px solid var(--edge); border-radius: 14px; padding: 1.2rem 1.4rem; background: rgba(102, 34, 73, .35); transition: border-color .2s, background .2s; }
+.shelf a:hover, .shelf a:focus-visible { border-color: var(--pink); background: rgba(102, 34, 73, .6); }
+.shelf .t { font-family: var(--serif); font-size: 1.5rem; color: var(--cream); display: block; }
+.shelf .go { font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--pink); }
+.subpage .soon { font-family: var(--serif); font-style: italic; font-size: 1.4rem; color: var(--pink); }
+
+/* Six menu links: keep the business name on one line at medium widths */
+.brand span { white-space: nowrap; }
+@media (max-width: 80rem) { .nav-links { gap: 1.1rem; font-size: .8rem; letter-spacing: .08em; } .nav-links .pill-light { padding-inline: 1.1rem; } }
+@media (max-width: 68rem) { .nav-links { gap: .8rem; letter-spacing: .05em; } .nav-links .pill-light { padding-inline: .9rem; } .brand { font-size: 1.1rem; } }
+
+/* Hypnosis sessions: picture fits the screen but never grows past its real size */
+.session { border: 1px solid var(--edge); border-radius: 14px; background: rgba(102, 34, 73, .35); padding: 1.4rem; display: grid; gap: 1rem; justify-items: center; }
+.session h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); margin: 0; justify-self: start; max-width: none; }
+.session img { display: block; max-width: 100%; max-height: 80vh; max-height: 80svh; width: auto; height: auto; border-radius: 10px; }
+.session audio { width: 100%; }
+@media (max-width: 66rem) { .nav-links { gap: .65rem; font-size: .74rem; letter-spacing: .04em; } .nav-links .pill-light { padding-inline: .75rem; } .brand { font-size: 1.02rem; } .brand .mark { width: 36px; height: 36px; } }

@@ -1,0 +1,770 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Series IX · Schemas, Modes & Needs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column, tab rail on top, one question per screen; results as ruled rows with a signature chart. Series X structure, cool slate-and-teal palette. */
+:root{
+  --paper:#EDF0EE; --sheet:#F7F9F8; --ink:#1D2729; --muted:#5B686B; --rule:#CDD5D3;
+  --teal:#1E6B68; --teal-soft:#D2E5E2; --plum:#6A4878; --plum-soft:#E6DCEB; --ochre:#9A6511;
+  --d1:#9A3F45; --d2:#9A6511; --d3:#4B763A; --d4:#2E6A88; --d5:#6A4878;
+  --care:#F3E3E2;
+  /* one accent per inventory */
+  --sch:#1E6B68; --sch-soft:#D2E5E2; --mod:#6A4878; --mod-soft:#E6DCEB; --nee:#2F5D8A; --nee-soft:#D9E4EF;
+  --acc:var(--sch); --acc-soft:var(--sch-soft);
+  /* score bands: low → high concern */
+  --b0:#3D7A4C; --b0-soft:#DCEBDD; --b1:#5E7279; --b1-soft:#E1E7E8; --b2:#A86A0E; --b2-soft:#F4E5C9; --b3:#A63A41; --b3-soft:#F3DCDD;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121819; --sheet:#1A2224; --ink:#E3EAE8; --muted:#94A3A3; --rule:#2D3839;
+  --teal:#6FC2BB; --teal-soft:#1B3533; --plum:#C6A6D4; --plum-soft:#2E2537; --ochre:#DDAA55;
+  --d1:#E28C91; --d2:#DDAA55; --d3:#9DC888; --d4:#80B9D7; --d5:#C6A6D4; --care:#3A2224;
+  --sch:#6FC2BB; --sch-soft:#1B3533; --mod:#C6A6D4; --mod-soft:#2E2537; --nee:#8DB6E0; --nee-soft:#1C2B3A;
+  --b0:#86C793; --b0-soft:#1D3323; --b1:#A3B3B8; --b1-soft:#263033; --b2:#E3AE55; --b2-soft:#3A2C14; --b3:#EC8E93; --b3-soft:#3D2023; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121819; --sheet:#1A2224; --ink:#E3EAE8; --muted:#94A3A3; --rule:#2D3839;
+  --teal:#6FC2BB; --teal-soft:#1B3533; --plum:#C6A6D4; --plum-soft:#2E2537; --ochre:#DDAA55;
+  --d1:#E28C91; --d2:#DDAA55; --d3:#9DC888; --d4:#80B9D7; --d5:#C6A6D4; --care:#3A2224;
+  --sch:#6FC2BB; --sch-soft:#1B3533; --mod:#C6A6D4; --mod-soft:#2E2537; --nee:#8DB6E0; --nee-soft:#1C2B3A;
+  --b0:#86C793; --b0-soft:#1D3323; --b1:#A3B3B8; --b1-soft:#263033; --b2:#E3AE55; --b2-soft:#3A2C14; --b3:#EC8E93; --b3-soft:#3D2023; color-scheme:dark}
+*{box-sizing:border-box}
+.wrap[data-inst="SMP"]{--acc:var(--mod);--acc-soft:var(--mod-soft)}
+.wrap[data-inst="CNI"]{--acc:var(--nee);--acc-soft:var(--nee-soft)}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(30px,6vw,44px);line-height:1.08;margin:0;text-wrap:balance}
+h1 em{font-style:italic;color:var(--sch)}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+.five{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.five b{font-weight:500}
+.five i,nav button i{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none}
+.five span{display:inline-flex;align-items:center;gap:7px}
+nav{display:flex;gap:2px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+nav button{all:unset;cursor:pointer;padding:10px 12px 9px;font-size:14px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;display:flex;gap:8px;align-items:center}
+nav button small{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc)}
+nav button:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.panel{display:flex;flex-direction:column;gap:22px}
+.intro{display:flex;flex-direction:column;gap:14px;max-width:62ch}
+.intro h2,.res h2,.card h3{font-family:var(--display);font-weight:500;margin:0;text-wrap:balance}
+.intro h2,.res h2{font-size:26px}
+.intro p{margin:0}
+.meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 16px}
+.intro .eyebrow,.res>.eyebrow{color:var(--acc)}
+.btn{all:unset;cursor:pointer;align-self:flex-start;background:var(--acc);color:var(--paper);padding:10px 18px;border-radius:3px;font-weight:500;font-size:15px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.row-btns{display:flex;flex-wrap:wrap;gap:10px}
+/* question */
+.q{display:flex;flex-direction:column;gap:18px;min-height:340px}
+.qmeta{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prompt{margin:0;font-size:14px;color:var(--muted)}
+.track{height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+.track i{display:block;height:100%;background:var(--acc);transition:width .2s}
+.stem{font-family:var(--display);font-size:clamp(22px,4.4vw,28px);line-height:1.3;margin:0 0 4px;min-height:3.9em;text-wrap:balance}
+.scale{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.scale button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border:1px solid var(--rule);border-radius:3px;background:var(--sheet);text-align:center}
+.scale button b{font-family:var(--mono);font-weight:500;font-size:17px}
+.scale button span{font-size:11.5px;line-height:1.25;color:var(--muted)}
+.scale button:hover{border-color:var(--muted)}
+.scale button[aria-pressed="true"]{background:var(--acc-soft);border-color:var(--acc)}
+.scale button[aria-pressed="true"] b{color:var(--acc)}
+.qnav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.qnav button{all:unset;cursor:pointer;font-size:14px;color:var(--muted)}
+.qnav button[disabled]{opacity:.35;cursor:default}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+@media (max-width:520px){.scale{grid-template-columns:repeat(3,minmax(0,1fr))}.hint{display:none}}
+/* results */
+.res{display:flex;flex-direction:column;gap:20px}
+.chart{display:flex;justify-content:center}
+.chart svg{width:100%;max-width:440px;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.group{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0;padding-top:10px;font-family:var(--display);font-weight:500;font-size:18px}
+.group span{font-family:var(--mono);font-size:12px;font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.group i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.srow h4{margin:0;font-size:15.5px;font-weight:600}
+.srow .val{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;text-align:right}
+.srow .def,.srow .read{grid-column:1/-1;margin:0;font-size:14px;color:var(--muted)}
+.srow .read{color:var(--ink)}
+.bt{grid-column:1/-1;position:relative;height:6px;background:var(--rule);border-radius:3px}
+.bt i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.bt u{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--muted);opacity:.5}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);color:var(--muted);margin-left:8px;vertical-align:2px;font-weight:500;white-space:nowrap}
+.chip.r0{background:var(--b0-soft);border-color:var(--b0);color:var(--b0)}
+.chip.r1{background:var(--b1-soft);border-color:var(--b1);color:var(--b1)}
+.chip.r2{background:var(--b2-soft);border-color:var(--b2);color:var(--b2)}
+.chip.r3{background:var(--b3-soft);border-color:var(--b3);color:var(--b3)}
+.key{display:flex;flex-wrap:wrap;align-items:center;gap:8px 4px;font-size:13px;color:var(--muted)}
+.key .chip{margin-left:0;margin-right:4px}
+.note{font-size:13.5px;color:var(--muted);max-width:62ch;margin:0}
+.care{background:var(--care);border-left:3px solid var(--d1);padding:12px 14px;border-radius:0 3px 3px 0;font-size:14.5px;margin:0;max-width:62ch}
+/* synthesis */
+.cards{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+.card h3{font-size:20px}
+.card p{margin:0;font-size:15px}
+.card .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card.locked{background:transparent;border-style:dashed}
+.card.locked p{color:var(--muted)}
+.mrow{display:grid;grid-template-columns:9.5em minmax(0,1fr) 3.6em;gap:10px;align-items:center;font-size:14px}
+.mrow .d{font-family:var(--mono);font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.mt{position:relative;height:16px}
+.mt::before{content:"";position:absolute;left:0;right:0;top:7px;height:2px;background:var(--rule)}
+.mt .r,.mt .e{position:absolute;top:3px;width:10px;height:10px;border-radius:50%;margin-left:-5px}
+.mt .r{background:var(--nee)}
+.mt .e{border:2px solid var(--sch);background:var(--sheet)}
+@media (max-width:520px){.mrow{grid-template-columns:6.5em minmax(0,1fr) 3.2em;font-size:13px}}
+.asks{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px;font-size:15px}
+/* appendix */
+.apx{display:flex;flex-direction:column;gap:18px;max-width:68ch}
+.apx h3{font-family:var(--display);font-weight:500;font-size:20px;margin:6px 0 0}
+.apx p,.apx li{font-size:14.5px}
+.apx p{margin:0}
+.apx ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* legal */
+.legal{border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:10px;max-width:68ch;font-size:13px;line-height:1.55;color:var(--muted)}
+.legal h2{font-family:var(--display);font-weight:500;font-size:17px;color:var(--ink);margin:0}
+.legal p{margin:0}
+.legal b{color:var(--ink);font-weight:600}
+@media (prefers-reduced-motion:reduce){.track i{transition:none}}
+</style>
+
+<div class="wrap" id="wrap" data-inst="SPI">
+  <header>
+    <div class="eyebrow">Series IX · Schema therapy suite</div>
+    <h1>Schemas, modes, and <em>the needs beneath them</em></h1>
+    <p class="lede">There's no single schema you are. Everyone carries a profile: a few long-standing beliefs that run loud, the states they push you into, and the childhood needs that went short. Three inventories map each layer, and the Synthesis tab reads them together.</p>
+    <div class="five"><span><i style="background:var(--sch)"></i><b style="color:var(--sch)">SPI</b> Schema Profile · 18 schemas</span><span><i style="background:var(--mod)"></i><b style="color:var(--mod)">SMP</b> Schema Mode Profile · 12 modes</span><span><i style="background:var(--nee)"></i><b style="color:var(--nee)">CNI</b> Core Needs Inventory · 5 needs</span></div>
+  </header>
+  <nav role="tablist" id="tabs"></nav>
+  <main class="panel" id="view"></main>
+  <footer class="legal" id="legal">
+    <h2>Legal disclaimer</h2>
+    <p><b>For education and self-reflection only.</b> This suite is an original, self-authored set of questionnaires written for a book project. It is not a psychological test, a medical device, or a clinical assessment. It has not been validated or normed on a human sample, and the reliability figures in the appendix come from computer simulation, not from real respondents.</p>
+    <p><b>Not a diagnosis or professional advice.</b> Nothing on this page diagnoses, treats, or rules out any mental health condition, and nothing here is medical, psychological, or legal advice. Using it does not create a therapist–client or any other professional relationship. Talk with a licensed mental health professional before making decisions about your health, treatment, or relationships based on these results.</p>
+    <p><b>If you are in crisis</b> or thinking about harming yourself, call or text 988 (Suicide &amp; Crisis Lifeline, US) or your local emergency number now.</p>
+    <p><b>Your answers.</b> Responses are saved only in this browser on this device so you can resume later. They are not sent to the author or anyone else. Use Retake on each tab, or clear your browser's site data, to erase them.</p>
+    <p><b>Independent work.</b> This suite draws on published schema therapy research (Young, Klosko &amp; Weishaar, 2003; the Schema Mode Inventory) but uses entirely original items and is not affiliated with or endorsed by Jeffrey Young, the Schema Therapy Institute, or the International Society of Schema Therapy. It does not reproduce the Young Schema Questionnaire or the Schema Mode Inventory, and its scores are not comparable to theirs.</p>
+    <p><b>No warranty.</b> The suite is provided as is, without warranties of any kind. To the fullest extent permitted by law, the author is not liable for any decision made or action taken based on it.</p>
+    <p>© 2026 Erica Campbell. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const ALPHA = /*ALPHA*/{"SPI": {"Abandonment": {"mean": 0.817, "p05": 0.774, "items": 6}, "Mistrust": {"mean": 0.815, "p05": 0.77, "items": 6}, "Deprivation": {"mean": 0.813, "p05": 0.77, "items": 6}, "Defectiveness": {"mean": 0.813, "p05": 0.768, "items": 6}, "Isolation": {"mean": 0.819, "p05": 0.781, "items": 6}, "Dependence": {"mean": 0.817, "p05": 0.772, "items": 6}, "Vulnerability": {"mean": 0.818, "p05": 0.778, "items": 6}, "Enmeshment": {"mean": 0.817, "p05": 0.779, "items": 6}, "Failure": {"mean": 0.817, "p05": 0.776, "items": 6}, "Entitlement": {"mean": 0.817, "p05": 0.776, "items": 6}, "SelfControl": {"mean": 0.817, "p05": 0.779, "items": 6}, "Subjugation": {"mean": 0.814, "p05": 0.771, "items": 6}, "SelfSacrifice": {"mean": 0.815, "p05": 0.779, "items": 6}, "Approval": {"mean": 0.817, "p05": 0.778, "items": 6}, "Pessimism": {"mean": 0.817, "p05": 0.777, "items": 6}, "Inhibition": {"mean": 0.818, "p05": 0.771, "items": 6}, "Standards": {"mean": 0.815, "p05": 0.782, "items": 6}, "Punitiveness": {"mean": 0.817, "p05": 0.776, "items": 6}}, "SMP": {"Vulnerable": {"mean": 0.818, "p05": 0.778, "items": 6}, "Angry": {"mean": 0.816, "p05": 0.782, "items": 6}, "Impulsive": {"mean": 0.816, "p05": 0.775, "items": 6}, "Contented": {"mean": 0.82, "p05": 0.776, "items": 6}, "Surrenderer": {"mean": 0.817, "p05": 0.779, "items": 6}, "Detached": {"mean": 0.819, "p05": 0.776, "items": 6}, "Soother": {"mean": 0.817, "p05": 0.772, "items": 6}, "Aggrandizer": {"mean": 0.816, "p05": 0.775, "items": 6}, "Attack": {"mean": 0.816, "p05": 0.775, "items": 6}, "Punitive": {"mean": 0.817, "p05": 0.779, "items": 6}, "Demanding": {"mean": 0.816, "p05": 0.768, "items": 6}, "HealthyAdult": {"mean": 0.816, "p05": 0.777, "items": 6}}, "CNI": {"Safety": {"mean": 0.818, "p05": 0.775, "items": 6}, "Autonomy": {"mean": 0.818, "p05": 0.779, "items": 6}, "Expression": {"mean": 0.817, "p05": 0.774, "items": 6}, "Play": {"mean": 0.818, "p05": 0.775, "items": 6}, "Limits": {"mean": 0.818, "p05": 0.777, "items": 6}}}/*END*/;
+const SIM = /*SIM*/{"N":1400,"runs":200}/*END*/;
+const SCALE = ["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"];
+const DOMAINS={
+ DR:{label:"Disconnection & Rejection",color:"var(--d1)"},
+ IA:{label:"Impaired Autonomy",color:"var(--d2)"},
+ IL:{label:"Impaired Limits",color:"var(--d3)"},
+ OD:{label:"Other-Directedness",color:"var(--d4)"},
+ OI:{label:"Overvigilance & Inhibition",color:"var(--d5)"}
+};
+const F=t=>({t,rev:false}), R=t=>({t,rev:true});
+const BANK={
+ SPI:{
+  name:"Schema Profile Inventory", code:"SPI",
+  lead:"The beliefs that run the show.",
+  desc:"Eighteen early maladaptive schemas: lasting beliefs about yourself and other people that formed early and still color how you read situations. Most people have two to four that run loud.",
+  prompt:"How true is each statement of you, as you usually are?",
+  bands:["Quiet","Present","Active"], positive:[],
+  subs:{
+   Abandonment:{label:"Abandonment",dom:"DR",def:"“The people I count on will leave.”",items:[
+    F("When someone close to me is hard to reach, I start to fear they're gone for good."),
+    F("I expect the important people in my life to eventually leave."),
+    F("Even in steady relationships, I worry the other person will walk away."),
+    R("I feel confident that my close relationships will last."),
+    R("Time apart from someone I love doesn't make me fear losing them."),
+    R("I trust that the people I depend on will stay.")]},
+   Mistrust:{label:"Mistrust / Abuse",dom:"DR",def:"“People will hurt, use, or deceive me.”",items:[
+    F("I assume people will take advantage of me if I let my guard down."),
+    F("I watch for hidden motives behind people's kindness."),
+    F("I expect that someone I trust will eventually hurt me."),
+    R("I take most people's good intentions at face value."),
+    R("I feel safe letting people get close to me."),
+    R("When someone is generous with me, I don't look for a catch.")]},
+   Deprivation:{label:"Emotional Deprivation",dom:"DR",def:"“No one will really care for or understand me.”",items:[
+    F("I've rarely had someone who truly understood what I feel."),
+    F("When I need comfort, I don't expect anyone to provide it."),
+    F("I feel like there's no one I can really lean on."),
+    R("I have people who pay close attention to how I'm feeling."),
+    R("When I'm struggling, I usually get the care I need."),
+    R("I feel deeply understood by at least one person.")]},
+   Defectiveness:{label:"Defectiveness / Shame",dom:"DR",def:"“If people saw the real me, they'd find me unlovable.”",items:[
+    F("I feel that something about me is fundamentally flawed."),
+    F("I keep parts of myself hidden out of shame."),
+    F("I believe no one could love me if they truly knew me."),
+    R("I'm comfortable letting people see who I really am."),
+    R("I feel worthy of love just as I am."),
+    R("When someone gets to know me better, I expect them to like me more.")]},
+   Isolation:{label:"Social Isolation",dom:"DR",def:"“I'm different from everyone and don't fit in anywhere.”",items:[
+    F("I feel like an outsider in most groups."),
+    F("I feel fundamentally different from the people around me."),
+    F("I don't feel part of any community."),
+    R("I feel like I fit in with the people around me."),
+    R("There are groups where I feel like one of them."),
+    R("I have a lot in common with the people in my life.")]},
+   Dependence:{label:"Dependence / Incompetence",dom:"IA",def:"“I can't handle everyday life without help.”",items:[
+    F("I need someone else's input before I can make everyday decisions."),
+    F("I doubt my ability to manage daily responsibilities on my own."),
+    F("When a new problem comes up, I look for someone else to solve it."),
+    R("I trust my own judgment on day-to-day matters."),
+    R("I can handle most practical problems by myself."),
+    R("I feel capable of running my own life.")]},
+   Vulnerability:{label:"Vulnerability to Harm",dom:"IA",def:"“Catastrophe could strike at any moment.”",items:[
+    F("I worry that a disaster could strike at any moment."),
+    F("Minor physical symptoms make me fear something serious is wrong."),
+    F("I feel the world is a dangerous place."),
+    R("I feel safe going about my day."),
+    R("I rarely worry that something terrible will suddenly happen to me."),
+    R("When I hear about a disaster, I don't assume it will happen to me.")]},
+   Enmeshment:{label:"Enmeshment / Undeveloped Self",dom:"IA",def:"“I don't know who I am apart from someone close to me.”",items:[
+    F("I struggle to know what I want apart from what a person close to me wants."),
+    F("I feel I have no clear identity of my own."),
+    F("When someone close to me is upset, I feel it as if it were my own feeling."),
+    R("I have a clear sense of who I am apart from the people I'm close to."),
+    R("I can make choices my family disagrees with without losing my sense of self."),
+    R("My opinions stay my own even when they differ from those closest to me.")]},
+   Failure:{label:"Failure",dom:"IA",def:"“I'm less capable than others, and I'll fail.”",items:[
+    F("I feel less competent than most people my age."),
+    F("I'm less talented than most of the people I work with."),
+    F("I expect to fail at things I try."),
+    R("I feel I've achieved as much as most people."),
+    R("I'm as capable as the people around me."),
+    R("When I take on something new, I expect to do well at it.")]},
+   Entitlement:{label:"Entitlement / Grandiosity",dom:"IL",def:"“I'm special, and the usual rules don't apply to me.”",items:[
+    F("I feel I shouldn't have to follow the same rules as everyone else."),
+    F("I get irritated when I can't have what I want."),
+    F("I believe my needs should come before other people's."),
+    R("I accept limits on what I can have."),
+    R("I think the same rules should apply to me as to anyone."),
+    R("I can take no for an answer without resentment.")]},
+   SelfControl:{label:"Insufficient Self-Control",dom:"IL",def:"“I can't make myself push through boredom or frustration.”",items:[
+    F("I give up on tasks once they become boring."),
+    F("I have trouble resisting impulses, even when I know better."),
+    F("I struggle to make myself do routine tasks."),
+    R("I can stick with tedious work until it's done."),
+    R("I can delay what I want now for a longer-term goal."),
+    R("I stay in control of myself when I'm frustrated.")]},
+   Subjugation:{label:"Subjugation",dom:"OD",def:"“If I don't go along, something bad will happen.”",items:[
+    F("I let others take control because I fear what happens if I don't."),
+    F("I go along with what others want to avoid conflict."),
+    F("I feel I have no choice but to give in to others."),
+    R("I state my preferences even when others disagree."),
+    R("I feel free to say no to people."),
+    R("I make my own decisions in my relationships.")]},
+   SelfSacrifice:{label:"Self-Sacrifice",dom:"OD",def:"“Other people's needs matter more than mine.”",items:[
+    F("I put other people's needs ahead of my own."),
+    F("I feel guilty when I focus on myself."),
+    F("I end up taking care of everyone around me."),
+    R("I make room for my own needs even when others need me."),
+    R("I can rest without feeling I'm neglecting someone."),
+    R("I let other adults take care of themselves.")]},
+   Approval:{label:"Approval-Seeking",dom:"OD",def:"“My worth depends on what others think of me.”",items:[
+    F("My sense of worth depends on what others think of me."),
+    F("I change how I present myself to win people's approval."),
+    F("I need recognition to feel good about what I've done."),
+    R("I feel good about myself even when others don't notice my efforts."),
+    R("Other people's opinions don't define my self-worth."),
+    R("I make choices without worrying how they'll look to others.")]},
+   Pessimism:{label:"Negativity / Pessimism",dom:"OI",def:"“Things will go wrong.”",items:[
+    F("I focus on what could go wrong in a situation."),
+    F("I expect things to turn out badly."),
+    F("Even when life is going well, I wait for something bad to happen."),
+    R("I expect good things in my future."),
+    R("I tend to notice what's going right."),
+    R("When I make a mistake, I don't assume it will lead to disaster.")]},
+   Inhibition:{label:"Emotional Inhibition",dom:"OI",def:"“Showing feelings is unsafe or embarrassing.”",items:[
+    F("I keep my feelings to myself."),
+    F("I find it embarrassing to show affection."),
+    F("Other people describe me as hard to read."),
+    R("I express my feelings openly."),
+    R("I'm comfortable showing affection."),
+    R("I let people see when I'm hurt.")]},
+   Standards:{label:"Unrelenting Standards",dom:"OI",def:"“I have to meet very high standards, or I've failed.”",items:[
+    F("I have to be the best at most of what I do."),
+    F("I find it hard to slow down, even when I'm exhausted."),
+    F("Good enough rarely feels good enough to me."),
+    R("I can accept work that isn't perfect."),
+    R("I give myself room to relax without having to earn it."),
+    R("I hold myself to the same standards I'd hold anyone else to.")]},
+   Punitiveness:{label:"Punitiveness",dom:"OI",def:"“Mistakes deserve punishment.”",items:[
+    F("People should be punished when they make mistakes."),
+    F("I'm hard on myself when I fall short."),
+    F("I struggle to forgive myself for my mistakes."),
+    R("I'm forgiving of other people's mistakes."),
+    R("I can cut myself some slack after a mistake."),
+    R("I think people deserve understanding when they fall short.")]}
+  }
+ },
+ SMP:{
+  name:"Schema Mode Profile", code:"SMP",
+  lead:"The states you shift into.",
+  desc:"Schemas are traits; modes are the moment-to-moment states they trigger. Twelve modes in four families: child states, coping states, inner critics, and the Healthy Adult who can step in.",
+  prompt:"Over the past few months, how true has each of these been of you?",
+  bands:["Rare","Occasional","Frequent"], positive:["Contented","HealthyAdult"],
+  families:{child:{label:"Child modes",color:"var(--d2)"},coping:{label:"Coping modes",color:"var(--d4)"},critic:{label:"Inner critics",color:"var(--d1)"},adult:{label:"Healthy Adult",color:"var(--d3)"}},
+  subs:{
+   Vulnerable:{label:"Vulnerable Child",fam:"child",def:"Lonely, frightened, unloved.",items:[
+    F("I feel lonely."),F("I feel like a frightened child."),F("I feel unloved."),
+    R("I feel safe inside myself."),R("I feel cared for."),R("I feel connected to the people around me.")]},
+   Angry:{label:"Angry Child",fam:"child",def:"Furious that needs aren't being met.",items:[
+    F("I feel furious that my needs aren't being met."),F("I feel angry at the people closest to me."),F("My anger comes out before I can stop it."),
+    R("I stay calm when people let me down."),R("I can express frustration without blowing up."),R("Small disappointments roll off me.")]},
+   Impulsive:{label:"Impulsive Child",fam:"child",def:"Acting on wants in the moment.",items:[
+    F("I act on urges without thinking about the consequences."),F("I do what I feel like in the moment, even if I regret it later."),F("I say things without stopping to think."),
+    R("I think before I act."),R("I can resist doing something I'll regret."),R("I weigh the consequences before making choices.")]},
+   Contented:{label:"Contented Child",fam:"child",def:"Playful, light, at ease. Higher is healthier.",items:[
+    F("I feel playful."),F("I feel lighthearted."),F("I enjoy life in a carefree way."),
+    R("I feel too weighed down to have fun."),R("Nothing feels fun to me."),R("I can't remember the last time I felt playful.")]},
+   Surrenderer:{label:"Compliant Surrenderer",fam:"coping",style:"surrender",def:"Giving in to keep the peace.",items:[
+    F("I let others have their way to keep the peace."),F("I put up with being treated badly."),F("I do what others expect of me, even when I don't want to."),
+    R("I stand up for myself when someone crosses a line."),R("I disagree openly when I don't like a plan."),R("I refuse requests that don't sit right with me.")]},
+   Detached:{label:"Detached Protector",fam:"coping",style:"avoidance",def:"Shutting feeling and people out.",items:[
+    F("I feel numb."),F("I keep people at a distance."),F("I feel nothing, even when something important happens."),
+    R("I feel present with my emotions."),R("I let people get close to me."),R("I feel emotionally engaged in my own life.")]},
+   Soother:{label:"Detached Self-Soother",fam:"coping",style:"avoidance",def:"Escaping feelings through distraction.",items:[
+    F("I keep myself busy so I don't have to feel things."),F("I numb uncomfortable feelings with habits I'd rather not rely on."),F("I reach for a distraction the moment I start to feel bad."),
+    R("I can sit with uncomfortable feelings without escaping them."),R("When I'm upset, I face the feeling directly."),R("I can be still without needing a distraction.")]},
+   Aggrandizer:{label:"Self-Aggrandizer",fam:"coping",style:"overcompensation",def:"Needing to be above others.",items:[
+    F("I need to be seen as better than others."),F("I put others down to feel superior."),F("I make sure people know about my successes."),
+    R("I'm comfortable when others get more credit than me."),R("I can treat others as equals."),R("I don't need to impress people.")]},
+   Attack:{label:"Bully-and-Attack",fam:"coping",style:"overcompensation",def:"Striking first to stay safe.",items:[
+    F("I go on the attack before someone can hurt me."),F("I use intimidation to get what I want."),F("I belittle people who challenge me."),
+    R("When I feel threatened, I respond without attacking."),R("I treat people respectfully even when they oppose me."),R("I can lose an argument without needing to dominate.")]},
+   Punitive:{label:"Punitive Critic",fam:"critic",def:"An inner voice that punishes.",items:[
+    F("I feel I deserve to be punished."),F("An inner voice tells me I'm worthless."),F("I'm cruel to myself after a mistake."),
+    R("My inner voice is gentle with me."),R("I feel I deserve good things."),R("I treat myself with patience when I struggle.")]},
+   Demanding:{label:"Demanding Critic",fam:"critic",def:"An inner voice that's never satisfied.",items:[
+    F("I push myself to do more, no matter how much I've done."),F("An inner voice tells me I'm not working hard enough."),F("I feel I have to get everything right."),
+    R("I feel satisfied when I've done enough."),R("I let myself stop before everything is done."),R("I go easy on myself about how productive I am.")]},
+   HealthyAdult:{label:"Healthy Adult",fam:"adult",def:"Grounded, balanced, able to care for your needs. Higher is healthier.",items:[
+    F("I handle problems in a sensible way."),F("I can take care of my own needs."),F("I make decisions that serve me over the long run."),
+    R("When I'm stressed, I lose sight of what I need."),R("My reactions feel out of proportion to what's happening."),R("I feel overwhelmed by my own emotions.")]}
+  }
+ },
+ CNI:{
+  name:"Core Needs Inventory", code:"CNI",
+  lead:"The needs that went short.",
+  desc:"Schema therapy traces schemas to five core emotional needs in childhood. When one went unmet, the schemas in its domain tend to grow. Higher scores mean the need was less met.",
+  prompt:"Think back to growing up, roughly before age 16. How true is each statement?",
+  bands:["Largely met","Partly met","Largely unmet"], positive:[],
+  subs:{
+   Safety:{label:"Safety & Connection",dom:"DR",def:"Secure attachment: safety, stability, nurturance, acceptance.",items:[
+    F("I often felt unsafe at home."),F("I felt I had no one to turn to as a child."),F("Affection was scarce in my family."),
+    R("At least one adult made me feel safe."),R("I felt loved growing up."),R("I could count on my caregivers to be there.")]},
+   Autonomy:{label:"Autonomy & Competence",dom:"IA",def:"Room to become capable and separate.",items:[
+    F("I was rarely trusted to do things on my own."),F("My caregivers made decisions I could have made myself."),F("I was treated as less capable than I was."),
+    R("I was encouraged to try new things on my own."),R("My caregivers let me make age-appropriate choices."),R("My efforts to do things myself were supported.")]},
+   Expression:{label:"Freedom to Express",dom:"OD",def:"Permission to have needs and feelings.",items:[
+    F("I learned to hide my feelings to keep the peace at home."),F("Expressing a need felt selfish when I was a child."),F("Anger was not allowed in my home."),
+    R("I was allowed to disagree with my caregivers."),R("My feelings were taken seriously growing up."),R("I could ask for what I needed without guilt.")]},
+   Play:{label:"Spontaneity & Play",dom:"OI",def:"Room to be a child: lightness, fun, mess.",items:[
+    F("Play wasn't valued in my family."),F("I had to grow up too fast."),F("My home felt serious most of the time."),
+    R("I had plenty of time to play."),R("Laughter was common in my home."),R("I was free to be silly as a child.")]},
+   Limits:{label:"Realistic Limits",dom:"IL",def:"Structure that teaches self-control and consideration.",items:[
+    F("I was rarely told no as a child."),F("I could get whatever I wanted if I pushed hard enough."),F("No one taught me to finish what I started."),
+    R("My caregivers set consistent rules."),R("I learned to wait for things I wanted."),R("I was expected to think about how my actions affected others.")]}
+  }
+ }
+};
+
+const KEYS = ["SPI","SMP","CNI"];
+const TAB = {SPI:"Schemas",SMP:"Modes",CNI:"Needs"};
+const ACC = {SPI:"var(--sch)",SMP:"var(--mod)",CNI:"var(--nee)"};
+const SEED = {SPI:9011,SMP:9023,CNI:9037};
+const BANDS = {
+  SPI:["Quiet","Mild","Elevated","Active"],
+  SMP:["Rare","Occasional","Frequent","Pervasive"],
+  CNI:["Largely met","Mostly met","Partly met","Largely unmet"]
+};
+const DOM_ORDER = ["DR","IA","IL","OD","OI"];
+const NEED_FOR = {DR:"Safety",IA:"Autonomy",IL:"Limits",OD:"Expression",OI:"Play"};
+const SHORT = {DR:"Disconnection",IA:"Autonomy",IL:"Limits",OD:"Other-directed",OI:"Overvigilance"};
+
+/* Interpretive reads: [high, low]. A mid read is generated. */
+const READS = {
+ SPI:{
+  Abandonment:["Silence or distance from people you count on sets off an alarm fast.","You trust that close bonds will hold through distance."],
+  Mistrust:["You stay guarded, watching for the catch in other people's kindness.","You extend trust readily and take kindness at face value."],
+  Deprivation:["You expect to go without comfort and understanding, so you rarely ask.","You feel seen and cared for by the people around you."],
+  Defectiveness:["Shame sits close to the surface, and you keep parts of yourself hidden.","You feel acceptable as you are and let people see you."],
+  Isolation:["You often feel like the outsider, different from everyone in the room.","You feel you belong in the groups you're part of."],
+  Dependence:["Everyday decisions feel safer with someone else's input.","You trust yourself to run your own day-to-day life."],
+  Vulnerability:["Some part of you is braced for catastrophe.","You move through the world feeling reasonably safe."],
+  Enmeshment:["Your sense of self tends to blur into someone close to you.","You know who you are apart from the people you love."],
+  Failure:["You measure yourself as behind and expect to fall short.","You see yourself as about as capable as anyone."],
+  Entitlement:["Limits and ordinary rules chafe, and no is hard to take.","You accept limits without much resentment."],
+  SelfControl:["Boredom and frustration pull you off course quickly.","You can push through tedium and delay what you want."],
+  Subjugation:["You give way to others, often out of fear of what happens if you don't.","You state what you want and say no when you need to."],
+  SelfSacrifice:["Your needs come last, and putting yourself first brings guilt.","You make room for your own needs alongside others'."],
+  Approval:["Your worth rides on how others see you.","Your sense of worth holds steady without an audience."],
+  Pessimism:["Your attention goes first to what could go wrong.","You expect things to mostly work out."],
+  Inhibition:["You keep feelings under wraps, and showing them feels risky.","You let feelings show without much discomfort."],
+  Standards:["Good enough rarely feels good enough, and rest has to be earned.","You can accept imperfect work and rest without earning it."],
+  Punitiveness:["Mistakes feel like they deserve punishment, yours most of all.","You meet mistakes, your own included, with some forgiveness."]
+ },
+ SMP:{
+  Vulnerable:["Loneliness and fear come up often, the young, unprotected feeling.","That small, frightened feeling rarely takes over."],
+  Angry:["Anger at unmet needs flares often and fast.","Disappointment rarely tips into a flare of anger."],
+  Impulsive:["You often act on the urge of the moment and sort it out later.","You usually pause before acting on an impulse."],
+  Contented:["You have regular access to play and lightness. That's a strength.","Playfulness and ease are hard to reach right now."],
+  Surrenderer:["You often go along to keep the peace, even at your own cost.","You hold your ground when someone crosses a line."],
+  Detached:["You often shut down feeling and keep people at a distance.","You stay present with your feelings and with people."],
+  Soother:["You often reach for busyness or habits to avoid feeling things.","You can sit with discomfort without escaping it."],
+  Aggrandizer:["You often need to be seen as above others.","You're comfortable on equal footing with others."],
+  Attack:["When threatened, you tend to strike first.","You stay respectful even when you feel challenged."],
+  Punitive:["A harsh inner voice punishes you when you slip.","Your inner voice tends to be patient with you."],
+  Demanding:["An inner voice keeps raising the bar and never says enough.","You can call something done and mean it."],
+  HealthyAdult:["You often have a grounded, sensible self at the wheel. That's the capacity schema therapy builds.","The grounded adult self is hard to reach when things get hard."]
+ },
+ CNI:{
+  Safety:["Safety, warmth and someone to turn to were in short supply.","You grew up with enough safety and warmth to lean on."],
+  Autonomy:["You weren't given much room to become capable on your own.","You were trusted to grow into doing things yourself."],
+  Expression:["Having needs or feelings, especially anger, wasn't safe to show.","Your feelings and needs were allowed and taken seriously."],
+  Play:["Childhood was serious, and you may have grown up too fast.","There was room to play and be silly."],
+  Limits:["Structure and consistent limits were thin.","You had consistent rules that taught patience and consideration."]
+ }
+};
+/* What each schema needed in place of what it got. */
+const NEEDED = {
+  Abandonment:"Steadiness: people who stay, and who say when they'll be back.",
+  Mistrust:"Reliability: people whose kindness proves safe over time.",
+  Deprivation:"Being noticed: asking for comfort and letting it land.",
+  Defectiveness:"Acceptance: being fully seen and still welcomed.",
+  Isolation:"Belonging: a group where you're one of them.",
+  Dependence:"Confidence: room to make your own calls and recover from mistakes.",
+  Vulnerability:"Safety: a realistic read on risk, and calm around you.",
+  Enmeshment:"Separateness: a self of your own that survives disagreement.",
+  Failure:"Competence: an honest tally of what you've actually done.",
+  Entitlement:"Fair limits: rules that apply to everyone, you included.",
+  SelfControl:"Structure: small, steady practice with frustration.",
+  Subjugation:"Voice: saying what you want and finding the relationship survives it.",
+  SelfSacrifice:"Reciprocity: care that flows back toward you.",
+  Approval:"Inner worth: valuing what you do whether or not anyone sees it.",
+  Pessimism:"Balance: noticing what goes right as carefully as what goes wrong.",
+  Inhibition:"Permission: showing feeling to people who can receive it.",
+  Standards:"Rest: work that counts as done, and rest you don't have to earn.",
+  Punitiveness:"Forgiveness: mistakes met with repair instead of punishment."
+};
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr,rnd){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+// Blind interleave: always draw from a subscale with the most items left, never the one just used.
+function orderFor(key){
+  const subs=BANK[key].subs, rnd=mulberry32(SEED[key]), pools={};
+  for(const s in subs) pools[s]=shuffle(subs[s].items.map((_,i)=>i),rnd);
+  const out=[]; let prev=null;
+  for(;;){
+    const left=Object.keys(pools).filter(s=>pools[s].length);
+    if(!left.length) break;
+    let c=left.filter(s=>s!==prev); if(!c.length) c=left;
+    const mx=Math.max(...c.map(s=>pools[s].length));
+    const top=c.filter(s=>pools[s].length===mx);
+    const s=top[Math.floor(rnd()*top.length)];
+    const i=pools[s].shift();
+    out.push({sub:s,i,id:`${key}.${s}.${i}`});
+    prev=s;
+  }
+  return out;
+}
+const ORDER = Object.fromEntries(KEYS.map(k=>[k,orderFor(k)]));
+
+function score(key,ans){
+  const subs=BANK[key].subs, res={};
+  for(const s in subs){
+    const it=subs[s].items; let sum=0,n=0;
+    it.forEach((x,i)=>{const v=ans[`${key}.${s}.${i}`]; if(v){sum+=x.rev?7-v:v;n++}});
+    res[s]= n===it.length ? sum/n : null;
+  }
+  return res;
+}
+// Cut points 2.50 / 4.00 / 4.50. The neutral midpoint (3.50) and acquiescent responding sit in the second band.
+function bandIdx(v){return v<2.5?0:v<4?1:v<4.5?2:3}
+const isGood=(k,s)=>(BANK[k].positive||[]).includes(s);
+// Concern level for color: healthy modes run the other way, so a high Healthy Adult is green.
+const riskIdx=(k,s,v)=>isGood(k,s)?3-bandIdx(v):bandIdx(v);
+const spread=sc=>{const v=Object.values(sc);return Math.max(...v)-Math.min(...v)};
+const f2=v=>v.toFixed(2);
+function domainMeans(sc){const o={};DOM_ORDER.forEach(d=>{const ks=Object.keys(BANK.SPI.subs).filter(k=>BANK.SPI.subs[k].dom===d);o[d]=ks.reduce((a,k)=>a+sc[k],0)/ks.length});return o}
+function ranked(sc,excl){return Object.keys(sc).filter(k=>!(excl||[]).includes(k)).sort((a,b)=>sc[b]-sc[a])}
+
+/* state */
+const STORE="seriesIX-schemas-v2";
+let S={tab:"SPI",ans:{},pos:{SPI:0,SMP:0,CNI:0},phase:{SPI:"intro",SMP:"intro",CNI:"intro"}};
+try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans) S=Object.assign(S,p)}}catch(e){}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
+function isDone(k){return ORDER[k].every(o=>S.ans[o.id])}
+function answered(k){return ORDER[k].filter(o=>S.ans[o.id]).length}
+
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function renderTabs(){
+  const tabs=[...KEYS.map(k=>({id:k,label:TAB[k],dot:ACC[k],sm:isDone(k)?"done":`${answered(k)}/${ORDER[k].length}`})),{id:"SYN",label:"Synthesis",sm:""},{id:"APX",label:"Appendix",sm:""}];
+  $("#tabs").innerHTML=tabs.map(t=>`<button role="tab" data-tab="${t.id}" aria-selected="${S.tab===t.id}">${t.dot?`<i style="background:${t.dot}"></i>`:""}${t.label}${t.sm?`<small>${t.sm}</small>`:""}</button>`).join("");
+  $("#tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;save();render()});
+}
+function render(){
+  renderTabs();
+  $("#wrap").dataset.inst = KEYS.includes(S.tab) ? S.tab : "SPI";
+  const v=$("#view");
+  if(KEYS.includes(S.tab)){
+    const k=S.tab, ph=S.phase[k];
+    v.innerHTML = ph==="q" ? qHTML(k) : ph==="done" ? resultsHTML(k) : introHTML(k);
+    bindPanel(k);
+  } else if(S.tab==="SYN"){ v.innerHTML=synHTML(); }
+  else { v.innerHTML=apxHTML(); }
+}
+function introHTML(k){
+  const B=BANK[k], n=ORDER[k].length, subs=Object.keys(B.subs).length, a=answered(k);
+  return `<section class="intro"><div class="eyebrow">${B.code}</div><h2>${B.name}</h2><p>${B.desc}</p><p>${B.prompt}</p>
+  <div class="meta"><span>${n} items</span><span>${subs} subscales, revealed after</span><span>about ${Math.ceil(n/5)} min</span></div>
+  <div class="row-btns"><button class="btn" data-act="start">${a&&!isDone(k)?"Resume":"Begin"}</button>${isDone(k)?`<button class="btn ghost" data-act="results">See results</button>`:""}</div></section>`;
+}
+function qHTML(k){
+  const o=ORDER[k], p=Math.min(S.pos[k],o.length-1), item=BANK[k].subs[o[p].sub].items[o[p].i], cur=S.ans[o[p].id];
+  return `<section class="q" aria-live="polite"><div class="qmeta"><span>Item ${String(p+1).padStart(3,"0")} of ${o.length}</span><span>${TAB[k]}</span></div>
+  <div class="track"><i style="width:${(answered(k)/o.length*100).toFixed(1)}%"></i></div>
+  <p class="prompt">${BANK[k].prompt}</p>
+  <p class="stem" id="stem">${esc(item.t)}</p>
+  <div class="scale" role="group" aria-label="Response">${SCALE.map((lab,i)=>`<button data-v="${i+1}" aria-pressed="${cur===i+1}"><b>${i+1}</b><span>${lab}</span></button>`).join("")}</div>
+  <div class="qnav"><button data-act="back" ${p===0?"disabled":""}>← Back</button><span class="hint">1–6 to answer · Backspace to go back</span></div></section>`;
+}
+function answer(k,v){
+  const o=ORDER[k]; const p=Math.min(S.pos[k],o.length-1);
+  S.ans[o[p].id]=v;
+  if(p>=o.length-1 && isDone(k)){S.phase[k]="done"}
+  else { S.pos[k]=p+1; if(S.pos[k]>=o.length){ S.pos[k]=o.findIndex(x=>!S.ans[x.id]) } }
+  save(); render();
+}
+function back(k){ if(S.pos[k]>0){S.pos[k]--; save(); render()} }
+function bindPanel(k){
+  const v=$("#view");
+  v.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{
+    const a=b.dataset.act;
+    if(a==="start"){S.phase[k]="q"; if(S.pos[k]>=ORDER[k].length) S.pos[k]=0; save(); render()}
+    if(a==="results"){S.phase[k]="done";save();render()}
+    if(a==="back") back(k);
+    if(a==="review"){S.phase[k]="q";S.pos[k]=ORDER[k].length-1;save();render()}
+    if(a==="retake"){ORDER[k].forEach(o=>delete S.ans[o.id]);S.pos[k]=0;S.phase[k]="intro";save();render()}
+    if(a==="syn"){S.tab="SYN";save();render()}
+  });
+  v.querySelectorAll(".scale button").forEach(b=>b.onclick=()=>answer(k,+b.dataset.v));
+}
+document.addEventListener("keydown",e=>{
+  const k=S.tab; if(!KEYS.includes(k)||S.phase[k]!=="q") return;
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  if(/^[1-6]$/.test(e.key)){e.preventDefault();answer(k,+e.key)}
+  else if(e.key==="Backspace"){e.preventDefault();back(k)}
+});
+
+/* charts */
+function radar(labels,series,aria){
+  const W=440,H=370,cx=220,cy=190,Rr=118,n=labels.length;
+  const pt=(i,v)=>{const a=-Math.PI/2+i*2*Math.PI/n, r=(v-1)/5*Rr;return [cx+r*Math.cos(a),cy+r*Math.sin(a)]};
+  let g="";
+  [2,3,4,5,6].forEach(lv=>{g+=`<polygon points="${labels.map((_,i)=>pt(i,lv).map(x=>x.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="var(--rule)" stroke-width="${lv===6?1.2:.8}" ${lv===3.5?'stroke-dasharray="3 4"':""}/>`});
+  labels.forEach((l,i)=>{const [x,y]=pt(i,6);g+=`<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--rule)" stroke-width=".8"/>`;
+    const [lx,ly]=pt(i,7.1); const anchor=Math.abs(lx-cx)<8?"middle":lx>cx?"start":"end";
+    g+=`<text x="${lx.toFixed(1)}" y="${(ly+4).toFixed(1)}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--muted)">${l}</text>`});
+  [2,4,6].forEach(lv=>{const [x,y]=pt(0,lv);g+=`<text x="${(x+5).toFixed(1)}" y="${(y+3).toFixed(1)}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">${lv}</text>`});
+  series.forEach(s=>{const pts=s.v.map((v,i)=>pt(i,v).map(x=>x.toFixed(1)).join(",")).join(" ");
+    g+=`<polygon points="${pts}" fill="${s.fill}" fill-opacity=".16" stroke="${s.fill}" stroke-width="2" ${s.dash?'stroke-dasharray="5 4"':""}/>`;
+    s.v.forEach((v,i)=>{const [x,y]=pt(i,v);g+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="${s.fill}"/>`})});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${aria}">${g}</svg>`;
+}
+function modeWheel(sc){
+  const B=BANK.SMP, keys=Object.keys(B.subs), cx=220,cy=200,r0=36,rmax=140,n=keys.length;
+  const rr=v=>r0+(rmax-r0)*((v-1)/5);
+  let g="";
+  [2,3.5,6].forEach(lv=>g+=`<circle cx="${cx}" cy="${cy}" r="${rr(lv).toFixed(1)}" fill="none" stroke="var(--rule)" ${lv===3.5?'stroke-dasharray="3 4"':""}/>`);
+  keys.forEach((k,i)=>{
+    const a=-Math.PI/2+i*2*Math.PI/n, c=Math.cos(a), s=Math.sin(a), r=rr(sc[k]), col=B.families[B.subs[k].fam].color;
+    g+=`<line x1="${(cx+c*r0).toFixed(1)}" y1="${(cy+s*r0).toFixed(1)}" x2="${(cx+c*r).toFixed(1)}" y2="${(cy+s*r).toFixed(1)}" stroke="${col}" stroke-width="11" stroke-linecap="round"/>`;
+    const lx=cx+c*(rmax+16), ly=cy+s*(rmax+16), anchor=Math.abs(c)<.2?"middle":c>0?"start":"end";
+    g+=`<text x="${lx.toFixed(1)}" y="${(ly+4).toFixed(1)}" text-anchor="${anchor}" font-family="Inter, sans-serif" font-size="11" fill="var(--ink)">${B.subs[k].label.replace(" Child","").replace("Detached ","").replace("Compliant ","")}</text>`;
+  });
+  g+=`<text x="${cx}" y="${cy+4}" text-anchor="middle" font-family="Fraunces, serif" font-size="13" fill="var(--muted)">modes</text>`;
+  return `<svg viewBox="0 0 440 400" role="img" aria-label="Mode wheel: one spoke per mode, longer is more frequent">${g}</svg>`;
+}
+function row(k,s,v){
+  const sub=BANK[k].subs[s], b=bandIdx(v), r=riskIdx(k,s,v), rd=READS[k][s];
+  const read=v>=4.5?rd[0]:v<2.5?rd[1]:"Present for you, without standing out at either end.";
+  return `<div class="srow" data-risk="${r}"><h4>${sub.label}<span class="chip r${r}">${BANDS[k][b]}</span></h4><span class="val">${f2(v)}</span>
+  <div class="bt"><i style="width:${((v-1)/5*100).toFixed(1)}%;background:var(--b${r})"></i><u style="left:50%"></u></div>
+  <p class="def">${sub.def}</p><p class="read">${read}</p></div>`;
+}
+function bandKey(k){
+  const cuts=["under 2.50","2.50–3.99","4.00–4.49","4.50 and up"];
+  const flip=k==="SMP"?" Contented Child and Healthy Adult are healthy modes, so their colors run the other way: green when frequent.":"";
+  return `<div class="key">${BANDS[k].map((b,i)=>`<span><span class="chip r${i}">${b}</span>${cuts[i]}</span>`).join("")}</div>
+  <p class="note">Color shows level of concern, from green to red. The tick on each bar marks the 3.50 midpoint, which falls in the second band.${flip}</p>`;
+}
+function careNote(){return `<p class="care">Several scores here sit in the highest band. That's useful to know, and it's also a lot to carry. Schema therapy was built for this kind of profile, and a therapist trained in it can help you work with these results.</p>`}
+function resultsHTML(k){
+  const sc=score(k,S.ans), B=BANK[k]; let body="";
+  if(k==="SPI"){
+    const dm=domainMeans(sc), act=Object.keys(sc).filter(s=>sc[s]>=4.5);
+    body+=`<div class="chart">${radar(DOM_ORDER.map(d=>SHORT[d]),[{v:DOM_ORDER.map(d=>dm[d]),fill:"var(--sch)"}],"Schema domain profile")}</div>
+    <p class="note">Domain shape across Young's five domains. Each domain score is the mean of its schemas. ${act.length?`Active schemas: <b>${act.map(s=>B.subs[s].label).join(", ")}</b>.`:"No schema reaches the active band."} ${spread(sc)<0.5?"Your 18 scores sit within half a point of each other, so their order isn't meaningful.":`Top three: ${ranked(sc).slice(0,3).map(s=>`${B.subs[s].label} ${f2(sc[s])}`).join(" · ")}.`}</p>`;
+    if(act.length>=4) body+=careNote();
+    body+=bandKey(k);
+    DOM_ORDER.forEach(d=>{
+      body+=`<h3 class="group"><span style="font:inherit;color:var(--ink)"><i style="background:${DOMAINS[d].color}"></i>${DOMAINS[d].label}</span><span>domain ${f2(dm[d])}</span></h3>`;
+      body+=`<div class="rows">${Object.keys(B.subs).filter(s=>B.subs[s].dom===d).map(s=>row(k,s,sc[s])).join("")}</div>`;
+    });
+  } else if(k==="SMP"){
+    const ha=sc.HealthyAdult, crit=Math.max(sc.Punitive,sc.Demanding);
+    body+=`<div class="chart">${modeWheel(sc)}</div><div class="legend">${Object.values(B.families).map(f=>`<span><i style="background:${f.color}"></i>${f.label}</span>`).join("")}</div>
+    <p class="note">Each spoke is one mode; longer means more frequent. The dashed ring marks the 3.50 midpoint. Contented Child and Healthy Adult are the healthy modes, so longer is better there. ${ha>=crit?`Your Healthy Adult (${f2(ha)}) is at least as strong as your louder inner critic (${f2(crit)}).`:`Your louder inner critic (${f2(crit)}) outweighs your Healthy Adult (${f2(ha)}).`}</p>`;
+    const hot=Object.keys(sc).filter(s=>!isGood(k,s)&&sc[s]>=4.5);
+    if(hot.length>=4||(sc.Punitive>=4.5&&ha<2.5)) body+=careNote();
+    body+=bandKey(k);
+    Object.keys(B.families).forEach(f=>{
+      body+=`<h3 class="group"><span style="font:inherit;color:var(--ink)"><i style="background:${B.families[f].color}"></i>${B.families[f].label}</span></h3>`;
+      body+=`<div class="rows">${Object.keys(B.subs).filter(s=>B.subs[s].fam===f).map(s=>row(k,s,sc[s])).join("")}</div>`;
+    });
+  } else {
+    const needs=DOM_ORDER.map(d=>NEED_FOR[d]), spi=isDone("SPI")?domainMeans(score("SPI",S.ans)):null;
+    const series=[{v:needs.map(n=>sc[n]),fill:"var(--nee)"}]; if(spi) series.unshift({v:DOM_ORDER.map(d=>spi[d]),fill:"var(--sch)",dash:true});
+    body+=`<div class="chart">${radar(needs.map(n=>B.subs[n].label.split(" ")[0]),series,"Unmet needs profile")}</div>
+    ${spi?`<div class="legend"><span><i style="background:var(--nee)"></i>Need unmet</span><span><i style="background:var(--sch)"></i>Matching schema domain</span></div>`:""}
+    <p class="note">Higher means the need was less met. Each need sits on the same spoke as the schema domain it feeds${spi?", so the two shapes can be compared directly":". Finish the Schemas tab to overlay your domain profile"}.</p>`;
+    if(needs.filter(n=>sc[n]>=4.5).length>=3) body+=careNote();
+    body+=bandKey(k);
+    body+=`<div class="rows">${needs.map(n=>row(k,n,sc[n])).join("")}</div>`;
+  }
+  return `<section class="res"><div class="eyebrow">${B.code} · Results</div><h2>${B.name}</h2>${body}
+  <div class="row-btns"><button class="btn ghost" data-act="review">Review answers</button><button class="btn ghost" data-act="retake">Retake</button><button class="btn" data-act="syn">Open Synthesis</button></div></section>`;
+}
+
+/* synthesis */
+const STYLE_TEXT={
+ surrender:"You tend to give in to it. You treat the belief as fact and end up in situations that seem to confirm it.",
+ avoidance:"You tend to route around it. You sidestep the people, feelings and moments that would touch it, so it never gets tested.",
+ overcompensation:"You tend to fight it by acting as if the opposite were true. That works until it doesn't, and it often recreates the outcome the belief predicts."
+};
+const ORD=["first","second","third","fourth","fifth"];
+function locked(title,need){return `<div class="card locked" data-card="${title}"><div class="k">Locked</div><h3>${title}</h3><p>Complete ${need} to unlock this reading.</p></div>`}
+function synHTML(){
+  const s=isDone("SPI")?score("SPI",S.ans):null, m=isDone("SMP")?score("SMP",S.ans):null, n=isDone("CNI")?score("CNI",S.ans):null;
+  const out=[];
+  const K=(src,txt)=>`<div class="k" style="color:${src}">${txt}</div>`;
+  if(s){const act=Object.keys(s).filter(k=>s[k]>=4.5), top=ranked(s).slice(0,3), B=BANK.SPI.subs, flat=spread(s)<0.5;
+    const h=act.length===0?"No schema running loud":act.length<=3?"A few schemas run loud":"Many schemas active at once";
+    const p=act.length===0?"None of the 18 reaches the active band. Your highest ones are still worth reading as tendencies.":act.length<=3?"That's the typical shape: two to four schemas carry most of the weight, and the rest sit quiet.":"When this many schemas are active together, they tend to feed each other. That's a lot to carry, and a schema therapist can help sort which one to start with.";
+    out.push(`<div class="card" data-card="profile">${K("var(--sch)","Schema profile · SPI")}<h3>${h}</h3><p>${p}</p><p class="note">${flat?"All 18 scores sit within half a point of each other, so there's no meaningful top three.":`Highest: ${top.map(k=>`${B[k].label} ${f2(s[k])}`).join(" · ")}`}</p></div>`);
+  } else out.push(locked("Schema profile","Schemas"));
+  if(s&&m){
+    const rk=ranked(s), lead=s[rk[0]], leads=rk.filter(k=>lead-s[k]<0.005).slice(0,3);
+    const clearSchema=lead>=4&&spread(s)>=0.5;
+    const styles={surrender:m.Surrenderer,avoidance:Math.max(m.Detached,m.Soother),overcompensation:Math.max(m.Aggrandizer,m.Attack)};
+    const sv=Object.keys(styles).sort((a,b)=>styles[b]-styles[a]), st=sv[0];
+    const clearStyle=styles[st]>=3.5&&styles[st]-styles[sv[1]]>=0.25;
+    const cop=["Surrenderer","Detached","Soother","Aggrandizer","Attack"].sort((a,b)=>m[b]-m[a])[0];
+    const names=leads.map(k=>BANK.SPI.subs[k].label).join(" and ");
+    const state=!clearSchema?"flat":clearStyle?"paired":"mixed";
+    const h=state==="flat"?"No schema stands out to pair":state==="paired"?`${names} through ${st}`:`${names}, with mixed coping`;
+    const belief=leads.length===1?`Your loudest schema carries the belief ${BANK.SPI.subs[leads[0]].def}`:`Your loudest schemas are tied: ${names}.`;
+    const p=state==="flat"?"None of your schemas sits clearly above the rest at 4.00 or higher, so there's no single belief to pair with a coping style."
+      :state==="paired"?`${belief} ${STYLE_TEXT[st]}`
+      :`${belief} No single coping style leads by a clear margin, so you may handle it differently in different situations.`;
+    out.push(`<div class="card" data-card="coping" data-state="${state}" data-style="${clearStyle?st:"none"}">${K("var(--mod)","Schema × coping · SPI × SMP")}<h3>${h}</h3>
+    <p>${p}</p>
+    <p class="note">${clearStyle?`Leading coping mode: ${BANK.SMP.subs[cop].label} (${f2(m[cop])}).`:"Coping styles: "+sv.map(x=>`${x} ${f2(styles[x])}`).join(" · ")+"."} Surrender is Compliant Surrenderer; avoidance is Detached Protector or Self-Soother; overcompensation is Self-Aggrandizer or Bully-and-Attack.</p></div>`);
+  } else out.push(locked("Schema × coping","Schemas and Modes"));
+  if(s&&n){
+    const dm=domainMeans(s), flat=spread(n)<0.5||spread(dm)<0.5;
+    const topNeed=ranked(n)[0], d=BANK.CNI.subs[topNeed].dom, drank=DOM_ORDER.slice().sort((a,b)=>dm[b]-dm[a]), pos=drank.indexOf(d), al=pos<=1;
+    const state=flat?"flat":al?"aligned":"divergent";
+    const h=flat?"No single need or domain stands out":`Need and schema ${al?"line up":"diverge"}`;
+    const p=flat?`Your ${spread(n)<0.5?"need":"domain"} scores sit within half a point of each other, so there's no leading one to match. Compare them one row at a time below.`
+      :`The need that went most short, <b>${BANK.CNI.subs[topNeed].label}</b>, predicts elevation in <b>${DOMAINS[d].label}</b>. ${al?`That domain ranks ${ORD[pos]} in your schema profile, so the origin and the present pattern line up.`:`That domain ranks ${ORD[pos]} of five in your profile. Divergence is common: later relationships can repair a need, and schemas can grow from experiences after childhood. Your leading domain is ${DOMAINS[drank[0]].label}.`}`;
+    out.push(`<div class="card" data-card="coherence" data-state="${state}">${K("var(--nee)","Need × schema · CNI × SPI")}<h3>${h}</h3>
+    <p>${p}</p>
+    <div style="display:flex;flex-direction:column;gap:6px">${DOM_ORDER.map(dd=>{const nv=n[NEED_FOR[dd]],sv2=dm[dd];return `<div class="mrow"><span>${SHORT[dd]}</span><div class="mt"><span class="r" style="left:${((nv-1)/5*100).toFixed(1)}%"></span><span class="e" style="left:${((sv2-1)/5*100).toFixed(1)}%"></span></div><span class="d">${sv2-nv>=0?"+":""}${f2(sv2-nv)}</span></div>`}).join("")}</div>
+    <div class="legend" style="justify-content:flex-start"><span><i style="background:var(--nee)"></i>Need unmet</span><span><i style="border:2px solid var(--sch);width:10px;height:10px"></i>Schema domain</span><span>Δ = schema − need</span></div></div>`);
+  } else out.push(locked("Need × schema","Schemas and Needs"));
+  if(m){
+    const ha=m.HealthyAdult, crit=m.Punitive>=m.Demanding?"Punitive":"Demanding", cv=m[crit];
+    const child=["Vulnerable","Angry","Impulsive"].sort((a,b)=>m[b]-m[a])[0];
+    out.push(`<div class="card" data-card="critic">${K("var(--mod)","Critic vs. Healthy Adult · SMP")}<h3>${ha-cv>=.5?"The Healthy Adult has room to work":cv-ha>=.5?"The critic has the upper hand":"Critic and Adult are close to even"}</h3>
+    <p>Your louder critic is the <b>${BANK.SMP.subs[crit].label}</b> (${f2(cv)}), against a Healthy Adult of ${f2(ha)}. ${cv-ha>=.5?"When the critic leads, the child modes usually get scolded instead of cared for.":ha-cv>=.5?"That's the capacity schema therapy works to build.":"Which one wins probably depends on the day."}</p>
+    <p class="note">${m[child]>=4?`The child state most likely to surface underneath: ${BANK.SMP.subs[child].label} (${f2(m[child])}).`:"None of the three distressed child states reaches 4.00."}</p></div>`);
+  } else out.push(locked("Critic vs. Healthy Adult","Modes"));
+  if(s){const top=ranked(s).slice(0,3).filter(k=>s[k]>=4);
+    out.push(`<div class="card" data-card="needed">${K("var(--sch)","What your top schemas needed · SPI")}<h3>The antidote, not the label</h3>${top.length?`<p>Schema therapy works by meeting the need a schema grew in place of. These are the needs behind your highest schemas at 4.00 or above.</p><ul class="asks">${top.map(k=>`<li><b>${BANK.SPI.subs[k].label}.</b> ${NEEDED[k]}</li>`).join("")}</ul>`:`<p>None of your schemas reaches 4.00, so there's no specific need to point to. If one still feels true for you, its row on the Schemas tab is worth a second read.</p>`}</div>`);
+  }
+  return `<section class="res"><div class="eyebrow">Synthesis</div><h2>Reading the three together</h2><p class="note">Cards unlock as you finish each inventory. Together they trace a chain: a need that went short, the schema that grew in its place, and the modes it pushes you into now. These are prompts for reflection, not a diagnosis.</p><div class="cards">${out.join("")}</div></section>`;
+}
+
+/* appendix */
+function apxHTML(){
+  const grp=(k,s)=>k==="SMP"?BANK.SMP.families[BANK.SMP.subs[s].fam].label:DOMAINS[BANK[k].subs[s].dom].label;
+  const rows=KEYS.flatMap(k=>Object.keys(BANK[k].subs).map(s=>{const a=(ALPHA[k]||{})[s]||{};const it=BANK[k].subs[s].items;
+    return `<tr><td>${k}</td><td>${BANK[k].subs[s].label}</td><td>${grp(k,s)}</td><td class="n">${it.length}</td><td class="n">${it.filter(x=>!x.rev).length}F / ${it.filter(x=>x.rev).length}R</td><td class="n">${a.mean!=null?a.mean.toFixed(3):"–"}</td><td class="n">${a.p05!=null?a.p05.toFixed(3):"–"}</td></tr>`}));
+  const total=KEYS.reduce((a,k)=>a+ORDER[k].length,0), nsub=KEYS.reduce((a,k)=>a+Object.keys(BANK[k].subs).length,0);
+  return `<section class="apx"><div class="eyebrow">Psychometric appendix</div>
+  <p><b>Series IX</b> has ${total} items across ${nsub} subscales in three inventories. Every subscale has six items, three forward-keyed and three reverse-keyed, on the house 6-point scale with no neutral midpoint. Subscale scores are item means after reverse items are rescored (7 − response), so answering 6 to everything, or 1 to everything, lands exactly at 3.50 on every subscale. Items are shown one at a time in a fixed, interleaved order so no two items from the same subscale appear back to back. Subscale names appear only in the results.</p>
+  <h3>Reliability (simulated)</h3>
+  <p>Values below come from a Monte Carlo simulation (N = ${SIM.N.toLocaleString()} synthetic respondents per run, ${SIM.runs} runs) using a one-factor model per subscale, with forward loadings drawn from .60–.85 and reverse loadings from .50–.75, responses cut to six ordinal points. They estimate how the item structure should behave. They are not data from real respondents.</p>
+  <div class="tbl"><table><thead><tr><th>Inst.</th><th>Subscale</th><th>Domain / family</th><th>Items</th><th>Keying</th><th>α mean</th><th>α 5th pct</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>
+  <p>Because the simulation generates clean one-factor data and then measures it, these α values confirm the scoring arithmetic works as designed. They are not evidence of reliability in people.</p>
+  <h3>Acquiescence check (simulated)</h3>
+  <p>A second simulation (N = 4,000) gave each synthetic respondent both a true trait level and a tendency to agree with everything. Balanced scoring tracked the true trait (r = .89) and was uncorrelated with the agreement bias (r = .00). Scoring only the forward items tracked the trait less well (r = .70) and picked up much of the bias (r = .57). That is why every subscale carries three reverse items.</p>
+  <h3>Methodological decisions</h3>
+  <ul>
+    <li><b>Band cut points.</b> Bands break at 2.50, 4.00 and 4.50. The neutral midpoint (3.50), and the 3.50 that agreeing with everything produces, both fall in the second band, so a noncommittal profile never reads as elevated. A mean of 4.00 is an average of "slightly agree," the lowest level of endorsement on the scale.</li>
+    <li><b>Flat profiles.</b> When scores sit within half a point of each other, or no schema reaches 4.00, the Synthesis tab says so instead of naming a leader. Rankings within a flat profile reflect noise, not a pattern.</li>
+    <li><b>Profile instead of type.</b> Popular schema quizzes return a single label. Schema research doesn't support sorting people into one schema, so the SPI reports all 18 scores, grouped by domain.</li>
+    <li><b>Schema construct mapping.</b> The 18 schemas and five domains follow Young, Klosko and Weishaar (2003). The reference instrument is the Young Schema Questionnaire (YSQ-L3 at 232 items, YSQ-S3 at 90). The SPI does not reproduce its items; every stem is original and written to the published schema definitions. At 108 items it sits between the two YSQ forms.</li>
+    <li><b>Domains are interpretive.</b> Factor work supports the schemas better than the higher-order grouping, and several groups favor a four-domain solution (Bach et al., 2018). Domain scores here are simple means of their schemas, not validated factors.</li>
+    <li><b>Modes: 12 of the SMI's 14.</b> Modes follow the Schema Mode Inventory (Young et al., 2007; Lobbestael et al., 2010). Enraged Child is folded into Angry Child because it marks the extreme end of the same state. Undisciplined Child is omitted because it overlaps heavily with the Insufficient Self-Control schema. The SMI's Punitive Parent and Demanding Parent are labeled Punitive Critic and Demanding Critic, following current usage.</li>
+    <li><b>Healthy modes score up.</b> Contented Child and Healthy Adult are scored in the healthy direction, so a higher score is better. Their reverse items describe the absence of that state.</li>
+    <li><b>Mode scale.</b> The SMI uses a frequency scale. The SMP keeps the house agreement scale anchored to the past few months, so its scores aren't comparable to SMI norms.</li>
+    <li><b>Core needs.</b> The five needs and their pairing with the five domains follow Young et al. (2003). Arntz et al. (2021) proposed revisions; the original five are kept because they map one-to-one onto the SPI domains. Scores run toward unmet so higher always means more risk, matching the SPI.</li>
+    <li><b>Overlap to watch.</b> Defectiveness and Failure, Subjugation and Self-Sacrifice, and Unrelenting Standards and Punitiveness are adjacent pairs. They're kept separate, as in Young's model, and are the first to check for redundancy once real data exist.</li>
+    <li><b>Relation to Series VI.</b> The Series VI Schema Domain Index scores the five domains directly with 30 items. Use it as a quick screen and the SPI for schema-level detail.</li>
+  </ul>
+  <h3>Limitations</h3>
+  <ul>
+    <li>No norms. Bands are fixed cut points on the response scale, not percentiles.</li>
+    <li>Reliability figures are simulated. Real-sample alphas and a factor analysis are the next step before any published claim.</li>
+    <li>The CNI is retrospective. It describes how childhood reads to you now, which current mood and current schemas shape.</li>
+    <li>Self-report only. An observer form would make most sense for the Modes tab, since a partner can see a Detached Protector or Bully-and-Attack state.</li>
+    <li>Not diagnostic. Nothing here identifies a disorder.</li>
+  </ul>
+  <h3>Sources</h3>
+  <ul>
+    <li>Young, J. E., Klosko, J. S., &amp; Weishaar, M. E. (2003). <i>Schema therapy: A practitioner's guide</i>. Guilford.</li>
+    <li>Young, J. E. (2005). <i>Young Schema Questionnaire, Short Form 3 (YSQ-S3)</i>. Schema Therapy Institute.</li>
+    <li>Young, J. E., Arntz, A., Atkinson, T., Lobbestael, J., Weishaar, M. E., van Vreeswijk, M. F., &amp; Klokman, J. (2007). <i>The Schema Mode Inventory</i>. Schema Therapy Institute.</li>
+    <li>Lobbestael, J., van Vreeswijk, M., Spinhoven, P., Schouten, E., &amp; Arntz, A. (2010). Reliability and validity of the short Schema Mode Inventory (SMI). <i>Behavioural and Cognitive Psychotherapy, 38</i>(4), 437–458.</li>
+    <li>Bach, B., Lockwood, G., &amp; Young, J. E. (2018). A new look at the schema therapy model: Organization and role of early maladaptive schemas. <i>Cognitive Behaviour Therapy, 47</i>(4), 328–349.</li>
+    <li>Arntz, A., Rijkeboer, M., Chan, E., et al. (2021). Towards a reformulated theory underlying schema therapy: Position paper of an international workgroup. <i>Cognitive Therapy and Research, 45</i>, 1007–1020.</li>
+  </ul></section>`;
+}
+
+window.__SIX={BANK,ORDER,KEYS,score,bandIdx,domainMeans,orderFor,get S(){return S},render,answer,back,isDone,ALPHA,
+  fill(k,fn){ORDER[k].forEach(o=>delete S.ans[o.id]);S.tab=k;S.pos[k]=0;S.phase[k]="q";for(let i=0;i<ORDER[k].length;i++){const o=ORDER[k][S.pos[k]];answer(k,fn({sub:o.sub,rev:BANK[k].subs[o.sub].items[o.i].rev}))}}};
+render();
+</script>
+
+</body></html>

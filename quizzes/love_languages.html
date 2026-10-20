@@ -1,0 +1,496 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Series X · Love Languages</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column, tab rail on top, one question per screen; results as ruled rows with a pentagon chart. */
+:root{
+  --paper:#F5F0E6; --sheet:#FBF8F2; --ink:#2A2421; --muted:#6E625B; --rule:#DED4C6;
+  --rose:#8C3B4A; --rose-soft:#EBD6D6; --sage:#476653; --sage-soft:#D8E3D9; --amber:#8A5D14;
+  --wa:#A3412C; --qt:#2B6585; --gi:#8A5D14; --as:#46703A; --pt:#87397A;
+  --fu:#22696A; --fv:#4A4E8F; --fc:#8C3B4A;
+  --care:#F4E4E2; --flag:#F3EAD6;
+  --c:var(--rose); /* per-row color alias, set inline on rows; resolves through the theme tokens */
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1B1715; --sheet:#241F1C; --ink:#EDE5D9; --muted:#A99C91; --rule:#3B332E;
+  --rose:#E09AA6; --rose-soft:#43282D; --sage:#93BBA0; --sage-soft:#26352B; --amber:#D9A75A;
+  --wa:#E58E77; --qt:#82B9D9; --gi:#DDAA55; --as:#9DC888; --pt:#D79BC9;
+  --fu:#72C4BD; --fv:#A6ABE3; --fc:#E09AA6;
+  --care:#3C2426; --flag:#3A311F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1B1715; --sheet:#241F1C; --ink:#EDE5D9; --muted:#A99C91; --rule:#3B332E;
+  --rose:#E09AA6; --rose-soft:#43282D; --sage:#93BBA0; --sage-soft:#26352B; --amber:#D9A75A;
+  --wa:#E58E77; --qt:#82B9D9; --gi:#DDAA55; --as:#9DC888; --pt:#D79BC9;
+  --fu:#72C4BD; --fv:#A6ABE3; --fc:#E09AA6;
+  --care:#3C2426; --flag:#3A311F; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(30px,6vw,44px);line-height:1.08;margin:0;text-wrap:balance}
+h1 em{font-style:italic;color:var(--rose)}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+.five{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.five b{color:var(--ink);font-weight:500}
+.five i,.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+nav{display:flex;gap:2px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+nav button{all:unset;cursor:pointer;padding:10px 12px 9px;font-size:14px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;display:flex;gap:8px;align-items:baseline}
+nav button small{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--rose)}
+nav button:focus-visible,button:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+.panel{display:flex;flex-direction:column;gap:22px}
+.intro{display:flex;flex-direction:column;gap:14px;max-width:62ch}
+.intro h2,.res h2,.card h3{font-family:var(--display);font-weight:500;margin:0;text-wrap:balance}
+.intro h2,.res h2{font-size:26px}
+.intro p{margin:0}
+.meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 16px}
+.btn{all:unset;cursor:pointer;align-self:flex-start;background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:3px;font-weight:500;font-size:15px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.row-btns{display:flex;flex-wrap:wrap;gap:10px}
+/* question */
+.q{display:flex;flex-direction:column;gap:18px;min-height:340px}
+.qmeta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.track{height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+.track i{display:block;height:100%;background:var(--rose);transition:width .2s}
+.stem{font-family:var(--display);font-size:clamp(22px,4.4vw,28px);line-height:1.3;margin:6px 0 4px;min-height:3.9em;text-wrap:balance}
+.scale{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.scale button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border:1px solid var(--rule);border-radius:3px;background:var(--sheet);text-align:center}
+.scale button b{font-family:var(--mono);font-weight:500;font-size:17px}
+.scale button span{font-size:11.5px;line-height:1.25;color:var(--muted)}
+.scale button:hover{border-color:var(--muted)}
+.scale button[aria-pressed="true"]{background:var(--rose-soft);border-color:var(--rose)}
+.scale button[aria-pressed="true"] b{color:var(--rose)}
+.qnav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.qnav button{all:unset;cursor:pointer;font-size:14px;color:var(--muted)}
+.qnav button[disabled]{opacity:.35;cursor:default}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+@media (max-width:520px){.scale{grid-template-columns:repeat(3,minmax(0,1fr))}.hint{display:none}}
+/* results */
+.res{display:flex;flex-direction:column;gap:20px}
+.chart{display:flex;justify-content:center}
+.chart svg{width:100%;max-width:420px;height:auto}
+.legend{display:flex;gap:16px;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.srow h4{margin:0;font-size:15.5px;font-weight:600}
+.srow .val{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;text-align:right}
+.srow .def,.srow .read{grid-column:1/-1;margin:0;font-size:14px;color:var(--muted)}
+.srow .read{color:var(--ink)}
+.bt{grid-column:1/-1;position:relative;height:6px;background:var(--rule);border-radius:3px}
+.bt i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.bt u{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--muted);opacity:.5}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);color:var(--muted);margin-left:8px;vertical-align:2px;font-weight:400}
+.chip.Strong{background:var(--c);border-color:var(--c);color:var(--paper)}
+.chip.Substantial{border-color:var(--c);color:var(--c)}
+.srow{border-left:3px solid var(--c);padding-left:12px}
+.flagbox{background:var(--flag);border-left:3px solid var(--amber);padding:12px 14px;border-radius:0 3px 3px 0;font-size:14.5px;margin:0;max-width:62ch;display:flex;flex-direction:column;gap:6px}
+.flagbox b{font-family:var(--display);font-weight:500;font-size:17px}
+.care{background:var(--care);border-left:3px solid var(--fc);padding:12px 14px;border-radius:0 3px 3px 0;font-size:14.5px;margin:0;max-width:62ch}
+.asks li::marker{color:var(--c)}
+/* footer */
+footer.legal{border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.55;color:var(--muted);max-width:72ch}
+footer.legal h2{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;margin:0;color:var(--muted)}
+footer.legal p{margin:0}
+footer.legal b{color:var(--ink);font-weight:500}
+footer.legal .tel{font-family:var(--mono);color:var(--ink);user-select:all;white-space:nowrap}
+footer.legal button{all:unset;cursor:pointer;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+footer.legal button:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+.note{font-size:13.5px;color:var(--muted);max-width:62ch;margin:0}
+/* synthesis */
+.cards{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+.card h3{font-size:20px}
+.card p{margin:0;font-size:15px}
+.card .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card.locked{background:transparent;border-style:dashed}
+.card.locked p{color:var(--muted)}
+.mrow{display:grid;grid-template-columns:7.5em minmax(0,1fr) 3.6em;gap:10px;align-items:center;font-size:14px}
+.mrow > span:first-child{white-space:nowrap}
+.mrow .d{font-family:var(--mono);font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.mt{position:relative;height:16px}
+.mt::before{content:"";position:absolute;left:0;right:0;top:7px;height:2px;background:var(--rule)}
+.mt .r,.mt .e{position:absolute;top:3px;width:10px;height:10px;border-radius:50%;margin-left:-5px}
+.mt .r{background:var(--rose)}
+.mt .e{border:2px solid var(--sage);background:var(--sheet)}
+.asks{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px;font-size:15px}
+/* appendix */
+.apx{display:flex;flex-direction:column;gap:18px;max-width:68ch}
+.apx h3{font-family:var(--display);font-weight:500;font-size:20px;margin:6px 0 0}
+.apx p,.apx li{font-size:14.5px}
+.apx p{margin:0}
+.apx ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:440px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.track i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Series X · Bridge instrument</div>
+    <h1>Love Languages, <em>read honestly</em></h1>
+    <p class="lede">Gary Chapman's five love languages, scored one at a time instead of ranked against each other, plus a measure of whether you feel understood, validated and cared for by a partner.</p>
+    <div class="five"><span><i style="background:var(--wa)"></i><b>WA</b> Words of Affirmation</span><span><i style="background:var(--qt)"></i><b>QT</b> Quality Time</span><span><i style="background:var(--gi)"></i><b>GI</b> Receiving Gifts</span><span><i style="background:var(--as)"></i><b>AS</b> Acts of Service</span><span><i style="background:var(--pt)"></i><b>PT</b> Physical Touch</span></div>
+  </header>
+  <nav role="tablist" id="tabs"></nav>
+  <main class="panel" id="view"></main>
+  <footer class="legal" id="legal">
+    <h2>Disclaimer</h2>
+    <p><b>For education and self-reflection only.</b> Series X is a self-report questionnaire written for a book project. It is not a psychological test, a clinical assessment, a diagnosis, or a measure of relationship compatibility, and it has not been validated or normed on a real population. Scores describe how you answered on one occasion. They can shift with mood, circumstances and which relationship you have in mind.</p>
+    <p><b>Not professional advice.</b> Nothing here is medical, psychological, counseling, therapeutic or legal advice, and using it does not create a professional relationship of any kind. Don't use your results as the sole basis for decisions about a relationship, your health or your safety. For concerns about your relationship or well-being, talk with a licensed mental health professional.</p>
+    <p><b>If you are in danger.</b> If you feel unsafe with a partner, contact the National Domestic Violence Hotline at <span class="tel">1-800-799-7233</span> or text <span class="tel">START</span> to <span class="tel">88788</span>. If you are in crisis, call or text <span class="tel">988</span>. In an emergency, call <span class="tel">911</span>. These are U.S. services; outside the U.S., contact your local emergency number.</p>
+    <p><b>Trademarks and sources.</b> "The 5 Love Languages" is a trademark of its owner. This questionnaire is independent and is not affiliated with, sponsored by, or endorsed by Gary Chapman or his publishers. All items are original and are not reproduced from any published instrument. Research cited in the appendix is credited to its authors.</p>
+    <p><b>Privacy.</b> Your answers are saved only in this browser, on this device, so you can resume later. They are not sent to the author or anyone else. <button type="button" id="clear-data">Clear my answers</button><span id="clear-msg" role="status"></span></p>
+    <p><b>No warranty.</b> This questionnaire is provided "as is," without warranties of any kind. To the fullest extent permitted by law, the author is not liable for any decision made or action taken based on it.</p>
+    <p>© 2026. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+const ALPHA = /*ALPHA*/{"LLR": {"WA": {"mean": 0.815, "p05": 0.775, "items": 6}, "QT": {"mean": 0.815, "p05": 0.771, "items": 6}, "GI": {"mean": 0.815, "p05": 0.776, "items": 6}, "AS": {"mean": 0.818, "p05": 0.777, "items": 6}, "PT": {"mean": 0.818, "p05": 0.775, "items": 6}}, "LLE": {"WA": {"mean": 0.815, "p05": 0.766, "items": 6}, "QT": {"mean": 0.816, "p05": 0.773, "items": 6}, "GI": {"mean": 0.813, "p05": 0.775, "items": 6}, "AS": {"mean": 0.817, "p05": 0.774, "items": 6}, "PT": {"mean": 0.812, "p05": 0.773, "items": 6}}, "PRS": {"U": {"mean": 0.818, "p05": 0.779, "items": 6}, "V": {"mean": 0.814, "p05": 0.779, "items": 6}, "C": {"mean": 0.813, "p05": 0.776, "items": 6}}}/*END*/;
+const F = t => ({ t, r: false }), R = t => ({ t, r: true });
+const SCALE = ["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"];
+const LANGS = ["WA","QT","GI","AS","PT"];
+const LNAME = { WA:"Words of Affirmation", QT:"Quality Time", GI:"Receiving Gifts", AS:"Acts of Service", PT:"Physical Touch" };
+const LSHORT = { WA:"Words", QT:"Time", GI:"Gifts", AS:"Service", PT:"Touch" };
+const COL = { WA:"var(--wa)", QT:"var(--qt)", GI:"var(--gi)", AS:"var(--as)", PT:"var(--pt)", U:"var(--fu)", V:"var(--fv)", C:"var(--fc)" };
+/* Cut points calibrated by simulation (see appendix, Accuracy checks). */
+const SHAPE_B = 1.6, SHAPE_P = 2.5, TOP_TOL = 0.5, GAP = 1.5;
+const ACQ = { LLR:[2.33,4.67], LLE:[2.33,4.67], PRS:[2.25,4.75] };
+
+const INSTR = {
+  LLR: { code:"LLR", tab:"Receiving", name:"Love Languages · Receiving", seed:1013,
+    intro:"Rate how true each statement is of you. Think about romantic partners in general, current or past. Most people find several of these matter, so rate each one on its own.",
+    subs:{
+      WA:{ label:LNAME.WA, def:"Spoken or written appreciation, praise and affection.",
+        hi:"Hearing it said lands for you. Spoken appreciation does real work in how loved you feel.", lo:"Words on their own don't move the needle much for you.",
+        items:[F("Hearing a partner say they appreciate me makes me feel loved."),F("A sincere compliment from a partner stays with me for days."),F("I feel closest to a partner when they tell me what they admire about me."),
+               R("Compliments from a partner don't change how loved I feel."),R("Going a long time without hearing 'I love you' wouldn't shake how loved I feel."),R("Verbal praise from a partner tends to slide right past me.")]},
+      QT:{ label:LNAME.QT, def:"Focused, undistracted attention and time set aside together.",
+        hi:"Focused, undistracted time is a strong signal of love for you.", lo:"You can feel loved without much one-on-one time.",
+        items:[F("Undivided attention from a partner makes me feel loved."),F("I feel most cared for when a partner sets aside time just for us."),F("When a partner puts their phone away to talk with me, I feel valued."),
+               R("Time alone with a partner isn't something I especially need to feel loved."),R("Rare one-on-one time with a partner doesn't make me feel less loved."),R("A partner being distracted during our time together doesn't bother me.")]},
+      GI:{ label:LNAME.GI, def:"Tokens and presents that show you were thought of.",
+        hi:"Thoughtful tokens register as being known and remembered.", lo:"Gifts play a small role in how loved you feel.",
+        items:[F("A small gift from a partner makes me feel thought of."),F("I keep the tokens a partner has given me."),F("When a partner brings me something that fits my taste, I feel known."),
+               R("Gifts from a partner don't do much for how loved I feel."),R("I'd be fine if a partner never marked occasions with a present."),R("I tend to forget gifts soon after I receive them.")]},
+      AS:{ label:LNAME.AS, def:"Practical help that lightens your load.",
+        hi:"Practical help reads as care. Taking something off your plate says a lot.", lo:"Help with tasks doesn't register much as affection for you.",
+        items:[F("When a partner takes a chore off my plate, I feel loved."),F("Practical help from a partner means a lot to me."),F("I feel cared for when a partner handles something I've been dreading."),
+               R("Help with tasks doesn't register much as love for me."),R("When a partner runs an errand for me, I barely notice it as affection."),R("I don't feel more loved when a partner pitches in around the house.")]},
+      PT:{ label:LNAME.PT, def:"Hugs, hand-holding and casual affectionate contact.",
+        hi:"Touch is a fast route to feeling connected for you.", lo:"Physical affection is not a main channel for you.",
+        items:[F("A hug from a partner can change my whole mood."),F("Holding hands with a partner makes me feel connected."),F("Casual touch from a partner, like a hand on my back, makes me feel loved."),
+               R("Physical affection isn't central to how loved I feel."),R("Going days without touch from a partner wouldn't make me feel less close."),R("Cuddling with a partner doesn't do much for me.")]}
+    }},
+  LLE: { code:"LLE", tab:"Expressing", name:"Love Languages · Expressing", seed:2027,
+    intro:"These items are about how you tend to show love to a partner. Answer for how you usually act, not how you'd like to.",
+    subs:{
+      WA:{ label:LNAME.WA, def:"Putting appreciation and affection into words.",
+        hi:"You put love into words readily.", lo:"You tend to leave affection unspoken.",
+        items:[F("I tell a partner what I admire about them."),F("I make a point of saying 'I love you' often."),F("When a partner does something well, I say so out loud."),
+               R("I rarely put my affection for a partner into words."),R("Complimenting a partner doesn't come naturally to me."),R("I assume a partner knows how I feel without my saying it.")]},
+      QT:{ label:LNAME.QT, def:"Making and protecting time together, and being present in it.",
+        hi:"You protect and show up for shared time.", lo:"Shared time tends to get crowded out.",
+        items:[F("I protect time on my calendar for just the two of us."),F("When a partner talks, I give them my full attention."),F("I plan activities for us to share."),
+               R("I often multitask when spending time with a partner."),R("Making one-on-one time with a partner isn't high on my list."),R("I let our time together get crowded out by other things.")]},
+      GI:{ label:LNAME.GI, def:"Choosing gifts and tokens for a partner.",
+        hi:"You show love with thoughtful things.", lo:"Gifts aren't much of your repertoire.",
+        items:[F("I pick up small things that remind me of a partner."),F("I put thought into finding the right gift for a partner."),F("I mark meaningful dates with a present."),
+               R("Giving gifts isn't really how I show love."),R("I often forget to get a partner something for an occasion."),R("Shopping for a partner feels like a chore to me.")]},
+      AS:{ label:LNAME.AS, def:"Doing practical things for a partner.",
+        hi:"You show love by taking things off a partner's plate.", lo:"Practical help isn't a main way you show care.",
+        items:[F("I take care of tasks so a partner doesn't have to."),F("I show love by fixing problems for a partner."),F("I handle chores a partner dislikes without being asked."),
+               R("Helping with a partner's to-do list isn't how I express affection."),R("I wait to be asked before I pitch in."),R("Doing practical things for a partner doesn't feel like love to me.")]},
+      PT:{ label:LNAME.PT, def:"Initiating hugs, hand-holding and casual touch.",
+        hi:"You reach out physically and often.", lo:"You initiate touch less often.",
+        items:[F("I reach for a partner's hand without thinking."),F("I greet a partner with a hug."),F("I show affection through casual touch."),
+               R("I'm not very physically affectionate with a partner."),R("I rarely start cuddling."),R("I keep physical distance even when I feel close to a partner.")]}
+    }},
+  PRS: { code:"PRS", tab:"Responsiveness", name:"Perceived Responsiveness", seed:3041,
+    intro:"Answer about your current partner. If you're single, use your most recent significant partner and read the items in the past tense. This scale draws on Reis's model of perceived partner responsiveness.",
+    subs:{
+      U:{ label:"Understanding", def:"Your partner accurately reads your needs, feelings and what matters to you.",
+        hi:"You feel accurately seen.", lo:"You often feel misread.",
+        items:[F("My partner gets what I mean, even when I struggle to say it."),F("My partner can tell how I'm feeling."),F("My partner knows what matters most to me."),
+               R("My partner often misreads my needs."),R("I have to explain myself repeatedly before my partner understands."),R("My partner misses what I'm really getting at.")]},
+      V:{ label:"Validation", def:"Your partner treats your feelings and views as legitimate and values who you are.",
+        hi:"Your feelings and views are treated as legitimate.", lo:"Your concerns often get dismissed.",
+        items:[F("My partner treats my feelings as legitimate."),F("My partner respects my point of view when we disagree."),F("My partner values who I am."),
+               R("My partner dismisses my concerns."),R("My partner makes me feel my reactions are overblown."),R("My partner brushes off what's important to me.")]},
+      C:{ label:"Caring", def:"Your partner looks out for your well-being and shows up when you need support.",
+        hi:"You trust your partner to show up for you.", lo:"Support feels unreliable.",
+        items:[F("My partner looks out for my well-being."),F("My partner responds when I need support."),F("My partner shows concern when I'm struggling."),
+               R("My partner is indifferent when I'm going through something hard."),R("I can't count on my partner when I need help."),R("My partner's attention to my needs feels inconsistent.")]}
+    }}
+};
+const KEYS = ["LLR","LLE","PRS"];
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr,rnd){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+// Blind interleave: always draw from a subscale with the most items left, never the one just used.
+function orderFor(key){
+  const I=INSTR[key], rnd=mulberry32(I.seed), pools={};
+  for(const s in I.subs) pools[s]=shuffle(I.subs[s].items.map((_,i)=>i),rnd);
+  const out=[]; let prev=null;
+  for(;;){
+    const left=Object.keys(pools).filter(s=>pools[s].length);
+    if(!left.length) break;
+    let c=left.filter(s=>s!==prev); if(!c.length) c=left;
+    const mx=Math.max(...c.map(s=>pools[s].length));
+    const top=c.filter(s=>pools[s].length===mx);
+    const s=top[Math.floor(rnd()*top.length)];
+    const i=pools[s].shift();
+    out.push({sub:s,i,id:`${key}.${s}.${i}`});
+    prev=s;
+  }
+  return out;
+}
+const ORDER = Object.fromEntries(KEYS.map(k=>[k,orderFor(k)]));
+
+function score(key,ans){
+  const I=INSTR[key], res={};
+  for(const s in I.subs){
+    const it=I.subs[s].items; let sum=0,n=0;
+    it.forEach((x,i)=>{const v=ans[`${key}.${s}.${i}`]; if(v){sum+=x.r?7-v:v;n++}});
+    res[s]= n===it.length ? sum/n : null;
+  }
+  return res;
+}
+function band(v){return v<2.5?"Low":v<3.5?"Modest":v<4.5?"Substantial":"Strong"}
+function shape(rec){const v=LANGS.map(l=>rec[l]);const range=Math.max(...v)-Math.min(...v);return {range,label:range<SHAPE_B-1e-9?"Balanced":range<SHAPE_P-1e-9?"Leaning":"Pronounced"}}
+/* Mean raw response before reverse-scoring. With balanced keying, the trait cancels and this sits near the middle for honest answering. */
+function acqIndex(key,ans){const o=ORDER[key];let s=0,n=0;o.forEach(x=>{const v=ans[x.id];if(v){s+=v;n++}});return n===o.length?s/n:null}
+function acqFlag(key,ans){const a=acqIndex(key,ans);if(a===null)return null;return a>=ACQ[key][1]-1e-9?"yea":a<=ACQ[key][0]+1e-9?"nay":null}
+const f2=v=>v.toFixed(2);
+
+/* state */
+const STORE="seriesX-love-v1";
+let S={tab:"LLR",ans:{},pos:{LLR:0,LLE:0,PRS:0},phase:{LLR:"intro",LLE:"intro",PRS:"intro"}};
+try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans) S=Object.assign(S,p)}}catch(e){}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
+function isDone(k){return ORDER[k].every(o=>S.ans[o.id])}
+function answered(k){return ORDER[k].filter(o=>S.ans[o.id]).length}
+
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function renderTabs(){
+  const tabs=[...KEYS.map(k=>({id:k,label:INSTR[k].tab,sm:isDone(k)?"done":`${answered(k)}/${ORDER[k].length}`})),{id:"SYN",label:"Synthesis",sm:""},{id:"APX",label:"Appendix",sm:""}];
+  $("#tabs").innerHTML=tabs.map(t=>`<button role="tab" data-tab="${t.id}" aria-selected="${S.tab===t.id}">${t.label}${t.sm?`<small>${t.sm}</small>`:""}</button>`).join("");
+  $("#tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;save();render()});
+}
+
+function render(){
+  renderTabs();
+  const v=$("#view");
+  if(KEYS.includes(S.tab)){
+    const k=S.tab, ph=S.phase[k];
+    v.innerHTML = ph==="q" ? qHTML(k) : ph==="done" ? resultsHTML(k) : introHTML(k);
+    bindPanel(k);
+  } else if(S.tab==="SYN"){ v.innerHTML=synHTML(); }
+  else { v.innerHTML=apxHTML(); }
+}
+
+function introHTML(k){
+  const I=INSTR[k], n=ORDER[k].length, subs=Object.keys(I.subs).length, a=answered(k);
+  return `<section class="intro"><div class="eyebrow">${I.code}</div><h2>${I.name}</h2><p>${I.intro}</p>
+  <div class="meta"><span>${n} items</span><span>${subs} subscales, revealed after</span><span>about ${Math.ceil(n/5)} min</span></div>
+  <div class="row-btns"><button class="btn" data-act="start">${a&&!isDone(k)?"Resume":"Begin"}</button>${isDone(k)?`<button class="btn ghost" data-act="results">See results</button>`:""}</div></section>`;
+}
+function qHTML(k){
+  const o=ORDER[k], p=Math.min(S.pos[k],o.length-1), item=INSTR[k].subs[o[p].sub].items[o[p].i], cur=S.ans[o[p].id];
+  return `<section class="q" aria-live="polite"><div class="qmeta"><span>Item ${String(p+1).padStart(2,"0")} of ${o.length}</span><span>${INSTR[k].tab}</span></div>
+  <div class="track"><i style="width:${(answered(k)/o.length*100).toFixed(1)}%"></i></div>
+  <p class="stem" id="stem">${esc(item.t)}</p>
+  <div class="scale" role="group" aria-label="Response">${SCALE.map((lab,i)=>`<button data-v="${i+1}" aria-pressed="${cur===i+1}"><b>${i+1}</b><span>${lab}</span></button>`).join("")}</div>
+  <div class="qnav"><button data-act="back" ${p===0?"disabled":""}>← Back</button><span class="hint">1–6 to answer · Backspace to go back</span></div></section>`;
+}
+function answer(k,v){
+  const o=ORDER[k]; const p=Math.min(S.pos[k],o.length-1);
+  S.ans[o[p].id]=v;
+  if(p>=o.length-1 && isDone(k)){S.phase[k]="done"}
+  else { S.pos[k]=p+1; if(S.pos[k]>=o.length){ S.pos[k]=o.findIndex(x=>!S.ans[x.id]) } }
+  save(); render();
+}
+function back(k){ if(S.pos[k]>0){S.pos[k]--; save(); render()} }
+function bindPanel(k){
+  const v=$("#view");
+  v.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{
+    const a=b.dataset.act;
+    if(a==="start"){S.phase[k]="q"; if(S.pos[k]>=ORDER[k].length) S.pos[k]=0; save(); render()}
+    if(a==="results"){S.phase[k]="done";save();render()}
+    if(a==="back") back(k);
+    if(a==="review"){S.phase[k]="q";S.pos[k]=ORDER[k].length-1;save();render()}
+    if(a==="retake"){ORDER[k].forEach(o=>delete S.ans[o.id]);S.pos[k]=0;S.phase[k]="intro";save();render()}
+  });
+  v.querySelectorAll(".scale button").forEach(b=>b.onclick=()=>answer(k,+b.dataset.v));
+}
+document.addEventListener("keydown",e=>{
+  const k=S.tab; if(!KEYS.includes(k)||S.phase[k]!=="q") return;
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  if(/^[1-6]$/.test(e.key)){e.preventDefault();answer(k,+e.key)}
+  else if(e.key==="Backspace"){e.preventDefault();back(k)}
+});
+
+/* charts */
+function radar(series){
+  const W=400,H=360,cx=200,cy=186,Rr=118, n=5;
+  const pt=(i,v)=>{const a=-Math.PI/2+i*2*Math.PI/n, r=(v-1)/5*Rr;return [cx+r*Math.cos(a),cy+r*Math.sin(a)]};
+  let g="";
+  [2,3,4,5,6].forEach(lv=>{g+=`<polygon points="${LANGS.map((_,i)=>pt(i,lv).join(",")).join(" ")}" fill="none" stroke="var(--rule)" stroke-width="${lv===6?1.2:.8}"/>`});
+  LANGS.forEach((l,i)=>{const [x,y]=pt(i,6);g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--rule)" stroke-width=".8"/>`;
+    const [lx,ly]=pt(i,7.15); const anchor=Math.abs(lx-cx)<8?"middle":lx>cx?"start":"end";
+    g+=`<text x="${lx}" y="${ly+4}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="12.5" font-weight="500" fill="${COL[l]}">${LSHORT[l]}</text>`});
+  [2,4,6].forEach(lv=>{const [x,y]=pt(0,lv);g+=`<text x="${x+5}" y="${y+3}" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--muted)">${lv}</text>`});
+  series.forEach(s=>{const pts=LANGS.map((l,i)=>pt(i,s.v[l]).join(",")).join(" ");
+    g+=`<polygon points="${pts}" fill="${s.fill}" fill-opacity=".18" stroke="${s.fill}" stroke-width="2" ${s.dash?'stroke-dasharray="5 4"':""}/>`;
+    LANGS.forEach((l,i)=>{const [x,y]=pt(i,s.v[l]);g+=`<circle cx="${x}" cy="${y}" r="${s.dash?3.5:5}" fill="${s.dash?"var(--sheet)":COL[l]}" stroke="${s.dash?s.fill:"var(--sheet)"}" stroke-width="${s.dash?2:1.5}"/>`})});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Five-language profile chart">${g}</svg>`;
+}
+function rowsHTML(k,sc){
+  const I=INSTR[k];
+  return `<div class="rows">${Object.keys(I.subs).map(s=>{const v=sc[s],b=band(v),sub=I.subs[s];
+    const read=v>=4.5?sub.hi:v<2.5?sub.lo:"Present for you, without standing out at either end.";
+    return `<div class="srow" data-sub="${s}" style="--c:${COL[s]}"><h4>${sub.label}<span class="chip ${b}">${b}</span></h4><span class="val">${f2(v)}</span>
+    <div class="bt"><i style="width:${((v-1)/5*100).toFixed(1)}%;background:${COL[s]}"></i><u style="left:50%"></u></div>
+    <p class="def">${sub.def}</p><p class="read">${read}</p></div>`}).join("")}</div>`;
+}
+function resultsHTML(k){
+  const sc=score(k,S.ans), I=INSTR[k];
+  let top="";
+  if(k==="LLR"||k==="LLE"){
+    const other=k==="LLR"?"LLE":"LLR", os=isDone(other)?score(other,S.ans):null;
+    const me={v:sc,fill:k==="LLR"?"var(--rose)":"var(--sage)"};
+    const series=os?[ {v:os,fill:k==="LLR"?"var(--sage)":"var(--rose)",dash:true}, me ]:[me];
+    const sh=shape(sc);
+    top=`<div class="chart">${radar(series)}</div>${os?`<div class="legend"><span><i style="background:var(--rose)"></i>Receiving</span><span><i style="background:var(--sage)"></i>Expressing</span></div>`:""}
+    <p class="note">Profile shape: <b>${sh.label}</b> (range ${f2(sh.range)} on a 1–6 scale; Balanced under ${SHAPE_B.toFixed(2)}, Pronounced at ${SHAPE_P.toFixed(2)} and up). Each language is scored on its own, so high scores on several at once are expected.</p>`;
+  } else {
+    const comp=(sc.U+sc.V+sc.C)/3;
+    top=`<p class="note" style="--c:var(--fu)">Composite responsiveness: <b style="font-family:var(--mono)">${f2(comp)}</b> <span class="chip ${band(comp)}">${band(comp)}</span></p>`;
+    if(comp<2.5) top+=`<p class="care" data-care="prs">Feeling misread, dismissed or unsupported this often is hard to live with. A couples therapist can help you and a partner work on it together, and an individual therapist can help you sort out what you need. If you ever feel unsafe, the contacts at the bottom of this page are there for that.</p>`;
+  }
+  const fl=acqFlag(k,S.ans);
+  if(fl) top=`<div class="flagbox" data-flag="${fl}"><b>Check your answer pattern</b><span>You ${fl==="yea"?"agreed":"disagreed"} with most statements in this section, including ones that say opposite things (average response ${f2(acqIndex(k,S.ans))} on the 1–6 scale). When that happens, scores drift toward the middle and stop showing your real profile. If you were answering quickly, consider retaking this section and reading each statement on its own.</span></div>`+top;
+  return `<section class="res"><div class="eyebrow">${I.code} · Results</div><h2>${I.name}</h2>${top}
+  ${rowsHTML(k,sc)}
+  <p class="note">Bands: Low under 2.50 · Modest 2.50–3.49 · Substantial 3.50–4.49 · Strong 4.50 and up. The tick marks the 3.50 midpoint.</p>
+  <div class="row-btns"><button class="btn ghost" data-act="review">Review answers</button><button class="btn ghost" data-act="retake">Retake</button></div></section>`;
+}
+
+/* synthesis */
+const ASKS={WA:"Tell me when you appreciate something I did.",QT:"Protect some phone-free time that's just ours.",GI:"Small thought-of-you things mean a lot to me.",AS:"Taking a task off my list lands as love.",PT:"Reach for me: a hug, a hand, a touch in passing."};
+function locked(title,need){return `<div class="card locked" data-card="${title}"><div class="k">Locked</div><h3>${title}</h3><p>Complete ${need} to unlock this reading.</p></div>`}
+function topSet(sc){const mx=Math.max(...LANGS.map(l=>sc[l]));return LANGS.filter(l=>sc[l]>=mx-TOP_TOL-1e-9)}
+const dot=l=>`<i class="dot" style="background:${COL[l]}"></i>`;
+function synHTML(){
+  const dR=isDone("LLR"),dE=isDone("LLE"),dP=isDone("PRS");
+  const r=dR?score("LLR",S.ans):null,e=dE?score("LLE",S.ans):null,p=dP?score("PRS",S.ans):null;
+  const out=[];
+  if(r){const sh=shape(r),ord=LANGS.slice().sort((a,b)=>r[b]-r[a]);
+    const txt={Balanced:"Your five scores sit close together. That's the most common result when the languages are rated one at a time: most people value all five. Think of this as a balanced diet rather than a single language.",
+      Leaning:"You lean toward some forms of love over others, but none is the only route in. The lower ones still count.",
+      Pronounced:"You have a clear preference. That's useful to share with a partner. Treat it as a request, not a rule they have to decode."}[sh.label];
+    out.push(`<div class="card" data-card="shape"><div class="k">Profile shape · LLR</div><h3>${sh.label}</h3><p>${txt}</p><p class="note">Highest to lowest: ${ord.map(l=>`${dot(l)}${LNAME[l]} ${f2(r[l])}`).join(" · ")}</p><p class="note">Calibrated so that a truly even profile reads Balanced about 9 times in 10. A retake can shift the label when you sit near a cut point.</p></div>`);
+  } else out.push(locked("Profile shape","Receiving"));
+  if(r&&e){const flat=shape(r).label==="Balanced"||shape(e).label==="Balanced";
+    const tr=topSet(r),te=topSet(e),st=flat?"flat":tr.some(l=>te.includes(l))?"same":"diff";
+    const gaps=LANGS.filter(l=>Math.abs(e[l]-r[l])>=GAP-1e-9);
+    const H={flat:"No clear top language to compare",same:"You give the way you want to get",diff:"You give differently than you want to get"}[st];
+    const P={flat:"At least one of your two profiles is Balanced, so there's no clear strongest language on that side to compare. Look at the rows below one language at a time instead.",
+      same:"Your strongest expressing language overlaps with your strongest receiving one. That's common. The catch: a partner may not share your profile, so love you send in your own currency can go unnoticed.",
+      diff:"What you most want and what you most offer don't line up. A partner who copies how you show love may still leave you wanting what you value most."}[st];
+    out.push(`<div class="card" data-card="mirror" data-state="${st}"><div class="k">Give vs. receive · LLR × LLE</div><h3>${H}</h3>
+    <p>${P}</p>
+    <div style="display:flex;flex-direction:column;gap:6px">${LANGS.map(l=>`<div class="mrow"><span>${dot(l)}${LSHORT[l]}</span><div class="mt"><span class="r" style="left:${((r[l]-1)/5*100).toFixed(1)}%"></span><span class="e" style="left:${((e[l]-1)/5*100).toFixed(1)}%"></span></div><span class="d">${(e[l]-r[l]>=0?"+":"")}${f2(e[l]-r[l])}</span></div>`).join("")}</div>
+    <div class="legend" style="justify-content:flex-start"><span><i style="background:var(--rose)"></i>Receiving</span><span><i style="border:2px solid var(--sage);width:10px;height:10px"></i>Expressing</span><span>Δ = give − receive</span></div>
+    ${gaps.length?`<p class="note">Gaps of ${GAP.toFixed(1)} points or more: ${gaps.map(l=>`${LNAME[l]} (you ${e[l]>r[l]?"give more than you seek":"seek more than you give"})`).join("; ")}.</p>`:`<p class="note">No gap reaches ${GAP.toFixed(1)} points. Smaller gaps are within measurement noise.</p>`}</div>`);
+  } else out.push(locked("Give vs. receive","Receiving and Expressing"));
+  if(p){const comp=(p.U+p.V+p.C)/3, low=["U","V","C"].sort((a,b)=>p[a]-p[b])[0], lab=INSTR.PRS.subs[low].label;
+    const need=r?LANGS.reduce((a,l)=>a+r[l],0)/5:null;
+    let txt = comp<3.5 ? "Feeling understood, validated and cared for is the stronger predictor of satisfaction, and right now it's running low. If something feels off, the issue is probably here rather than in a language mismatch."
+      : comp<4.5 ? "Responsiveness is in a workable middle range. Small, specific requests tend to move it more than a new love-language strategy."
+      : "You feel well understood, validated and cared for. That's the base that makes any of the five languages land.";
+    out.push(`<div class="card" data-card="responsiveness"><div class="k">Responsiveness · PRS${r?" × LLR":""}</div><h3>Composite ${f2(comp)} · ${band(comp)}</h3><p>${txt}</p>
+    <p class="note">Lowest facet: ${lab} (${f2(p[low])}).${need!==null&&need>=4.5&&comp<3.5?" You also want a lot from a partner across all five languages, which can make low responsiveness feel sharper.":""}</p></div>`);
+  } else out.push(locked("Responsiveness","Responsiveness"));
+  if(r){const t=topSet(r);
+    out.push(`<div class="card" data-card="menu"><div class="k">What to ask for · LLR</div><h3>Your menu, not your type</h3><p>Share these as requests a partner can act on. Keep the rest of the menu open; all five forms of love tend to raise satisfaction.</p><ul class="asks">${t.map(l=>`<li style="--c:${COL[l]}"><b style="font-weight:500;color:${COL[l]}">${LNAME[l]}.</b> ${ASKS[l]}</li>`).join("")}</ul><p class="note">Lists every language within ${TOP_TOL.toFixed(1)} points of your highest. Closer than that, the test can't reliably tell them apart.</p></div>`);
+  }
+  const fl=KEYS.filter(k=>isDone(k)&&acqFlag(k,S.ans)).map(k=>INSTR[k].tab);
+  const warn=fl.length?`<div class="flagbox" data-flag="syn"><b>Answer-pattern check</b><span>${fl.join(" and ")} ${fl.length>1?"were":"was"} answered with mostly the same response, so the readings that use ${fl.length>1?"them":"it"} are less trustworthy.</span></div>`:"";
+  return `<section class="res"><div class="eyebrow">Synthesis</div><h2>Reading the three together</h2><p class="note">Cards unlock as you finish each instrument. These are prompts for reflection and conversation, not a diagnosis or a compatibility score.</p>${warn}<div class="cards">${out.join("")}</div></section>`;
+}
+
+/* appendix */
+function apxHTML(){
+  const rows=KEYS.flatMap(k=>Object.keys(INSTR[k].subs).map(s=>{const a=(ALPHA[k]||{})[s]||{};const it=INSTR[k].subs[s].items;
+    return `<tr><td>${k}</td><td>${dot(s)}${INSTR[k].subs[s].label}</td><td class="n">${it.length}</td><td class="n">${it.filter(x=>!x.r).length}F / ${it.filter(x=>x.r).length}R</td><td class="n">${a.mean!=null?a.mean.toFixed(3):"–"}</td><td class="n">${a.p05!=null?a.p05.toFixed(3):"–"}</td></tr>`}));
+  const total=KEYS.reduce((a,k)=>a+ORDER[k].length,0), nsub=KEYS.reduce((a,k)=>a+Object.keys(INSTR[k].subs).length,0);
+  return `<section class="apx"><div class="eyebrow">Psychometric appendix</div>
+  <p><b>Series X</b> has ${total} items across ${nsub} subscales in three instruments. Every subscale has six items, three forward-keyed and three reverse-keyed, on the house 6-point scale with no neutral midpoint. Subscale scores are item means after reverse items are rescored (7 − response). Items are shown one at a time in a fixed, interleaved order so no two items from the same subscale appear back to back.</p>
+  <h3>Reliability (simulated)</h3>
+  <p>Values below come from a Monte Carlo simulation (N = 1,400 synthetic respondents per run, 200 runs) using a one-factor model per subscale with forward loadings drawn from .60–.85 and reverse loadings from .50–.75, responses cut to six ordinal points. They estimate how the item structure should behave. They are not data from real respondents.</p>
+  <div class="tbl"><table><thead><tr><th>Inst.</th><th>Subscale</th><th>Items</th><th>Keying</th><th>α mean</th><th>α 5th pct</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>
+  <h3>Accuracy checks (simulated)</h3>
+  <p>Alpha shows items hang together. It doesn't show that scores recover what they're meant to measure, so v2 adds four checks on simulated respondents (N = 20,000 each). Each simulated person has a true level for each language, linked by a shared factor (r = .30), plus measurement error and, where noted, a yea-saying bias.</p>
+  <div class="tbl"><table><thead><tr><th>Check</th><th>v1 rule</th><th>v2 rule</th></tr></thead><tbody>
+  <tr><td>Score tracks the true trait</td><td class="n">r = .90</td><td class="n">unchanged</td></tr>
+  <tr><td>Score tracks yea-saying bias</td><td class="n">r = .00</td><td class="n">unchanged (forward-only scoring: r = .50)</td></tr>
+  <tr><td>Truly even profile labeled Balanced</td><td class="n">47%</td><td class="n">93% (cuts 1.6 / 2.5)</td></tr>
+  <tr><td>True top language in the "what to ask for" list</td><td class="n">81% (within .25)</td><td class="n">92% (within .50, avg. 2 listed)</td></tr>
+  <tr><td>Identical give and receive flagged as a gap</td><td class="n">44% (≥ 1.0)</td><td class="n">7% (≥ 1.5)</td></tr>
+  <tr><td>Honest responders flagged by answer-pattern check</td><td class="n">–</td><td class="n">0.2% (LLR/LLE), 0.7% (PRS)</td></tr>
+  <tr><td>Moderate yea-sayers caught</td><td class="n">–</td><td class="n">82% (LLR/LLE), 72% (PRS)</td></tr>
+  </tbody></table></div>
+  <p>The answer-pattern check uses the average raw response before reverse-scoring. Because each subscale has three forward and three reverse items, a person's true level cancels out and an honest average sits near the middle. Cutoffs: 4.67 and 2.33 for the 30-item sections, 4.75 and 2.25 for the 18-item Responsiveness section. Flags never change scores. Nay-saying (disagreeing with everything) is caught less often than yea-saying, because it is less extreme in practice.</p>
+  <p>One limit these checks expose: the test can't reliably separate languages less than about half a point apart, and a single retake picks the same top language only about 56% of the time. That is why results show a short list and a profile shape rather than one primary language.</p>
+  <h3>Methodological decisions</h3>
+  <ul>
+    <li><b>Independent ratings instead of forced choice.</b> Chapman's own quiz makes respondents pick between pairs, which mathematically forces one language to the top. Impett, Park and Muise (2024) found that when people rate the five separately, most rate all of them as important. Series X rates each language independently and reports profile shape (Balanced, Leaning, Pronounced) instead of a single primary language.</li>
+    <li><b>Matching claim excised.</b> Chapman holds that couples are happier when partners speak each other's primary language. The 2024 review found no consistent support for this. The Synthesis tab never scores partner matching, and the give-vs-receive card is framed as a prompt for conversation.</li>
+    <li><b>Receiving and expressing measured separately.</b> Chapman's model is mostly about receiving. Dobson (2024, N = 740) factor-analyzed both formats and found a five-factor solution plausible in exploratory analysis, but no model held up in confirmatory analysis. The five-language structure here is a framework, not an established factor structure.</li>
+    <li><b>Responsiveness added as the validated anchor.</b> Perceived partner responsiveness (Reis &amp; Shaver, 1988; Reis, Clark &amp; Holmes, 2004) is defined by understanding, validation and caring. The PRS subscales map onto those three facets. Items are original clean-room writing; they are not taken from the Perceived Responsiveness and Insensitivity Scale (Crasta, Rogge, Maniaci &amp; Reis, 2021) and are not normed against it.</li>
+    <li><b>Sample caveat.</b> Chapman built the model from clinical work with religious, mixed-gender, traditional couples. Items here use "a partner" throughout and avoid gendered or marital framing.</li>
+  </ul>
+  <h3>Limitations</h3>
+  <ul>
+    <li>No norms. Bands are fixed cut points on the response scale, not percentiles.</li>
+    <li>Accuracy checks use a simulated population. The cut points should be re-estimated once real response data exist.</li>
+    <li>Reliability figures are simulated. Real-sample alphas and a factor analysis are the next step before any published claim.</li>
+    <li>Self-report only. A partner-report version of LLE would check whether the love you think you show is the love your partner notices.</li>
+    <li>Not a diagnostic or compatibility tool.</li>
+  </ul>
+  <h3>Sources</h3>
+  <ul>
+    <li>Chapman, G. (1992/2015). <i>The 5 Love Languages</i>. Northfield.</li>
+    <li>Impett, E. A., Park, H. G., &amp; Muise, A. (2024). Popular psychology through a scientific lens: Evaluating love languages from a relationship science perspective. <i>Current Directions in Psychological Science</i>.</li>
+    <li>Dobson, R. (2024). <i>Psychometric exploration of the five love languages</i> (Master's thesis). University of New Mexico.</li>
+    <li>Surijah, E. A., &amp; Septiarly, Y. L. (2016). Construct validation of five love languages. <i>Anima Indonesian Psychological Journal, 31</i>(2), 65–76.</li>
+    <li>Reis, H. T., Clark, M. S., &amp; Holmes, J. G. (2004). Perceived partner responsiveness as an organizing construct in the study of intimacy and closeness.</li>
+    <li>Crasta, D., Rogge, R. D., Maniaci, M. R., &amp; Reis, H. T. (2021). Toward an optimized measure of perceived partner responsiveness. <i>Psychological Assessment, 33</i>(4), 338–355.</li>
+  </ul></section>`;
+}
+
+document.getElementById("clear-data").onclick=()=>{
+  S={tab:"LLR",ans:{},pos:{LLR:0,LLE:0,PRS:0},phase:{LLR:"intro",LLE:"intro",PRS:"intro"}};
+  try{localStorage.removeItem(STORE)}catch(e){}
+  render(); document.getElementById("clear-msg").textContent=" Cleared. Your answers have been removed from this browser.";
+};
+window.__SX={INSTR,ORDER,KEYS,LANGS,COL,score,band,shape,acqIndex,acqFlag,topSet,orderFor,get S(){return S},render,answer,back,isDone,ALPHA,SHAPE_B,SHAPE_P,TOP_TOL,GAP,ACQ};
+render();
+</script>
+
+</body></html>

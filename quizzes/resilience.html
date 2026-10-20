@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Series V · Perseverance, Recovery &amp; the Cost of Enduring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Series V — Series X structure (cool slate base, per-subscale accent colors,
+   per-instrument signature hue, full light/dark theming). */
+:root{
+  --paper:#EDF0EE; --sheet:#F7F9F8; --ink:#1D2729; --ink2:#394446; --muted:#5B686B; --rule:#CDD5D3;
+  --sig:#1E6B68;                         /* per-instrument signature, set at runtime */
+  --good:#4B763A; --warn:#9A6511; --bad:#9A3F45;
+  --care:#F3E3E2; --careink:#6E2E2A; --careline:#B86A5C;
+  --track:#DFE5E3;
+  /* dimension palette for result bars */
+  --d1:#1E6B68; --d2:#4B763A; --d3:#9A6511; --d4:#9A3F45; --d5:#2E6A88; --d6:#6A4878; --d7:#8A5A2B;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121819; --sheet:#1A2224; --ink:#E3EAE8; --ink2:#C4CFCD; --muted:#94A3A3; --rule:#2D3839;
+  --sig:#6FC2BB;
+  --good:#9DC888; --warn:#DDAA55; --bad:#E28C91;
+  --care:#3A2224; --careink:#F0D7D4; --careline:#B86A5C;
+  --track:#243032;
+  --d1:#6FC2BB; --d2:#9DC888; --d3:#DDAA55; --d4:#E28C91; --d5:#80B9D7; --d6:#C6A6D4; --d7:#D3A06A;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#121819; --sheet:#1A2224; --ink:#E3EAE8; --ink2:#C4CFCD; --muted:#94A3A3; --rule:#2D3839;
+  --sig:#6FC2BB;
+  --good:#9DC888; --warn:#DDAA55; --bad:#E28C91;
+  --care:#3A2224; --careink:#F0D7D4; --careline:#B86A5C;
+  --track:#243032;
+  --d1:#6FC2BB; --d2:#9DC888; --d3:#DDAA55; --d4:#E28C91; --d5:#80B9D7; --d6:#C6A6D4; --d7:#D3A06A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.58;
+  -webkit-font-smoothing:antialiased;
+  padding-left:max(20px,env(safe-area-inset-left,0px));
+  padding-right:max(20px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 0 80px}
+header{padding:40px 0 20px;border-bottom:1px solid var(--rule)}
+.toprow{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,5vw,38px);line-height:1.14;margin:0 0 9px;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);font-size:14.5px;max-width:62ch;margin:0}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sig);margin:0 0 10px}
+.themebtn{
+  flex:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--sheet);color:var(--muted);border:1px solid var(--rule);border-radius:2px;
+  padding:7px 11px;cursor:pointer;transition:.15s;margin-top:2px;
+}
+.themebtn:hover{border-color:var(--sig);color:var(--sig)}
+
+nav{display:flex;gap:2px;flex-wrap:wrap;margin:22px 0 0;border-bottom:1px solid var(--rule)}
+nav button{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;
+  background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);
+  padding:10px 12px;cursor:pointer;transition:.15s;
+}
+nav button:hover{color:var(--ink)}
+nav button[aria-selected="true"]{color:var(--sig);border-bottom-color:var(--sig)}
+
+.panel{display:none;padding-top:30px}
+.panel.on{display:block}
+
+h2{font-family:var(--display);font-weight:600;font-size:25px;margin:0 0 4px;letter-spacing:-.01em}
+h2 em{font-style:italic;color:var(--sig)}
+h3{font-family:var(--display);font-weight:600;font-size:18px;margin:34px 0 10px}
+p{margin:0 0 14px}
+.lede{color:var(--ink2);font-size:15.5px}
+.meta{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;margin:0 0 18px}
+
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:3px;padding:22px;margin:20px 0}
+.card.tight{padding:16px 18px}
+
+button.go{
+  font-family:var(--body);font-size:14px;font-weight:500;
+  background:var(--sig);color:var(--paper);border:none;border-radius:2px;
+  padding:12px 26px;cursor:pointer;transition:.15s;
+}
+button.go:hover{filter:brightness(1.08)}
+button.ghost{
+  font-family:var(--body);font-size:13.5px;background:none;color:var(--muted);
+  border:1px solid var(--rule);border-radius:2px;padding:9px 18px;cursor:pointer;transition:.15s;
+}
+button.ghost:hover{border-color:var(--sig);color:var(--sig)}
+
+.prog{height:2px;background:var(--rule);margin:0 0 26px;position:relative}
+.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--sig);transition:width .25s}
+.count{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted);margin:0 0 14px}
+.stem{font-family:var(--display);font-size:clamp(19px,3.4vw,23px);line-height:1.4;margin:0 0 26px;min-height:2.6em}
+.scale{display:grid;gap:6px;margin:0 0 22px}
+.scale button{
+  display:flex;align-items:center;gap:12px;text-align:left;width:100%;
+  background:var(--sheet);border:1px solid var(--rule);border-radius:2px;
+  padding:12px 14px;cursor:pointer;font-family:var(--body);font-size:14.5px;color:var(--ink2);
+  transition:.12s;
+}
+.scale button:hover{border-color:var(--sig);color:var(--ink)}
+.scale button b{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  border:1px solid var(--rule);border-radius:2px;width:22px;height:22px;
+  display:grid;place-items:center;flex:none;font-weight:400;
+}
+.scale button:hover b{border-color:var(--sig);color:var(--sig)}
+.navrow{display:flex;gap:10px;align-items:center}
+.hint{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;margin-left:auto}
+
+.bar{margin:0 0 15px}
+.bar .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;margin:0 0 5px;gap:12px}
+.bar .lab .nm b{color:var(--ink)}
+.bar .lab .rd{font-family:var(--mono);font-size:11.5px;white-space:nowrap;color:var(--muted)}
+.bar .lab .rd .band{font-weight:500}
+.band-good{color:var(--good)} .band-warn{color:var(--warn)} .band-bad{color:var(--bad)}
+.track{height:9px;background:var(--track);border-radius:1px;overflow:hidden}
+.track i{display:block;height:100%;transition:width .5s;border-radius:1px}
+
+.note{border-left:2px solid var(--sig);padding:2px 0 2px 16px;margin:18px 0;font-size:14.5px;color:var(--ink2)}
+.care{border-left:3px solid var(--careline);background:var(--care);color:var(--careink);padding:16px 18px;border-radius:2px;margin:22px 0;font-size:14.5px}
+.care b{font-family:var(--display);display:block;margin-bottom:5px;font-size:15px}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:400}
+td.num{font-family:var(--mono);text-align:right}
+
+svg{max-width:100%;height:auto;display:block;margin:6px auto 4px}
+.cap{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-align:center;letter-spacing:.05em;margin:0 0 6px}
+
+details{border-top:1px solid var(--rule);padding:14px 0;margin-top:26px}
+summary{cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+summary::-webkit-details-marker{display:none}
+summary:before{content:"+ ";color:var(--sig)}
+details[open] summary:before{content:"– "}
+details .body{padding-top:14px;font-size:13.5px;color:var(--ink2)}
+.ref{font-size:12.5px;color:var(--muted);line-height:1.55}
+
+.locked{color:var(--muted);font-size:14.5px;font-style:italic}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+.chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  border:1px solid var(--rule);border-radius:2px;padding:5px 9px;color:var(--muted)}
+.chip.done{border-color:var(--good);color:var(--good)}
+
+footer{border-top:1px solid var(--rule);margin-top:50px;padding-top:20px;font-size:12px;color:var(--muted)}
+.legal{font-size:11.5px;line-height:1.6;color:var(--muted)}
+.legal b{color:var(--ink2);font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:400}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="toprow">
+    <div>
+      <p class="kicker">Series V</p>
+      <h1>Perseverance, Recovery &amp; the Cost of Enduring</h1>
+    </div>
+    <button class="themebtn" id="theme" aria-label="Toggle colour theme">Theme: Auto</button>
+  </div>
+  <p class="sub">Four self-report instruments. Three measure what perseverance and resilience are usually taken to mean. The fourth measures what they cost you — the part the workplace version leaves out.</p>
+  <nav role="tablist">
+    <button role="tab" data-tab="ppi" aria-selected="true">PPI · Perseverance</button>
+    <button role="tab" data-tab="rcp" aria-selected="false">RCP · Recovery</button>
+    <button role="tab" data-tab="hdi" aria-selected="false">HDI · Hardiness</button>
+    <button role="tab" data-tab="pci" aria-selected="false">PCI · Cost</button>
+    <button role="tab" data-tab="syn" aria-selected="false">Synthesis</button>
+  </nav>
+</header>
+
+<div class="panel on" id="p-ppi"></div>
+<div class="panel" id="p-rcp"></div>
+<div class="panel" id="p-hdi"></div>
+<div class="panel" id="p-pci"></div>
+<div class="panel" id="p-syn"></div>
+
+<footer>
+  <p class="legal">
+    <b>Legal notice &amp; disclaimer</b>
+    These instruments are provided for educational, informational, and self-reflective purposes only. They are <b style="display:inline;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:11.5px">not</b> diagnostic tools and are not a substitute for professional evaluation, diagnosis, or treatment by a qualified physician, psychologist, psychiatrist, or other licensed health provider. They have not been clinically validated or normed on any population; the reliability figures shown are the output of statistical simulations describing the <i>structure</i> of each instrument, not evidence of its performance on real respondents. No score, band, or interpretation generated here constitutes medical or psychological advice, and nothing here establishes a clinician–patient relationship. Never disregard professional advice or delay seeking it because of something you read in this material. If you are in crisis or may harm yourself or others, contact your local emergency services or, in the US, call or text 988 (Suicide &amp; Crisis Lifeline). Items are original works written independently; the published constructs they are modelled on are cited, with their authors, in each instrument's psychometric appendix, and no affiliation with or endorsement by those authors is claimed or implied. Provided "as is," without warranty of any kind. You use these instruments at your own discretion and risk, and the author accepts no liability for any decision or outcome arising from their use. © 2026. All rights reserved.
+  </p>
+</footer>
+</div>
+
+<script>
+/* ============================================================
+   ITEM BANK — 19 subscales, 6 items each, 3 forward / 3 reverse
+   r:1 = reverse-keyed (scored 7 − raw at results time)
+   ============================================================ */
+const BANK = {
+
+ppi: {
+  name:"Perseverance Profile Inventory", code:"PPI", sig:"var(--d1)",
+  lede:"Duckworth's two-facet grit construct, plus the achievement-striving facet from the original 17-item version. Facet-scored only — this instrument deliberately does not compute a total.",
+  frame:"Rate how true each statement is of you, generally — across work and life, not just this week.",
+  subs:{
+    PE:{label:"Perseverance of Effort", desc:"Sustained effort through difficulty, tedium and setback."},
+    CI:{label:"Consistency of Interest", desc:"Staying pointed at the same higher-order goal over years."},
+    AS:{label:"Achievement Striving", desc:"Holding to demanding internal standards regardless of what was asked."}
+  },
+  items:[
+    {s:"PE",t:"I keep working at something long after the difficulty would have stopped most people."},
+    {s:"PE",t:"Setbacks tend to make me more determined rather than less."},
+    {s:"PE",t:"I finish what I start, even after the work stops being interesting."},
+    {s:"PE",r:1,t:"When a project turns tedious, I tend to let it quietly drop."},
+    {s:"PE",r:1,t:"A serious obstacle usually drains my motivation for the whole effort."},
+    {s:"PE",r:1,t:"I lose steam once the early momentum wears off."},
+    {s:"CI",t:"I have pursued the same core ambition for many years."},
+    {s:"CI",t:"What I care about now is essentially what I cared about several years ago."},
+    {s:"CI",t:"I stay with one direction long enough to actually get somewhere with it."},
+    {s:"CI",r:1,t:"New ideas regularly pull my attention away from what I was already working on."},
+    {s:"CI",r:1,t:"I set a goal and then later decide to chase a different one instead."},
+    {s:"CI",r:1,t:"My interests shift substantially from year to year."},
+    {s:"AS",t:"I hold myself to standards most people would consider demanding."},
+    {s:"AS",t:"Doing something merely adequately bothers me."},
+    {s:"AS",t:"I measure myself against what I could have done, not against what was asked."},
+    {s:"AS",r:1,t:"I'm content to meet expectations rather than exceed them."},
+    {s:"AS",r:1,t:"I rarely push past the point where the work is good enough."},
+    {s:"AS",r:1,t:"Being average at something doesn't trouble me."}
+  ]
+},
+
+rcp: {
+  name:"Recovery Capacity Profile", code:"RCP", sig:"var(--d2)",
+  lede:"The resilience side. Five dimensions adapted from the CD-RISC factor structure, plus the bounce-back construct the Brief Resilience Scale isolates as resilience in its most literal sense.",
+  frame:"Rate how true each statement is of you when circumstances are genuinely hard — not on an ordinary day.",
+  subs:{
+    BB:{label:"Bounce-Back", desc:"Speed of return to baseline after a stressor ends."},
+    CT:{label:"Competence & Tenacity", desc:"Confidence, built on evidence, that you can handle what comes."},
+    TN:{label:"Tolerance of Negative Affect", desc:"Capacity to function while feeling badly."},
+    AC:{label:"Acceptance of Change", desc:"Adjusting to altered conditions rather than defending the old plan."},
+    SC:{label:"Sense of Control", desc:"Belief that your actions move your outcomes."},
+    SA:{label:"Support Access", desc:"Whether help exists and whether you actually reach for it."}
+  },
+  items:[
+    {s:"BB",t:"After something hard, I return to normal functioning fairly quickly."},
+    {s:"BB",t:"I recover from stressful events without a long tail."},
+    {s:"BB",t:"Difficult periods don't keep hold of me once they're over."},
+    {s:"BB",r:1,t:"It takes me a long time to get back to myself after a setback."},
+    {s:"BB",r:1,t:"Stressful events linger in me well after they've ended."},
+    {s:"BB",r:1,t:"I struggle to get through hard periods without coming apart."},
+    {s:"CT",t:"Under pressure I can be counted on to handle what's in front of me."},
+    {s:"CT",t:"I've come through enough hard things to trust that I can handle more."},
+    {s:"CT",t:"When conditions get difficult, I'm one of the people who stays functional."},
+    {s:"CT",r:1,t:"I doubt my ability to cope when circumstances get genuinely hard."},
+    {s:"CT",r:1,t:"Pressure exposes how little I actually have to draw on."},
+    {s:"CT",r:1,t:"I question whether I could survive another hard stretch."},
+    {s:"TN",t:"I can sit with painful feelings without needing them to stop immediately."},
+    {s:"TN",t:"Being upset doesn't prevent me from thinking clearly."},
+    {s:"TN",t:"I can act well even while feeling badly."},
+    {s:"TN",r:1,t:"When distress rises I have to do something to make it stop."},
+    {s:"TN",r:1,t:"Strong unpleasant emotions shut down my ability to function."},
+    {s:"TN",r:1,t:"I need my mood to settle before I can do anything useful."},
+    {s:"AC",t:"When circumstances change, I adjust and work with what is now true."},
+    {s:"AC",t:"I can revise a plan without treating the revision as a loss."},
+    {s:"AC",t:"Unexpected change tends to open options for me rather than close them."},
+    {s:"AC",r:1,t:"I resist changes to how things were supposed to go."},
+    {s:"AC",r:1,t:"I keep operating on the old plan after the conditions for it are gone."},
+    {s:"AC",r:1,t:"Change unsettles me for longer than it should."},
+    {s:"SC",t:"What happens to me is substantially a result of what I do."},
+    {s:"SC",t:"I can usually find some point of leverage in a bad situation."},
+    {s:"SC",t:"I have real influence over how my circumstances go."},
+    {s:"SC",r:1,t:"Outcomes in my life feel largely determined by forces outside me."},
+    {s:"SC",r:1,t:"Whatever I do, the result tends to come out the same."},
+    {s:"SC",r:1,t:"I have little say in what happens to me."},
+    {s:"SA",t:"When I need help, I know who to go to and I go."},
+    {s:"SA",t:"There are people I can be honest with about how bad it is."},
+    {s:"SA",t:"I have relationships that hold up under strain."},
+    {s:"SA",r:1,t:"I handle hard things alone because there isn't anyone to bring in."},
+    {s:"SA",r:1,t:"I minimize how bad things are when talking to people close to me."},
+    {s:"SA",r:1,t:"Asking for help costs me more than just doing it myself."}
+  ]
+},
+
+hdi: {
+  name:"Hardiness Disposition Index", code:"HDI", sig:"var(--d3)",
+  lede:"Kobasa's hardiness construct as operationalized in the Dispositional Resilience Scale: commitment, control, challenge. This is an appraisal style — how you read a stressor — rather than a recovery capacity.",
+  frame:"Rate how true each statement is of you as a general orientation.",
+  subs:{
+    CM:{label:"Commitment", desc:"Full involvement in your own life; finding what you do worth doing."},
+    CO:{label:"Control", desc:"Moving on the part of a problem that is yours to move."},
+    CH:{label:"Challenge", desc:"Reading disruption as opportunity rather than threat."}
+  },
+  items:[
+    {s:"CM",t:"What I spend my days doing feels worth doing."},
+    {s:"CM",t:"I'm fully involved in my own life rather than watching it happen."},
+    {s:"CM",t:"My work connects to something I actually care about."},
+    {s:"CM",r:1,t:"Most of what fills my time feels like it doesn't matter."},
+    {s:"CM",r:1,t:"I go through my days without much sense of purpose in them."},
+    {s:"CM",r:1,t:"I feel detached from the things I'm supposed to be invested in."},
+    {s:"CO",t:"When a situation goes wrong, my first move is to look for what I can affect."},
+    {s:"CO",t:"Under stress I focus on the part of the problem that's mine to move."},
+    {s:"CO",t:"I'd rather act imperfectly than wait for a situation to resolve itself."},
+    {s:"CO",r:1,t:"When things go badly I mostly wait to see how they land."},
+    {s:"CO",r:1,t:"In a crisis I feel like a passenger."},
+    {s:"CO",r:1,t:"I stop trying once a situation appears to be out of my hands."},
+    {s:"CH",t:"I'd rather have work that stretches me than work that's secure and dull."},
+    {s:"CH",t:"Disruption is where the interesting things tend to happen."},
+    {s:"CH",t:"I look for the growth in a difficult situation while I'm still inside it."},
+    {s:"CH",r:1,t:"I want my circumstances to stay predictable."},
+    {s:"CH",r:1,t:"New and uncertain situations feel more like threat than opportunity."},
+    {s:"CH",r:1,t:"I prefer knowing exactly what's coming to the possibility of something better."}
+  ]
+},
+
+pci: {
+  name:"Perseverance Cost Index", code:"PCI", sig:"var(--d4)",
+  lede:"The part the performance review leaves out. Grit is measured as a virtue; this measures its price — nonproductive persistence, the inability to disengage from a closed goal, high-effort coping against barriers effort can't move, and what that runs down in you.",
+  frame:"Anchor these to your working life — your job, your career, the goals you're held to. Rate how true each is of you.",
+  subs:{
+    NP:{label:"Nonproductive Persistence", desc:"Continuing to invest after the evidence has turned."},
+    DD:{label:"Disengagement Difficulty", desc:"Inability to withdraw commitment from a goal that has closed."},
+    RC:{label:"Reengagement Capacity", desc:"Ability to build a new goal after losing one. Protective."},
+    HE:{label:"High-Effort Coping", desc:"Answering structural barriers with personal effort alone."},
+    OC:{label:"Overcommitment", desc:"Giving beyond what the role requires, without an off switch."},
+    RD:{label:"Recognition Deficit", desc:"The gap between what you put in and what comes back."},
+    DL:{label:"Depletion Load", desc:"What the sustained effort has run down. A cost signal, not a diagnosis."}
+  },
+  items:[
+    {s:"NP",t:"I keep investing in efforts that have stopped producing anything."},
+    {s:"NP",t:"I've stayed with approaches long past the point where the evidence turned."},
+    {s:"NP",t:"When something isn't working, my instinct is to do more of it rather than something else."},
+    {s:"NP",r:1,t:"I notice early when an approach has stopped paying, and I change it."},
+    {s:"NP",r:1,t:"I'm willing to write off effort already spent when the path is dead."},
+    {s:"NP",r:1,t:"I regularly stop and ask whether persisting here is actually rational."},
+    {s:"DD",t:"When a goal becomes unreachable, I still can't stop pursuing it."},
+    {s:"DD",t:"I stay committed to things I've been told clearly are not going to happen."},
+    {s:"DD",t:"Letting go of a goal feels like a verdict on me rather than a decision."},
+    {s:"DD",r:1,t:"When something is genuinely closed to me, I can release it."},
+    {s:"DD",r:1,t:"I can withdraw effort from a goal without it costing me my sense of self."},
+    {s:"DD",r:1,t:"I find it manageable to accept that a particular door is shut."},
+    {s:"RC",t:"After a goal falls through, I can find another one that genuinely matters to me."},
+    {s:"RC",t:"When one path closes, I redirect toward something else with real commitment."},
+    {s:"RC",t:"I can build new ambitions after losing an old one."},
+    {s:"RC",r:1,t:"When a goal ends, I have nothing meaningful left to move toward."},
+    {s:"RC",r:1,t:"Losing one direction leaves me without any."},
+    {s:"RC",r:1,t:"I struggle to care about a replacement goal."},
+    {s:"HE",t:"When the system is stacked against me, my answer is to work harder."},
+    {s:"HE",t:"I've believed that enough effort could overcome obstacles that weren't really about effort."},
+    {s:"HE",t:"I take barriers on alone through sheer determination rather than naming them."},
+    {s:"HE",r:1,t:"I recognize when an obstacle is structural rather than a matter of my own effort."},
+    {s:"HE",r:1,t:"I'd rather name an unfair condition than out-work it."},
+    {s:"HE",r:1,t:"I stop pushing when the barrier isn't one that effort can move."},
+    {s:"OC",t:"I can't stop thinking about work once I've left it."},
+    {s:"OC",t:"I take on more than the role requires and can't seem to stop."},
+    {s:"OC",t:"People close to me say I sacrifice too much for the job."},
+    {s:"OC",r:1,t:"I can set work down at the end of the day."},
+    {s:"OC",r:1,t:"I keep what I give to work proportionate to what the role actually is."},
+    {s:"OC",r:1,t:"I protect time that has nothing to do with my work in it."},
+    {s:"RD",t:"The effort I put in isn't matched by what I get back."},
+    {s:"RD",t:"My contributions get absorbed without being acknowledged."},
+    {s:"RD",t:"People with less invested than me are advanced ahead of me."},
+    {s:"RD",r:1,t:"The recognition I receive is proportionate to what I put in."},
+    {s:"RD",r:1,t:"My effort is visible to the people who decide things."},
+    {s:"RD",r:1,t:"I'm rewarded in a way that reflects what I actually contribute."},
+    {s:"DL",t:"I'm running on reserves I don't actually have."},
+    {s:"DL",t:"Things that used to give me energy don't anymore."},
+    {s:"DL",t:"I keep functioning, but there's nothing left underneath it."},
+    {s:"DL",r:1,t:"I have genuine energy for things outside of what I'm obligated to do."},
+    {s:"DL",r:1,t:"I finish most weeks with something still in the tank."},
+    {s:"DL",r:1,t:"I still get real satisfaction from things I enjoy."}
+  ]
+}
+};
+
+const ANCHORS=[
+ [1,"Not at all like me"],[2,"Mostly unlike me"],[3,"Slightly unlike me"],
+ [4,"Slightly like me"],[5,"Mostly like me"],[6,"Very much like me"]
+];
+
+/* simulated internal consistency — N=1,500 synthetic respondents × 150 runs,
+   single-factor model per subscale, forward loadings ~U(.58,.82),
+   reverse items attenuated .12 for method effect, 3-forward/3-reverse keying.
+   Values are the mean simulated alpha for each subscale. */
+const ALPHA={
+ PE:.781,CI:.782,AS:.778,
+ BB:.777,CT:.782,TN:.778,AC:.780,SC:.780,SA:.783,
+ CM:.782,CO:.782,CH:.780,
+ NP:.776,DD:.780,RC:.781,HE:.785,OC:.781,RD:.782,DL:.784
+};
+
+/* per-subscale accent colour, cycled through the dimension palette */
+const DPAL=["var(--d1)","var(--d2)","var(--d3)","var(--d4)","var(--d5)","var(--d6)","var(--d7)"];
+
+/* ---------- interleave: round-robin across subscales ---------- */
+function interleave(items){
+  const buckets={};
+  items.forEach(it=>{ (buckets[it.s]=buckets[it.s]||[]).push(it); });
+  const keys=Object.keys(buckets), out=[];
+  let i=0;
+  while(out.length<items.length){
+    keys.forEach(k=>{ if(buckets[k][i]) out.push(buckets[k][i]); });
+    i++;
+  }
+  return out;
+}
+
+const STATE={};
+Object.keys(BANK).forEach(k=>{
+  STATE[k]={phase:"start", idx:0, order:interleave(BANK[k].items), ans:[], scores:null};
+});
+
+/* ---------- scoring ---------- */
+function score(key){
+  const st=STATE[key], sums={}, counts={};
+  st.order.forEach((it,i)=>{
+    const raw=st.ans[i];
+    const v=it.r?(7-raw):raw;
+    sums[it.s]=(sums[it.s]||0)+v; counts[it.s]=(counts[it.s]||0)+1;
+  });
+  const out={};
+  Object.keys(sums).forEach(s=>{ out[s]=sums[s]/counts[s]; });
+  st.scores=out;
+  return out;
+}
+function band(v){ return v<3.0?"low" : v<=4.5?"mod" : "high"; }
+function bandLabel(v){ return v<3.0?"Low" : v<=4.5?"Moderate" : "High"; }
+
+/* ---------- rendering ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function setSig(key){
+  const p=document.getElementById("p-"+key);
+  if(BANK[key]) p.style.setProperty("--sig", BANK[key].sig);
+}
+
+function render(key){
+  const el=document.getElementById("p-"+key);
+  if(key==="syn"){ el.style.setProperty("--sig","var(--d6)"); el.innerHTML=renderSyn(); wireSyn(); return; }
+  setSig(key);
+  const inst=BANK[key], st=STATE[key];
+  if(st.phase==="start")      el.innerHTML=renderStart(key,inst);
+  else if(st.phase==="quiz")  el.innerHTML=renderQuiz(key,inst,st);
+  else                        el.innerHTML=renderResults(key,inst,st);
+  wire(key);
+}
+
+function renderStart(key,inst){
+  const n=inst.items.length, k=Object.keys(inst.subs).length;
+  return `
+  <h2>${inst.code} · <em>${inst.name}</em></h2>
+  <p class="meta">${n} items · ${k} subscales · ~${Math.ceil(n/8)} minutes</p>
+  <p class="lede">${inst.lede}</p>
+  <div class="card tight">
+    <p style="margin:0 0 8px"><b>${inst.frame}</b></p>
+    <p style="margin:0;font-size:13.5px;color:var(--muted)">Six options, no neutral midpoint — you have to lean. Subscale labels stay hidden while you answer. Some items are reverse-keyed; you won't be able to tell which. Keyboard: <b>1</b>–<b>6</b> to answer, <b>Backspace</b> to go back.</p>
+  </div>
+  <button class="go" data-begin>Begin</button>`;
+}
+
+function renderQuiz(key,inst,st){
+  const it=st.order[st.idx], n=st.order.length;
+  return `
+  <h2>${inst.code}</h2>
+  <div class="prog"><i style="width:${(st.idx/n*100).toFixed(1)}%"></i></div>
+  <p class="count">${String(st.idx+1).padStart(2,"0")} / ${n}</p>
+  <p class="stem">${esc(it.t)}</p>
+  <div class="scale">
+    ${ANCHORS.map(([v,l])=>`<button data-v="${v}"><b>${v}</b>${l}</button>`).join("")}
+  </div>
+  <div class="navrow">
+    <button class="ghost" data-back ${st.idx===0?'disabled style="opacity:.4;cursor:default"':""}>Back</button>
+    <span class="hint">1–6 &nbsp;·&nbsp; ⌫ back</span>
+  </div>`;
+}
+
+/* ---- signature visuals (theme-aware via var()) ---- */
+function hexRadar(labels,vals,cols){
+  const cx=170,cy=155,R=105,n=labels.length;
+  const pt=(i,r)=>{const a=-Math.PI/2+i*2*Math.PI/n;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];};
+  let rings="";
+  [.25,.5,.75,1].forEach(f=>{
+    const p=labels.map((_,i)=>pt(i,R*f).map(x=>x.toFixed(1)).join(",")).join(" ");
+    rings+=`<polygon points="${p}" fill="none" stroke="var(--rule)" stroke-width="1"/>`;
+  });
+  let spokes=labels.map((_,i)=>{const[a,b]=pt(i,R);return `<line x1="${cx}" y1="${cy}" x2="${a.toFixed(1)}" y2="${b.toFixed(1)}" stroke="var(--rule)" stroke-width="1"/>`;}).join("");
+  const poly=vals.map((v,i)=>pt(i,R*((v-1)/5)).map(x=>x.toFixed(1)).join(",")).join(" ");
+  const dots=vals.map((v,i)=>{const[a,b]=pt(i,R*((v-1)/5));return `<circle cx="${a.toFixed(1)}" cy="${b.toFixed(1)}" r="3.6" fill="${cols[i%cols.length]}"/>`;}).join("");
+  const txt=labels.map((l,i)=>{
+    const[a,b]=pt(i,R+22);
+    const anchor=a<cx-8?"end":a>cx+8?"start":"middle";
+    return `<text x="${a.toFixed(1)}" y="${(b+4).toFixed(1)}" text-anchor="${anchor}" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="var(--muted)">${l}</text>`;
+  }).join("");
+  return `<svg viewBox="0 0 340 320" width="340">${rings}${spokes}
+    <polygon points="${poly}" fill="var(--sig)" fill-opacity="0.15" stroke="var(--sig)" stroke-width="1.6"/>
+    ${dots}${txt}</svg>`;
+}
+
+function quadPlot(x,y){
+  const W=340,H=300,m=46,S=W-m*2,T=H-m*2;
+  const px=m+((x-1)/5)*S, py=m+T-((y-1)/5)*T;
+  const midx=m+S/2, midy=m+T/2;
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}">
+   <rect x="${m}" y="${m}" width="${S}" height="${T}" fill="var(--sheet)" stroke="var(--rule)"/>
+   <rect x="${midx}" y="${m}" width="${S/2}" height="${T/2}" fill="var(--good)" fill-opacity="0.12"/>
+   <rect x="${midx}" y="${midy}" width="${S/2}" height="${T/2}" fill="var(--bad)" fill-opacity="0.15"/>
+   <line x1="${midx}" y1="${m}" x2="${midx}" y2="${m+T}" stroke="var(--rule)" stroke-dasharray="3 3"/>
+   <line x1="${m}" y1="${midy}" x2="${m+S}" y2="${midy}" stroke="var(--rule)" stroke-dasharray="3 3"/>
+   <text x="${m+S/4}" y="${m+16}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--muted)">UNDERUSED</text>
+   <text x="${midx+S/4}" y="${m+16}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--good)">SUSTAINABLE DRIVE</text>
+   <text x="${m+S/4}" y="${m+T-8}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--muted)">DISENGAGED</text>
+   <text x="${midx+S/4}" y="${m+T-8}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--bad)">OVEREXTENSION</text>
+   <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="7" fill="var(--sig)" stroke="var(--paper)" stroke-width="2.5"/>
+   <text x="${W/2}" y="${H-10}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="var(--muted)">LOAD  →</text>
+   <text x="14" y="${H/2}" text-anchor="middle" transform="rotate(-90,14,${H/2})" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="var(--muted)">RETURN  →</text>
+  </svg>`;
+}
+
+function bars(subs,sc){
+  const keys=Object.keys(subs);
+  return keys.map((k,idx)=>{
+    const v=sc[k], pct=((v-1)/5*100).toFixed(1), col=DPAL[idx%DPAL.length];
+    const bl=bandLabel(v), bcls=v<3?"band-warn":v<=4.5?"band-warn":"band-good";
+    return `<div class="bar">
+      <div class="lab"><span class="nm"><b>${subs[k].label}</b> — ${subs[k].desc}</span><span class="rd">${v.toFixed(2)} · <span class="band ${bcls}">${bl}</span></span></div>
+      <div class="track"><i style="width:${pct}%;background:${col}"></i></div>
+    </div>`;
+  }).join("");
+}
+
+function appendix(inst,refs){
+  const rows=Object.keys(inst.subs).map(k=>
+    `<tr><td>${inst.subs[k].label}</td><td class="num">6</td><td class="num">3</td><td class="num">${(ALPHA[k]||.78).toFixed(3)}</td></tr>`).join("");
+  return `<details><summary>Psychometric appendix</summary><div class="body">
+   <table><thead><tr><th>Subscale</th><th style="text-align:right">Items</th><th style="text-align:right">Reverse</th><th style="text-align:right">α (sim.)</th></tr></thead><tbody>${rows}</tbody></table>
+   <p style="font-size:12.5px;color:var(--muted)">Alpha values are <b>simulated</b>, not empirical: N = 1,500 synthetic respondents across 150 runs, single-factor model per subscale, forward loadings drawn ~U(0.58, 0.82), reverse-keyed items modelled with a 0.12 attenuation for the method effect, and reverse items rescored before α is computed. Balanced 3-forward / 3-reverse keying is carried on every subscale: all-agree and all-disagree responding both resolve to the 3.50 scale midpoint, neutralising acquiescence. No subscale falls below 0.70 (observed range in simulation ≈ 0.78). These figures describe the <i>structure</i> of the instrument, not its performance on real respondents.</p>
+   <p class="ref">${refs}</p>
+  </div></details>`;
+}
+
+function renderResults(key,inst,st){
+  const sc=st.scores, S=inst.subs;
+  let vis="", note="", care="";
+
+  if(key==="ppi"){
+    vis=`<div class="cap">Facet profile — no composite is computed</div>`;
+    const gap=Math.abs(sc.PE-sc.CI);
+    note=`<div class="note"><b>The gap that matters:</b> your Perseverance of Effort reads ${sc.PE.toFixed(2)}, your Consistency of Interest ${sc.CI.toFixed(2)} — a spread of ${gap.toFixed(2)}. ${
+      gap>=1.0 ? (sc.PE>sc.CI
+        ? "You work hard at whatever is in front of you, but what's in front of you keeps changing. A single 'grit score' would average these into something that describes neither."
+        : "You hold direction over long horizons but don't necessarily grind through the daily difficulty. Again, averaging these would hide the actual pattern.")
+      : "The two facets track closely, which is the case where a composite would at least be coherent — though the meta-analytic evidence still argues against reporting one."}</div>`;
+  }
+  if(key==="rcp"){
+    const ks=Object.keys(S);
+    vis=hexRadar(ks.map(k=>S[k].label.split(" ")[0].replace("&","")), ks.map(k=>sc[k]), DPAL)
+      + `<div class="cap">Recovery capacity across six dimensions</div>`;
+    const lows=ks.filter(k=>sc[k]<3);
+    note=lows.length
+      ? `<div class="note"><b>Thinnest dimension${lows.length>1?"s":""}:</b> ${lows.map(k=>S[k].label).join(", ")}. Resilience research treats these as partly separable resources rather than one trait, so a low dimension inside an otherwise strong profile is a specific gap, not a global verdict.</div>`
+      : `<div class="note">No dimension reads Low. Worth noting that the CD-RISC's resource-based framing and the Brief Resilience Scale's bounce-back framing measure related but distinct things — a strong resource profile does not guarantee fast recovery, which is what Bounce-Back is isolating here.</div>`;
+  }
+  if(key==="hdi"){
+    const ks=Object.keys(S);
+    vis=hexRadar(ks.map(k=>S[k].label), ks.map(k=>sc[k]), DPAL)
+      + `<div class="cap">Kobasa's three C's</div>`;
+    const lo=ks.filter(k=>sc[k]<3);
+    note=`<div class="note">Hardiness is an <i>appraisal</i> construct — it describes how you read a stressor before you cope with it. ${
+      lo.length? `Your lower reading on ${lo.map(k=>S[k].label).join(" and ")} is the appraisal step where the stressor gets categorized, upstream of anything you do about it.`
+      : "All three read at or above Moderate, the configuration the hardiness literature associates with staying healthy under sustained stress."}</div>`;
+  }
+  if(key==="pci"){
+    const load=(sc.NP+sc.DD+sc.HE+sc.OC)/4;
+    const ret=(sc.RC+(7-sc.RD))/2;
+    vis=quadPlot(load,ret)+`<div class="cap">Load ${load.toFixed(2)} · Return ${ret.toFixed(2)}</div>`;
+    const quad = load>=3.5 ? (ret>=3.5?"Sustainable Drive":"Overextension") : (ret>=3.5?"Underused":"Disengaged");
+    note=`<div class="note"><b>${quad}.</b> ${
+      quad==="Overextension" ? "High load, low return — you are spending heavily into a system that isn't reciprocating. This is the configuration the effort–reward imbalance literature associates with the worst health outcomes, and it is precisely what a performance review scoring you on 'tenacity' would record as a strength."
+      : quad==="Sustainable Drive" ? "High load, but it's coming back to you. Effort at this level is survivable when it's reciprocated; the thing to watch is whether the return side holds."
+      : quad==="Underused" ? "Low load, adequate return. Whatever capacity you have isn't currently being called on."
+      : "Low load and low return. Worth distinguishing between a deliberate withdrawal and a depleted one — check the Depletion reading."}</div>`;
+
+    if(sc.DL>=4.5 && (sc.DD>=4.5||sc.NP>=4.5)){
+      care=`<div class="care"><b>Worth naming directly</b>
+      Your Depletion reading is high alongside a high reading on ${sc.DD>=4.5?"Disengagement Difficulty":"Nonproductive Persistence"}. That specific combination is the one the goal-adjustment literature flags: continued pursuit of a goal that has closed is described as a possible spiral into depression, and difficulty adjusting to unattainable goals is treated as a vulnerability marker rather than a character strength.<br><br>
+      This instrument can't tell you anything diagnostic, and a high reading here is not a finding about you. But if the depletion is something you're living in rather than something you're studying, that's a reasonable thing to take to a person rather than a questionnaire.</div>`;
+    }
+  }
+
+  const body=bars(S,sc);
+  const REFS={
+    ppi:"Duckworth, A. L., Peterson, C., Matthews, M. D., &amp; Kelly, D. R. (2007). <i>JPSP</i> 92, 1087–1101. · Duckworth, A. L., &amp; Quinn, P. D. (2009). Development and validation of the Short Grit Scale. <i>Journal of Personality Assessment</i> 91, 166–174. · Credé, M., Tynan, M. C., &amp; Harms, P. D. (2017). Much ado about grit. <i>JPSP</i> 113, 492–511.",
+    rcp:"Connor, K. M., &amp; Davidson, J. R. T. (2003). Development of a new resilience scale (CD-RISC). <i>Depression and Anxiety</i> 18, 76–82. · Smith, B. W., et al. (2008). The Brief Resilience Scale. <i>International Journal of Behavioral Medicine</i> 15, 194–200.",
+    hdi:"Kobasa, S. C. (1979). Stressful life events, personality, and health. <i>JPSP</i> 37, 1–11. · Bartone, P. T. (1995, 2013). Dispositional Resilience Scale (DRS-15). · Maddi, S. R., &amp; Kobasa, S. C. (1984). <i>The Hardy Executive</i>.",
+    pci:"Wrosch, C., Scheier, M. F., Miller, G. E., Schulz, R., &amp; Carver, C. S. (2003). Goal disengagement and reengagement. · Miller, G. E., &amp; Wrosch, C. (2007). · James, S. A. (1994). John Henryism and the health of African-Americans. <i>Culture, Medicine and Psychiatry</i> 18, 163–182. · Siegrist, J. (1996). Effort–reward imbalance and overcommitment. · Pyszczynski, T., &amp; Greenberg, J. (1992). Self-regulatory perseveration theory."
+  };
+
+  return `
+  <h2>${inst.code} · <em>Results</em></h2>
+  <p class="meta">${inst.items.length} items · ${Object.keys(S).length} subscales · reverse-keyed items rescored</p>
+  ${vis}
+  ${body}
+  ${note}
+  ${care}
+  <div class="navrow" style="margin-top:24px">
+    <button class="ghost" data-retake>Retake</button>
+  </div>
+  ${appendix(inst,REFS[key])}`;
+}
+
+/* ---------- synthesis ---------- */
+function renderSyn(){
+  const done=Object.keys(BANK).filter(k=>STATE[k].scores);
+  const chips=Object.keys(BANK).map(k=>
+    `<span class="chip ${STATE[k].scores?"done":""}">${BANK[k].code}${STATE[k].scores?" ✓":""}</span>`).join("");
+  let cards="";
+  const S=k=>STATE[k].scores;
+
+  if(S("ppi")&&S("pci")){
+    const pe=S("ppi").PE, dd=S("pci").DD, rc=S("pci").RC;
+    cards+=`<div class="card"><h3 style="margin-top:0">Perseverance × Disengagement</h3>
+    <p style="margin:0">Perseverance of Effort ${pe.toFixed(2)} · Disengagement Difficulty ${dd.toFixed(2)} · Reengagement Capacity ${rc.toFixed(2)}.</p>
+    <p style="margin:10px 0 0;color:var(--ink2)">${
+      pe>=4.5&&dd>=4.5&&rc<3.5 ? "This is the costly configuration: high effort, poor ability to release a closed goal, and little capacity to build a new one. Effort has nowhere to go and no exit. This is the profile the research on nonproductive persistence describes — trying again toward either unremitting failure or a costly success that alternative courses of action could easily have surpassed."
+      : pe>=4.5&&rc>=4.5 ? "High effort paired with strong reengagement capacity. This is what adaptive perseverance looks like: you push, but you can also redirect, which means the effort compounds rather than sinks."
+      : dd>=4.5 ? "Disengagement difficulty is the load-bearing reading here, independent of how hard you work. The capacity to let go of an unreachable goal is a separate skill from the capacity to pursue a reachable one."
+      : "No high-cost configuration across these facets. Effort and release are reasonably balanced."}</p></div>`;
+  }
+  if(S("rcp")&&S("pci")){
+    const bb=S("rcp").BB, sa=S("rcp").SA, he=S("pci").HE, rd=S("pci").RD;
+    cards+=`<div class="card"><h3 style="margin-top:0">Recovery × Structural Load</h3>
+    <p style="margin:0">Bounce-Back ${bb.toFixed(2)} · Support Access ${sa.toFixed(2)} · High-Effort Coping ${he.toFixed(2)} · Recognition Deficit ${rd.toFixed(2)}.</p>
+    <p style="margin:10px 0 0;color:var(--ink2)">${
+      he>=4.5&&rd>=4.5 ? "High-effort coping against a system that isn't returning recognition. This is the John Henryism pattern precisely: coping with prolonged stress by expending high levels of effort, which accumulates physiological cost. The construct was developed to describe people out-working barriers that weren't about their effort in the first place — and the health cost lands hardest where the resources to actually clear the barrier are missing."
+      : he>=4.5&&sa<3 ? "High-effort coping with thin support access. Effort is substituting for resources that aren't there. That substitution has a documented cost."
+      : rd>=4.5 ? "The recognition gap is the standout reading. Effort–reward imbalance is a condition of the environment, not a deficit in you — worth separating from anything the instruments describe about your disposition."
+      : "No high structural-load pattern in this pairing."}</p></div>`;
+  }
+  if(S("hdi")&&S("pci")){
+    const co=S("hdi").CO, np=S("pci").NP;
+    cards+=`<div class="card"><h3 style="margin-top:0">Control Appraisal × Nonproductive Persistence</h3>
+    <p style="margin:0">Hardiness-Control ${co.toFixed(2)} · Nonproductive Persistence ${np.toFixed(2)}.</p>
+    <p style="margin:10px 0 0;color:var(--ink2)">${
+      co>=4.5&&np>=4.5 ? "A strong belief that you can move the situation, paired with a tendency to keep investing after the evidence has turned. The appraisal that usually protects you is here feeding the persistence — control beliefs are adaptive right up until the situation genuinely isn't controllable, at which point they're the thing keeping you in it."
+      : co>=4.5 ? "Strong control appraisal without the persistence cost. This is hardiness working as intended."
+      : "Control appraisal isn't currently driving persistence in either direction."}</p></div>`;
+  }
+  if(S("ppi")&&S("rcp")&&S("hdi")&&S("pci")){
+    const p=S("pci"), gritish=(S("ppi").PE+S("hdi").CM+S("hdi").CO)/3;
+    const cost=(p.DD+p.OC+p.DL+p.RD)/4;
+    cards+=`<div class="card"><h3 style="margin-top:0">The whole reading</h3>
+    <p style="margin:0 0 10px">Measured-at-work composite ${gritish.toFixed(2)} · Cost composite ${cost.toFixed(2)}.</p>
+    <p style="margin:0;color:var(--ink2)">${
+      gritish>=4.0&&cost>=4.0 ? "You would score well on every workplace metric in the left-hand column and be carrying most of the right-hand one. That divergence is the whole argument for building this fourth instrument: the performance review has language for the first number and none at all for the second."
+      : gritish>=4.0 ? "Strong on the measured traits without a matching cost load. That's the configuration the grit literature assumes is typical — and, per the goal-adjustment research, it is not."
+      : "The composites read close together. Neither the measured virtue nor its price is dominant in this profile."}</p></div>`;
+  }
+
+  return `
+  <h2>Synthesis</h2>
+  <p class="meta">Cross-instrument reading</p>
+  <p class="lede">The interesting findings live between instruments, not inside them. Complete two or more and this panel reads across.</p>
+  <div class="chips">${chips}</div>
+  ${done.length<2 ? `<p class="locked" style="margin-top:24px">Complete at least two instruments to unlock the cross-reading.</p>` : cards}
+  ${done.length>=2?`<details><summary>Why these pairings</summary><div class="body">
+   <p>Each card pairs a construct measured as a virtue against a construct measuring its cost. The design premise is that grit and resilience instruments are almost universally scored in one direction — more is better — and that the literature does not support that. Credé, Tynan and Harms' meta-analysis of 66,807 individuals found grit's higher-order structure unconfirmed and its correlation with conscientiousness so high (r ≈ .84) that the two may overlap completely, while the goal-adjustment literature finds that failure to disengage from unattainable goals predicts depressive symptoms.</p>
+   <p>The PCI is not a validated instrument and has no published parent. It is a construct assembled from four established literatures — nonproductive persistence, goal disengagement/reengagement, John Henryism, and effort–reward imbalance — and should be treated as a research object, not a measure.</p>
+  </div></details>`:""}`;
+}
+function wireSyn(){}
+
+/* ---------- events ---------- */
+function wire(key){
+  const el=document.getElementById("p-"+key), st=STATE[key];
+  const b=el.querySelector("[data-begin]");
+  if(b) b.onclick=()=>{ st.phase="quiz"; render(key); };
+  el.querySelectorAll(".scale button").forEach(btn=>{
+    btn.onclick=()=>answer(key,+btn.dataset.v);
+  });
+  const back=el.querySelector("[data-back]");
+  if(back&&!back.disabled) back.onclick=()=>{ st.idx=Math.max(0,st.idx-1); st.ans.pop(); render(key); };
+  const rt=el.querySelector("[data-retake]");
+  if(rt) rt.onclick=()=>{ STATE[key]={phase:"start",idx:0,order:interleave(BANK[key].items),ans:[],scores:null}; render(key); };
+}
+function answer(key,v){
+  const st=STATE[key];
+  st.ans[st.idx]=v; st.idx++;
+  if(st.idx>=st.order.length){ score(key); st.phase="done"; }
+  render(key);
+  if(st.phase==="done") render("syn");
+}
+document.addEventListener("keydown",e=>{
+  const key=document.querySelector('nav button[aria-selected="true"]').dataset.tab;
+  if(key==="syn"||!STATE[key]||STATE[key].phase!=="quiz") return;
+  if(e.key>="1"&&e.key<="6"){ e.preventDefault(); answer(key,+e.key); }
+  if(e.key==="Backspace"){ e.preventDefault(); const st=STATE[key];
+    if(st.idx>0){ st.idx--; st.ans.pop(); render(key); } }
+});
+document.querySelectorAll('nav button').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('nav button').forEach(b=>b.setAttribute("aria-selected","false"));
+    btn.setAttribute("aria-selected","true");
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove("on"));
+    document.getElementById("p-"+btn.dataset.tab).classList.add("on");
+    render(btn.dataset.tab);
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+});
+
+/* ---------- theme toggle (Auto → Light → Dark) ---------- */
+(function(){
+  const btn=document.getElementById("theme");
+  const modes=["Auto","Light","Dark"]; let i=0;
+  btn.onclick=()=>{
+    i=(i+1)%3; const m=modes[i];
+    if(m==="Auto") delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme=m.toLowerCase();
+    btn.textContent="Theme: "+m;
+  };
+})();
+
+["ppi","rcp","hdi","pci","syn"].forEach(render);
+</script>
+</body>
+</html>

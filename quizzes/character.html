@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Series VII · Character</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F0E6; --sheet:#FBF8F2; --sheet2:#F4EEE2; --ink:#2A2421; --muted:#6E625B; --faint:#998D80; --rule:#DED4C6; --rule2:#E9E1D3;
+  --vsp:#9A6A1F; --vsp-soft:#ECE0C7; --dti:#8C3B45; --dti-soft:#EBD6D8; --lti:#476653; --lti-soft:#D8E3D9; --hhp:#3F566B; --hhp-soft:#D6DEE6;
+  --ac:var(--vsp); --ac-soft:var(--vsp-soft); --shadow:0 1px 2px rgba(42,36,33,.05),0 10px 30px rgba(42,36,33,.06);
+  --display:"Fraunces",Georgia,"Times New Roman",serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1B1715; --sheet:#241F1C; --sheet2:#2B2521; --ink:#EDE5D9; --muted:#A99C91; --faint:#847568; --rule:#3B332E; --rule2:#322B26;
+  --vsp:#D9A75A; --vsp-soft:#3A3020; --dti:#E09AA3; --dti-soft:#43282C; --lti:#93BBA0; --lti-soft:#26352B; --hhp:#8FB0C6; --hhp-soft:#223038;
+  --ac:var(--vsp); --ac-soft:var(--vsp-soft); --shadow:0 1px 2px rgba(0,0,0,.25),0 10px 30px rgba(0,0,0,.3); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#1B1715; --sheet:#241F1C; --sheet2:#2B2521; --ink:#EDE5D9; --muted:#A99C91; --faint:#847568; --rule:#3B332E; --rule2:#322B26;
+  --vsp:#D9A75A; --vsp-soft:#3A3020; --dti:#E09AA3; --dti-soft:#43282C; --lti:#93BBA0; --lti-soft:#26352B; --hhp:#8FB0C6; --hhp-soft:#223038;
+  --ac:var(--vsp); --ac-soft:var(--vsp-soft); --shadow:0 1px 2px rgba(0,0,0,.25),0 10px 30px rgba(0,0,0,.3); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-.01em;margin:0}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2.5px solid var(--ac);outline-offset:3px;border-radius:3px}
+.wrap{max-width:820px;margin:0 auto}
+
+header.top{border-bottom:1px solid var(--rule);background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(6px);position:sticky;top:0;z-index:20}
+.top .wrap{display:flex;align-items:center;gap:14px;height:56px}
+.brand{font-family:var(--display);font-size:17px;font-weight:600;white-space:nowrap}
+.brand .no{font-family:var(--mono);font-size:12px;color:var(--faint);font-weight:400;margin-right:7px;letter-spacing:.05em}
+.tabs{display:flex;gap:1px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;background:none;color:var(--muted);font-size:13px;font-weight:500;padding:7px 10px;border-radius:7px;white-space:nowrap;position:relative;display:flex;align-items:center;gap:5px}
+.tab:hover{color:var(--ink);background:var(--sheet2)}
+.tab[aria-selected="true"]{color:var(--ink)}
+.tab[aria-selected="true"]::after{content:"";position:absolute;left:10px;right:10px;bottom:-9px;height:2px;background:var(--td,var(--ink));border-radius:2px}
+.tab small{font-family:var(--mono);font-size:10px;color:var(--tc,var(--faint))}
+
+main{padding-bottom:40px}
+section.view{display:none;padding:38px 0 60px;animation:fade .3s ease}
+section.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.hero .eyebrow{margin-bottom:18px}
+.hero h1{font-size:clamp(30px,6vw,46px);line-height:1.05;letter-spacing:-.02em;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--vsp)}
+.lede{font-size:18px;color:var(--muted);margin:20px 0 0;max-width:60ch;line-height:1.55}
+.grain{height:1px;background:linear-gradient(90deg,var(--rule),transparent);margin:34px 0}
+.lenses{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.lens{background:var(--sheet);border:1px solid var(--rule2);border-left:3px solid var(--ac);border-radius:12px;padding:20px;text-align:left;display:flex;flex-direction:column;gap:9px;box-shadow:var(--shadow);transition:transform .15s,border-color .15s,background .15s}
+.lens:hover{transform:translateY(-2px);background:color-mix(in srgb,var(--ac-soft) 45%,var(--sheet))}
+.lens .code{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ac);text-transform:uppercase}
+.lens h3{font-size:20px}
+.lens p{margin:0;font-size:13.5px;color:var(--muted)}
+.lens .facets{font-family:var(--mono);font-size:11px;color:var(--faint);line-height:1.7}
+.lens .go{margin-top:4px;font-size:13px;font-weight:600;color:var(--ac)}
+.lens .st{font-family:var(--mono);font-size:10.5px;color:var(--lti);letter-spacing:.05em}
+.note{background:var(--sheet2);border:1px solid var(--rule2);border-left:3px solid var(--faint);border-radius:8px;padding:15px 17px;margin:26px 0 0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.note b{color:var(--ink);font-weight:600}
+
+.intro .eyebrow{margin-bottom:14px}
+.intro h2{font-size:clamp(26px,5vw,36px);line-height:1.08}
+.intro .sub{color:var(--muted);font-size:16.5px;margin:16px 0 0;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 0}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted);background:var(--sheet);border:1px solid var(--rule2);border-radius:20px;padding:6px 12px}
+.startbtn{margin-top:30px;background:var(--ink);color:var(--paper);border:none;border-radius:10px;padding:14px 26px;font-size:15px;font-weight:600;box-shadow:var(--shadow)}
+.startbtn:hover{opacity:.92}
+.subscales{margin-top:26px;display:grid;gap:0}
+.subrow{display:flex;align-items:baseline;gap:12px;font-size:14px;padding:11px 0;border-top:1px solid var(--rule2)}
+.subrow .k{font-family:var(--mono);font-size:11px;color:var(--ac);width:22px;flex:none}
+.subrow .n{font-weight:600;min-width:150px}
+.subrow .d{color:var(--muted);font-size:13px}
+
+.q-stage{min-height:62vh;display:flex;flex-direction:column}
+.qbar{height:3px;background:var(--rule2);border-radius:3px;overflow:hidden}
+.qbar>i{display:block;height:100%;background:var(--ac);border-radius:3px;transition:width .3s ease}
+.qcount{font-family:var(--mono);font-size:11.5px;color:var(--faint);letter-spacing:.08em;margin:12px 0 0;display:flex;justify-content:space-between}
+.qcard{flex:1;display:flex;flex-direction:column;justify-content:center;padding:22px 0}
+.qtext{font-family:var(--display);font-size:clamp(23px,4.6vw,31px);line-height:1.3;max-width:24ch;text-wrap:balance}
+.scale{margin-top:30px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;max-width:560px}
+.opt{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;background:var(--sheet);border:1.5px solid var(--rule2);border-radius:10px;padding:13px 5px 11px;color:var(--ink);transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--ac)}
+.opt .num{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--muted)}
+.opt .lab{font-size:10.5px;line-height:1.25;color:var(--muted)}
+.opt[aria-pressed="true"]{background:var(--ac-soft);border-color:var(--ac)}
+.opt[aria-pressed="true"] .num{color:var(--ac)}
+@media(max-width:520px){.scale{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.qnav{display:flex;gap:14px;align-items:center;margin-top:26px}
+.backbtn{background:none;border:none;color:var(--muted);font-size:13px;font-weight:500;padding:6px 2px}
+.backbtn:hover{color:var(--ink)}
+.backbtn[disabled]{opacity:.35;cursor:default}
+.khint{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
+
+.res .eyebrow{margin-bottom:12px}
+.res h2{font-size:clamp(24px,5vw,34px)}
+.res .headline{font-family:var(--display);font-size:19px;color:var(--muted);margin:14px 0 0;line-height:1.5;max-width:60ch}
+.res .headline b{color:var(--ink)}
+.panel{background:var(--sheet);border:1px solid var(--rule2);border-radius:13px;padding:22px;margin-top:22px;box-shadow:var(--shadow)}
+.cap{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+.barrow{display:grid;grid-template-columns:132px 1fr 92px;align-items:center;gap:12px;padding:7px 0}
+.barrow .lab{font-size:13.5px;font-weight:500}
+.barrow .track{height:9px;background:var(--rule2);border-radius:6px;position:relative;overflow:hidden}
+.barrow .track>i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--ac);transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.barrow .rt{display:flex;justify-content:flex-end;gap:8px;align-items:baseline}
+.barrow .val{font-family:var(--mono);font-size:12px;color:var(--ink)}
+.barrow .band{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.03em}
+.composite{border-top:1px dashed var(--rule);margin-top:12px;padding-top:12px}
+.radar-wrap{display:flex;justify-content:center;padding:4px 0 10px}
+.rankgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+@media(max-width:560px){.rankgrid{grid-template-columns:1fr}}
+.rankrow{display:flex;align-items:center;gap:10px;font-size:13px;padding:6px 0;border-top:1px solid var(--rule2)}
+.rankrow .r{font-family:var(--mono);font-size:11px;color:var(--faint);width:20px}
+.rankrow .nm{flex:1}
+.rankrow .vr{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.rankrow.sig .nm{color:var(--ac);font-weight:600}
+.rankrow.sig .r{color:var(--ac)}
+.readblock{margin-top:20px}
+.readblock p{font-size:14.5px;color:var(--muted);line-height:1.6;margin:0 0 12px}
+.readblock p b{color:var(--ink);font-weight:600}
+.care{background:var(--dti-soft);border:1px solid var(--rule2);border-left:3px solid var(--dti);border-radius:8px;padding:15px 17px;margin-top:20px;font-size:13.5px;color:var(--ink);line-height:1.55}
+.care b{font-weight:600}
+.retake{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.ghostbtn{background:none;border:1px solid var(--rule);color:var(--muted);border-radius:10px;padding:11px 18px;font-size:13.5px;font-weight:500}
+.ghostbtn:hover{border-color:var(--ink);color:var(--ink)}
+
+.locked{text-align:center;padding:48px 20px;color:var(--muted)}
+.locked .big{font-family:var(--display);font-size:24px;color:var(--ink);margin-bottom:10px;text-wrap:balance}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:20px}
+.dots span{width:9px;height:9px;border-radius:50%;background:var(--rule)}
+.dots span.on{background:var(--ink)}
+.quad{position:relative;width:100%;max-width:420px;aspect-ratio:1;margin:8px auto 28px;border:1px solid var(--rule);border-radius:12px;background:var(--sheet);
+  background-image:linear-gradient(var(--rule2),var(--rule2)),linear-gradient(var(--rule2),var(--rule2));background-size:1px 100%,100% 1px;background-position:50% 0,0 50%;background-repeat:no-repeat}
+.quad .qlab{position:absolute;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;color:var(--faint);text-transform:uppercase;padding:9px;line-height:1.3}
+.quad .tl{top:0;left:0}.quad .tr{top:0;right:0;text-align:right}.quad .bl{bottom:0;left:0}.quad .br{bottom:0;right:0;text-align:right}
+.quad .axl{position:absolute;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.quad .ax-x{bottom:-22px;right:4px}.quad .ax-y{top:-20px;left:0}
+.quad .pt{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--ink);border:3px solid var(--paper);transform:translate(-50%,50%);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.crossrow{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--rule2)}
+.crossrow .ic{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none;width:66px;padding-top:2px;letter-spacing:.03em}
+.crossrow .bd{font-size:14px;color:var(--muted);line-height:1.55}
+.crossrow .bd b{color:var(--ink);font-weight:600}
+
+.appx h2{font-size:28px}
+.appx h3{font-family:var(--body);font-weight:600;font-size:14px;margin:26px 0 8px;letter-spacing:.01em}
+.appx p,.appx li{font-size:14px;color:var(--muted);line-height:1.62}
+.appx ul{padding-left:18px;margin:6px 0}
+.appx li{margin:4px 0}
+.appx .cite{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.tblwrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:460px}
+th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--rule2)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:400}
+td.n{font-family:var(--mono);color:var(--ink)}
+
+.legal{border-top:1px solid var(--rule);margin-top:10px;padding:26px 0 10px}
+.legal .lh{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:10px}
+.legal p{font-size:11.5px;line-height:1.6;color:var(--faint);margin:0 0 8px;max-width:88ch}
+.footer{padding:18px 0 46px;color:var(--faint);font-size:11px;font-family:var(--mono);letter-spacing:.03em}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:560px){.barrow{grid-template-columns:100px 1fr 80px}.brand .full{display:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><span class="no">VII</span><span class="full">Character</span></div>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+</div></header>
+<main class="wrap" id="main"></main>
+<div class="wrap">
+  <div class="legal" id="legal"></div>
+  <div class="footer">Series VII · Character — a self-assessment instrument · clean-room items · not a clinical or diagnostic tool</div>
+</div>
+
+<script>
+const ALPHA = /*ALPHA*/{"VSP":{"Wisdom":{"mean":0.815,"p05":0.779,"items":6},"Courage":{"mean":0.817,"p05":0.776,"items":6},"Humanity":{"mean":0.814,"p05":0.768,"items":6},"Justice":{"mean":0.818,"p05":0.768,"items":6},"Temperance":{"mean":0.82,"p05":0.772,"items":6},"Transcendence":{"mean":0.815,"p05":0.771,"items":6}},"DTI":{"Machiavellianism":{"mean":0.818,"p05":0.778,"items":6},"Narcissism":{"mean":0.817,"p05":0.776,"items":6},"Psychopathy":{"mean":0.818,"p05":0.776,"items":6},"Sadism":{"mean":0.814,"p05":0.775,"items":6}},"LTI":{"Kantianism":{"mean":0.816,"p05":0.774,"items":6},"Humanism":{"mean":0.813,"p05":0.769,"items":6},"Faith in humanity":{"mean":0.814,"p05":0.765,"items":6}},"HHP":{"Sincerity":{"mean":0.815,"p05":0.773,"items":6},"Fairness":{"mean":0.821,"p05":0.779,"items":6},"Greed-avoidance":{"mean":0.815,"p05":0.771,"items":6},"Modesty":{"mean":0.818,"p05":0.773,"items":6}}}/*END*/;
+const BANK = {
+  VSP:{
+    name:"Virtues & Strengths Profile", code:"VSP", ac:"var(--vsp)", soft:"var(--vsp-soft)",
+    tag:"the strengths you lead with",
+    source:"VIA classification (Peterson & Seligman, 2004) — 6 virtues over 24 strengths",
+    subs:{
+      Wisdom:{ blurb:"cognitive strengths — how you acquire and use knowledge", items:[
+        {t:"When I hit a problem, I come up with approaches other people haven't thought of.", s:"Creativity", rev:false},
+        {t:"I seek out unfamiliar experiences just to see what they're like.", s:"Curiosity", rev:false},
+        {t:"I'll happily dig into a subject purely for the pleasure of understanding it.", s:"Love of learning", rev:false},
+        {t:"I rarely reconsider a decision once I've made it.", s:"Judgment", rev:true},
+        {t:"People don't really come to me for a wider view of things.", s:"Perspective", rev:true},
+        {t:"I'm not that interested in how things I don't understand actually work.", s:"Curiosity", rev:true}
+      ]},
+      Courage:{ blurb:"emotional strengths — exercising will in the face of resistance", items:[
+        {t:"I stand up for what's right even when it's uncomfortable.", s:"Bravery", rev:false},
+        {t:"I finish what I start, even when it stops being fun.", s:"Perseverance", rev:false},
+        {t:"I throw myself into things with real energy.", s:"Zest", rev:false},
+        {t:"I'll shade the truth to keep things smooth.", s:"Honesty", rev:true},
+        {t:"When something gets hard, I tend to drift away from it.", s:"Perseverance", rev:true},
+        {t:"I usually stay quiet rather than risk standing out.", s:"Bravery", rev:true}
+      ]},
+      Humanity:{ blurb:"interpersonal strengths — tending and befriending others", items:[
+        {t:"I allow myself to be genuinely close to people.", s:"Love", rev:false},
+        {t:"I go out of my way to do kind things for people.", s:"Kindness", rev:false},
+        {t:"I read what people are feeling without them saying it.", s:"Social intelligence", rev:false},
+        {t:"I keep most people at arm's length.", s:"Love", rev:true},
+        {t:"Doing things for others isn't really my instinct.", s:"Kindness", rev:true},
+        {t:"I often misjudge the mood in a room.", s:"Social intelligence", rev:true}
+      ]},
+      Justice:{ blurb:"civic strengths — healthy community life", items:[
+        {t:"I pull my weight for the people on my team.", s:"Teamwork", rev:false},
+        {t:"I treat everyone by the same standard, even people I dislike.", s:"Fairness", rev:false},
+        {t:"I can get a group moving toward a shared goal.", s:"Leadership", rev:false},
+        {t:"I'd rather do my own thing than work as part of a group.", s:"Teamwork", rev:true},
+        {t:"I'll bend the rules for people I favor.", s:"Fairness", rev:true},
+        {t:"I let others take charge rather than step up myself.", s:"Leadership", rev:true}
+      ]},
+      Temperance:{ blurb:"protective strengths — guarding against excess", items:[
+        {t:"I let go of grudges rather than nursing them.", s:"Forgiveness", rev:false},
+        {t:"I think through the consequences before I act.", s:"Prudence", rev:false},
+        {t:"I can hold my impulses in check when I need to.", s:"Self-regulation", rev:false},
+        {t:"I feel I deserve more credit than most people around me.", s:"Humility", rev:true},
+        {t:"I often act on a whim without thinking it through.", s:"Self-regulation", rev:true},
+        {t:"I take risks without weighing them much.", s:"Prudence", rev:true}
+      ]},
+      Transcendence:{ blurb:"strengths of meaning — connection to the larger world", items:[
+        {t:"I'm regularly stopped in my tracks by something beautiful.", s:"Appreciation of beauty", rev:false},
+        {t:"I give thanks for the good things I'm given.", s:"Gratitude", rev:false},
+        {t:"I expect things to work out in the end.", s:"Hope", rev:false},
+        {t:"I don't see much point in joking around.", s:"Humor", rev:true},
+        {t:"I don't feel part of anything larger than myself.", s:"Spirituality", rev:true},
+        {t:"I mostly take what I have for granted.", s:"Gratitude", rev:true}
+      ]}
+    }
+  },
+  DTI:{
+    name:"Dark Traits Inventory", code:"DTI", ac:"var(--dti)", soft:"var(--dti-soft)",
+    tag:"the antagonistic edge",
+    source:"Dark Tetrad — SD3 triad (Jones & Paulhus, 2014) + everyday sadism (Buckels et al.)",
+    subs:{
+      Machiavellianism:{ blurb:"strategic manipulation and cynical self-interest", items:[
+        {t:"It's smart to hold information back so you can use it at the right moment.", rev:false},
+        {t:"I'll flatter people to get what I want from them.", rev:false},
+        {t:"You should really only act when it serves your own interests.", rev:false},
+        {t:"Manipulating people to get ahead feels wrong to me.", rev:true},
+        {t:"I'd rather lose honestly than win by scheming.", rev:true},
+        {t:"I don't keep a private ledger of what people owe me.", rev:true}
+      ]},
+      Narcissism:{ blurb:"grandiosity, entitlement, need for admiration", items:[
+        {t:"I deserve more recognition than I tend to get.", rev:false},
+        {t:"People are naturally drawn to me as a leader.", rev:false},
+        {t:"I find it easy to talk myself up.", rev:false},
+        {t:"I'm really no more important than anyone else.", rev:true},
+        {t:"I'd honestly rather blend in than stand out.", rev:true},
+        {t:"I don't need to be the center of attention.", rev:true}
+      ]},
+      Psychopathy:{ blurb:"callousness and impulsivity", items:[
+        {t:"I act on impulse without much worry about what follows.", rev:false},
+        {t:"Other people's feelings don't weigh on my decisions much.", rev:false},
+        {t:"If someone crosses me, payback should come without regret.", rev:false},
+        {t:"I feel bad for a long time after I've hurt someone.", rev:true},
+        {t:"I think carefully before I do anything with real stakes.", rev:true},
+        {t:"Seeing someone genuinely distressed moves me.", rev:true}
+      ]},
+      Sadism:{ blurb:"enjoyment of others' discomfort — everyday, subclinical", items:[
+        {t:"There's a certain satisfaction in putting someone in their place.", rev:false},
+        {t:"Watching someone squirm can be entertaining.", rev:false},
+        {t:"I don't mind humour that comes at someone else's expense.", rev:false},
+        {t:"When I see someone suffer, all I feel is bad for them.", rev:true},
+        {t:"I go out of my way to avoid causing anyone pain.", rev:true},
+        {t:"There is nothing enjoyable about another person's humiliation.", rev:true}
+      ]}
+    }
+  },
+  LTI:{
+    name:"Light Traits Inventory", code:"LTI", ac:"var(--lti)", soft:"var(--lti-soft)",
+    tag:"the orientation toward others",
+    source:"Light Triad Scale (Kaufman, Yaden, Hyde & Tsukayama, 2019) — a first-draft measure",
+    subs:{
+      Kantianism:{ blurb:"treating people as ends, not means", items:[
+        {t:"When I talk with people I'm rarely calculating what I can get from them.", rev:false},
+        {t:"I'd rather be genuine than strategically pleasant.", rev:false},
+        {t:"I treat people as worthwhile in themselves.", rev:false},
+        {t:"I mostly size people up by how useful they are to me.", rev:true},
+        {t:"I'll put on a false front if it gets me what I want.", rev:true},
+        {t:"Most of my kindness has a purpose behind it.", rev:true}
+      ]},
+      Humanism:{ blurb:"valuing the dignity and worth of each person", items:[
+        {t:"I enjoy hearing the stories of people from every walk of life.", rev:false},
+        {t:"I treat everyone I meet as genuinely worth something.", rev:false},
+        {t:"I like helping other people grow into their potential.", rev:false},
+        {t:"Some kinds of people simply don't deserve my respect.", rev:true},
+        {t:"I don't find most people particularly worth my time.", rev:true},
+        {t:"Other people's growth isn't really my concern.", rev:true}
+      ]},
+      "Faith in humanity":{ blurb:"believing people are fundamentally good", items:[
+        {t:"I tend to see the good in people.", rev:false},
+        {t:"I assume most people mean well until they show me otherwise.", rev:false},
+        {t:"People are basically good at heart.", rev:false},
+        {t:"Most people would take advantage of you if they could.", rev:true},
+        {t:"I generally expect people to let me down.", rev:true},
+        {t:"Human nature is more selfish than it is kind.", rev:true}
+      ]}
+    }
+  },
+  HHP:{
+    name:"Honesty–Humility Profile", code:"HHP", ac:"var(--hhp)", soft:"var(--hhp-soft)",
+    tag:"the integrity grain of personality",
+    source:"HEXACO Honesty–Humility factor (Ashton & Lee) — sixth dimension beyond the Big Five",
+    subs:{
+      Sincerity:{ blurb:"genuine in dealings, unwilling to manipulate", items:[
+        {t:"I'd rather ask for something directly than angle for it.", rev:false},
+        {t:"I don't pretend to like people to win their favour.", rev:false},
+        {t:"What you see with me is what you get.", rev:false},
+        {t:"I'll use charm to get things I couldn't get otherwise.", rev:true},
+        {t:"Flattering someone useful comes easily to me.", rev:true},
+        {t:"I'll pretend to agree just to stay in someone's good books.", rev:true}
+      ]},
+      Fairness:{ blurb:"unwilling to cheat, defraud, or exploit", items:[
+        {t:"I wouldn't cheat even if I were certain I'd never be caught.", rev:false},
+        {t:"Taking what isn't mine isn't worth it, however small.", rev:false},
+        {t:"I return extra change a cashier hands me by mistake.", rev:false},
+        {t:"A little cheating is fine as long as no one gets hurt.", rev:true},
+        {t:"I'd bend a rule to get ahead if the odds felt safe.", rev:true},
+        {t:"Cutting a corner for my own gain doesn't really bother me.", rev:true}
+      ]},
+      "Greed-avoidance":{ blurb:"uninterested in wealth, luxury, and status", items:[
+        {t:"I have little interest in outward signs of status.", rev:false},
+        {t:"A simple life appeals to me more than a lavish one.", rev:false},
+        {t:"I don't need expensive things to feel good about myself.", rev:false},
+        {t:"I'd love to be wealthy enough to show it.", rev:true},
+        {t:"Owning high-status things matters to me.", rev:true},
+        {t:"I want the finer things that mark a person as successful.", rev:true}
+      ]},
+      Modesty:{ blurb:"seeing yourself as no better than others", items:[
+        {t:"I'm no more deserving of special treatment than anyone else.", rev:false},
+        {t:"I'd honestly rather not be treated as important.", rev:false},
+        {t:"I see myself as an ordinary person, not a cut above.", rev:false},
+        {t:"People like me deserve a bit of extra consideration.", rev:true},
+        {t:"I'm entitled to more respect than most people get.", rev:true},
+        {t:"I deserve to be recognised as exceptional.", rev:true}
+      ]}
+    }
+  }
+};
+const ORDER_K=["VSP","DTI","LTI","HHP"];
+const SCALE=[["Strongly disagree",1],["Disagree",2],["Slightly disagree",3],["Slightly agree",4],["Agree",5],["Strongly agree",6]];
+const BANDS=[[1,2,"Very low"],[2,3,"Low"],[3,4,"Moderate"],[4,5,"High"],[5,6.001,"Very high"]];
+function bandOf(m){for(const[a,b,l]of BANDS)if(m>=a&&m<b)return l;return"—";}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* deterministic blind interleave: round-robin across subscales, never two adjacent from one subscale */
+function buildQueue(inst){
+  const subs=BANK[inst].subs, keys=Object.keys(subs);
+  const cols=keys.map(k=>subs[k].items.map((it,i)=>({...it,sub:k,idx:i,id:inst+"."+k+"."+i})));
+  const q=[]; let r=0, more=true;
+  while(more){ more=false; for(const c of cols){ if(r<c.length){ q.push(c[r]); more=true; } } r++; }
+  return q;
+}
+const ORDER=Object.fromEntries(ORDER_K.map(k=>[k,buildQueue(k)]));
+
+function scoreSub(inst,sub){
+  const items=BANK[inst].subs[sub].items; let sum=0,n=0;
+  items.forEach((it,i)=>{const raw=STATE.ans[inst][inst+"."+sub+"."+i]; if(raw==null)return; sum+=it.rev?7-raw:raw; n++;});
+  return n===items.length ? sum/n : null;
+}
+function scoreAll(inst){const o={}; Object.keys(BANK[inst].subs).forEach(s=>o[s]=scoreSub(inst,s)); return o;}
+function composite(inst){const v=Object.values(scoreAll(inst)); return v.reduce((a,b)=>a+b,0)/v.length;}
+function scoreStrength(){
+  const map={};
+  Object.keys(BANK.VSP.subs).forEach(sub=>BANK.VSP.subs[sub].items.forEach((it,i)=>{
+    const raw=STATE.ans.VSP["VSP."+sub+"."+i]; if(raw==null)return;
+    const v=it.rev?7-raw:raw; (map[it.s]=map[it.s]||[]).push(v);
+  }));
+  return Object.keys(map).map(s=>({s,m:map[s].reduce((a,b)=>a+b,0)/map[s].length,n:map[s].length})).sort((a,b)=>b.m-a.m);
+}
+function instComplete(inst){return ORDER[inst].every(o=>STATE.ans[inst][o.id]!=null);}
+function answered(inst){return ORDER[inst].filter(o=>STATE.ans[inst][o.id]!=null).length;}
+
+/* ---------- state ---------- */
+const STORE="seriesVII-character-v1";
+let STATE={tab:"home", phase:{VSP:"intro",DTI:"intro",LTI:"intro",HHP:"intro"}, pos:{VSP:0,DTI:0,LTI:0,HHP:0}, ans:{VSP:{},DTI:{},LTI:{},HHP:{}}};
+try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans)STATE=Object.assign(STATE,p);}}catch(e){}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(STATE));}catch(e){}}
+
+const M=document.getElementById('main'), TABS=document.getElementById('tabs');
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+function tabsRender(){
+  const items=[["home","Overview"],...ORDER_K.map(c=>[c,BANK[c].code]),["SYN","Synthesis"],["APX","Method"]];
+  TABS.innerHTML=items.map(([id,label])=>{
+    const sel=STATE.tab===id;
+    const done=ORDER_K.includes(id)&&instComplete(id);
+    const td=ORDER_K.includes(id)?BANK[id].ac:"var(--ink)";
+    const tc=ORDER_K.includes(id)?BANK[id].ac:"var(--faint)";
+    const sm=ORDER_K.includes(id)?(done?"✓":answered(id)+"/"+ORDER[id].length):"";
+    return `<button class="tab" role="tab" aria-selected="${sel}" data-tab="${id}" style="--td:${td};--tc:${tc}">${label}${sm?`<small>${sm}</small>`:""}</button>`;
+  }).join('');
+  TABS.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{STATE.tab=b.dataset.tab;save();scrollTo(0,0);render();});
+}
+function render(){
+  tabsRender();
+  const t=STATE.tab;
+  if(t==="home")return home();
+  if(ORDER_K.includes(t)){const ph=STATE.phase[t]; return ph==="q"?quiz(t):ph==="done"?result(t):intro(t);}
+  if(t==="SYN")return synth();
+  if(t==="APX")return appendix();
+}
+
+/* ---------- home ---------- */
+function home(){
+  const done=ORDER_K.filter(instComplete).length;
+  M.innerHTML=`<section class="view active"><div class="hero">
+    <div class="eyebrow">Series VII · Character</div>
+    <h1>Four lenses on the same person: your strengths, your <em>shadow</em>, and the grain in between.</h1>
+    <p class="lede">Most character quizzes name a virtue or a flaw and stop there. This one measures four validated construct families side by side — so you can see, on one page, the strengths you lead with, the antagonistic edge you'd rather not, and how the two actually coexist.</p>
+  </div><div class="grain"></div>
+  <div class="lenses">${ORDER_K.map((c,i)=>{const b=BANK[c],st=instComplete(c);
+    return `<button class="lens" data-tab="${c}" style="--ac:${b.ac};--ac-soft:${b.soft}">
+      <span class="code">${b.code} · lens ${i+1}</span><h3>${b.name}</h3><p>${b.tag}.</p>
+      <span class="facets">${Object.keys(b.subs).join(' · ')}</span>
+      <span class="go">${st?'Review result':'Begin'} →</span>${st?'<span class="st">✓ complete</span>':''}</button>`;}).join('')}</div>
+  <div class="note"><b>What this is.</b> A self-assessment built from original items written to published construct definitions (VIA, the Dark Tetrad, the Light Triad, and HEXACO Honesty–Humility). It is a mirror for reflection, not a diagnosis, a screen, or a verdict on anyone's worth. The <b>Method</b> tab documents every item source, the clean-room approach, and the tradeoffs. Progress ${done}/4 lenses complete.</div>
+  </section>`;
+  bind();
+}
+
+/* ---------- intro ---------- */
+function intro(inst){
+  const b=BANK[inst],subs=b.subs,keys=Object.keys(subs),n=ORDER[inst].length,a=answered(inst);
+  M.innerHTML=`<section class="view active intro" style="--ac:${b.ac};--ac-soft:${b.soft}">
+    <div class="eyebrow">${b.code} · Lens ${ORDER_K.indexOf(inst)+1} of 4</div>
+    <h2>${b.name}</h2><p class="sub">${introCopy(inst)}</p>
+    <div class="meta"><span class="chip">${n} items</span><span class="chip">${keys.length} subscales</span><span class="chip">6-point · agree–disagree</span><span class="chip">~${Math.ceil(n*0.13)} min</span></div>
+    <div class="subscales">${keys.map((k,i)=>`<div class="subrow"><span class="k">${String(i+1).padStart(2,'0')}</span><span class="n">${k}</span><span class="d">${subs[k].blurb}</span></div>`).join('')}</div>
+    <div class="retake"><button class="startbtn" data-act="start">${a&&!instComplete(inst)?'Resume':'Begin'} ${b.code} →</button>${instComplete(inst)?'<button class="ghostbtn" data-act="result">See results</button>':''}</div>
+    <div class="note">Items from different subscales are interleaved and some are reverse-worded, so there's no "right-looking" run of answers to fall into. Answer for how you generally are, not how you'd like to be — the scoring is built to notice straight-line agreement and discount it.</div>
+  </section>`;
+  bind(inst);
+}
+function introCopy(inst){return ({
+  VSP:"The VIA tradition asks a simple question — what's best in a person? — and answers it with 24 character strengths grouped under six broad virtues. Here the six virtues are scored and banded; on top of that, your 24 strengths are ranked so you can see which ones you lead with. Higher isn't the point; the shape is.",
+  DTI:"The Dark Tetrad maps the antagonistic side of personality: manipulation, grandiosity, callousness, and the everyday enjoyment of others' discomfort. These are ordinary, subclinical traits everyone has in some measure — this is a dial, not a label, and a high score is information about tendencies, not a verdict on you.",
+  LTI:"The Light Triad measures a loving, benevolent orientation toward others — the 'everyday saint' end of human nature. It's the deliberate counterweight to the dark traits, and the interesting finding is that the two aren't opposites: most people carry some of both.",
+  HHP:"Honesty–Humility is the sixth personality factor the Big Five missed — the tendency to be fair and genuine even when you could get away with more. Its four facets read like a grain running through character: sincerity, fairness, greed-avoidance, and modesty."
+})[inst];}
+
+/* ---------- quiz ---------- */
+function quiz(inst){
+  const b=BANK[inst],q=ORDER[inst],p=Math.min(STATE.pos[inst],q.length-1),it=q[p],cur=STATE.ans[inst][it.id];
+  M.innerHTML=`<section class="view active q-stage" style="--ac:${b.ac};--ac-soft:${b.soft}">
+    <div class="qbar"><i style="width:${answered(inst)/q.length*100}%"></i></div>
+    <div class="qcount"><span>${b.code} · ${String(p+1).padStart(2,'0')} / ${q.length}</span><span>${answered(inst)} answered</span></div>
+    <div class="qcard"><div class="qtext" id="stem">${esc(it.t)}</div>
+      <div class="scale" role="group" aria-label="response">${SCALE.map(([lab,val])=>`<button class="opt" data-v="${val}" aria-pressed="${cur===val}"><span class="num">${val}</span><span class="lab">${lab}</span></button>`).join('')}</div>
+      <div class="qnav"><button class="backbtn" data-act="back" ${p===0?'disabled':''}>← Back</button><span class="khint">1–6 to answer · ⌫ back</span></div>
+    </div></section>`;
+  bind(inst);
+}
+function answer(inst,v){
+  const q=ORDER[inst],p=Math.min(STATE.pos[inst],q.length-1);
+  STATE.ans[inst][q[p].id]=v;
+  if(p>=q.length-1 && instComplete(inst)){STATE.phase[inst]="done";}
+  else{STATE.pos[inst]=p+1; if(STATE.pos[inst]>=q.length){const nx=q.findIndex(x=>STATE.ans[inst][x.id]==null); STATE.pos[inst]=nx<0?q.length-1:nx;}}
+  save(); render();
+}
+function back(inst){if(STATE.pos[inst]>0){STATE.pos[inst]--;save();render();}}
+document.addEventListener('keydown',e=>{
+  const t=STATE.tab; if(!ORDER_K.includes(t)||STATE.phase[t]!=="q")return;
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  if(/^[1-6]$/.test(e.key)){e.preventDefault();answer(t,+e.key);}
+  else if(e.key==="Backspace"){e.preventDefault();back(t);}
+});
+
+/* ---------- visuals ---------- */
+function svgRadar(vals,labels){
+  const N=vals.length,cx=150,cy=140,R=104,grid=[];
+  for(let ring=1;ring<=3;ring++){const rr=R*ring/3;let p="";for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;p+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(1)+' '+(cy+rr*Math.sin(a)).toFixed(1)+' ';}grid.push(`<path d="${p}Z" fill="none" stroke="var(--rule)" stroke-width="1"/>`);}
+  let poly="",dots="",labs="";
+  for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N,rr=R*((vals[i]-1)/5),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
+    poly+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' '; dots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.2" fill="var(--ac)"/>`;
+    const lx=cx+(R+20)*Math.cos(a),ly=cy+(R+20)*Math.sin(a),anch=Math.abs(Math.cos(a))<.3?'middle':(Math.cos(a)>0?'start':'end');
+    labs+=`<text x="${lx.toFixed(1)}" y="${(ly+4).toFixed(1)}" text-anchor="${anch}" font-family="IBM Plex Mono,monospace" font-size="10.5" fill="var(--muted)">${labels[i]}</text>`;
+    grid.push(`<line x1="${cx}" y1="${cy}" x2="${(cx+R*Math.cos(a)).toFixed(1)}" y2="${(cy+R*Math.sin(a)).toFixed(1)}" stroke="var(--rule2)" stroke-width="1"/>`);}
+  return `<svg viewBox="0 0 300 280" width="300" height="280" role="img" aria-label="virtue profile">${grid.join('')}<path d="${poly}Z" fill="var(--ac)" fill-opacity="0.16" stroke="var(--ac)" stroke-width="2"/>${dots}${labs}</svg>`;
+}
+function bar(lab,m,band){return `<div class="barrow"><span class="lab">${lab}</span><span class="track"><i style="width:${((m-1)/5*100).toFixed(0)}%"></i></span><span class="rt"><span class="val">${m.toFixed(2)}</span>${band?`<span class="band">${band}</span>`:''}</span></div>`;}
+
+/* ---------- result ---------- */
+function result(inst){
+  const b=BANK[inst],keys=Object.keys(b.subs),sc=keys.map(k=>({k,m:scoreSub(inst,k)}));
+  let sig="";
+  if(inst==="VSP"){
+    const rank=scoreStrength();
+    sig=`<div class="panel"><div class="cap">Six virtues — profile</div><div class="radar-wrap">${svgRadar(sc.map(s=>s.m),keys.map(k=>k.slice(0,4)))}</div>
+      ${sc.map(s=>bar(s.k,s.m,bandOf(s.m))).join('')}</div>
+      <div class="panel"><div class="cap">24 strengths — signature ranking · exploratory</div><div class="rankgrid">
+        ${rank.map((r,i)=>`<div class="rankrow${i<5?' sig':''}"><span class="r">${String(i+1).padStart(2,'0')}</span><span class="nm">${r.s}</span><span class="vr">${r.m.toFixed(2)}${r.n<2?' ·1':''}</span></div>`).join('')}</div>
+        <p style="font-size:12px;color:var(--faint);margin:14px 0 0;line-height:1.5">Ranked from the same items that score the virtues (1–2 items per strength, reverse-scored where negatively worded). Treat the top five as a signal about where you naturally lead, not a precise measurement — single-item strengths are marked ·1.</p></div>`;
+  } else if(inst==="DTI"){
+    const core=composite(inst),elevated=sc.some(s=>s.m>=4)||core>=4;
+    sig=`<div class="panel"><div class="cap">Four dark traits</div>${sc.map(s=>bar(s.k,s.m,bandOf(s.m))).join('')}
+      <div class="composite">${bar("Dark core (D)",core,bandOf(core))}<p style="font-size:12px;color:var(--faint);margin:8px 0 0">The dark core is the mean of the four — the shared self-serving, other-discounting tendency beneath all of them.</p></div></div>
+      ${elevated?`<div class="care"><b>On reading a high score.</b> These are subclinical traits — dials everyone sits somewhere on, not conditions. A high band here describes a tendency toward self-interest, boldness, or bluntness, which in context can look like drive, nerve, or candour as easily as anything darker. It isn't a diagnosis and says nothing about your worth. If any of this surfaced something heavy, it's worth talking through with someone you trust.</div>`:''}`;
+  } else if(inst==="LTI"){
+    sig=`<div class="panel"><div class="cap">Three light traits</div>${sc.map(s=>bar(s.k,s.m,bandOf(s.m))).join('')}
+      <div class="composite">${bar("Light composite",composite(inst),bandOf(composite(inst)))}</div></div>
+      <div class="note">Complete <b>DTI</b> as well and the Synthesis tab plots your light against your dark — they're only loosely opposed, so it's common to sit high on both.</div>`;
+  } else {
+    sig=`<div class="panel"><div class="cap">Honesty–Humility · four facets</div>${sc.map(s=>bar(s.k,s.m,bandOf(s.m))).join('')}
+      <div class="composite">${bar("Honesty–Humility",composite(inst),bandOf(composite(inst)))}</div></div>`;
+  }
+  M.innerHTML=`<section class="view active res" style="--ac:${b.ac};--ac-soft:${b.soft}">
+    <div class="eyebrow">${b.code} · your result</div><h2>${b.name}</h2>
+    <p class="headline">${headline(inst,sc)}</p>${sig}
+    <div class="readblock">${readCopy(inst)}</div>
+    <div class="retake"><button class="ghostbtn" data-act="retake">Retake ${b.code}</button><button class="startbtn" style="margin-top:0" data-act="next">${nextLabel()} →</button></div>
+  </section>`;
+  bind(inst);
+}
+function topName(sc){return sc.slice().sort((a,b)=>b.m-a.m)[0].k;}
+function lowName(sc){return sc.slice().sort((a,b)=>a.m-b.m)[0].k;}
+function headline(inst,sc){const hi=topName(sc),lo=lowName(sc);return ({
+  VSP:`Your strongest virtue reads as <b>${hi}</b>, your quietest as <b>${lo}</b>. Character isn't one score — it's this shape.`,
+  DTI:`Your most pronounced edge is <b>${hi.toLowerCase()}</b>; <b>${lo.toLowerCase()}</b> sits lowest. Read the dials, not a label.`,
+  LTI:`<b>${hi}</b> leads your orientation toward others, with <b>${lo.toLowerCase()}</b> less pronounced.`,
+  HHP:`<b>${hi}</b> is the strongest strand of your integrity grain; <b>${lo.toLowerCase()}</b> the faintest.`
+})[inst];}
+function readCopy(inst){return ({
+  VSP:`<p>The six virtues aren't a scoreboard — everyone's profile has peaks and valleys, and a lower virtue is simply one that energises you less, not a deficiency. What's useful is the <b>relief</b>: which strengths you reach for without thinking, and which you'd have to work at.</p><p>The 24-strength ranking sharpens that picture. Your top handful are your <b>signature strengths</b> — the ones that feel effortless and like the "real you" when you use them. Deploying them deliberately is, in the VIA literature, one of the more reliable routes to engagement.</p>`,
+  DTI:`<p>These four traits share a self-serving core but pull differently: <b>Machiavellianism</b> is cold strategy, <b>narcissism</b> is hunger for status, <b>psychopathy</b> is impulsive callousness, and <b>sadism</b> is the only one that takes pleasure in harm itself. Where you're high and where you're low says more than the average does.</p><p>None of this is fixed or destiny. Traits like these are <b>subclinical</b> — present in ordinary people, shaped by situation, and often double-edged: the same boldness that reads as callous under pressure can read as decisive when the stakes are shared.</p>`,
+  LTI:`<p><b>Kantianism</b> is about not using people, <b>humanism</b> about honouring their worth, and <b>faith in humanity</b> about expecting good of them. They tend to move together but not perfectly — you can deeply respect individuals while being wary of people in general.</p><p>The light traits predict warmth, life satisfaction, and secure relationships — but the research is clear they're <b>not merely the absence of the dark ones</b>. Which is why the Synthesis tab is worth reaching once you've done both.</p>`,
+  HHP:`<p>Honesty–Humility predicts fair dealing and resistance to cutting corners better than almost any other single trait, and it's the strand most cleanly opposed to the dark tetrad. <b>Sincerity</b> and <b>fairness</b> govern how you treat people; <b>greed-avoidance</b> and <b>modesty</b> govern how you hold status and self-regard.</p><p>A low facet isn't a moral indictment — it can reflect ambition, self-confidence, or comfort with strategic social moves. But taken together the four are the best single read in this suite on the <b>integrity grain</b> of how you operate.</p>`
+})[inst];}
+function nextInst(){const rem=ORDER_K.filter(c=>!instComplete(c));return rem.length?rem[0]:"SYN";}
+function nextLabel(){const nx=nextInst();return nx==="SYN"?"See the Synthesis":"Next lens · "+BANK[nx].code;}
+
+/* ---------- synthesis ---------- */
+function synth(){
+  const done=ORDER_K.filter(instComplete);
+  if(done.length<2){
+    M.innerHTML=`<section class="view active"><div class="eyebrow">Synthesis</div>
+      <div class="locked"><div class="big">The Synthesis reads your lenses against each other.</div>
+      <p>Complete at least two of the four to unlock it — all four for the full cross-read.</p>
+      <div class="dots">${ORDER_K.map(c=>`<span class="${instComplete(c)?'on':''}"></span>`).join('')}</div>
+      <div style="margin-top:22px">${ORDER_K.filter(c=>!instComplete(c)).map(c=>`<button class="ghostbtn" style="margin:4px" data-tab="${c}">Do ${BANK[c].code} →</button>`).join('')}</div></div></section>`;
+    bind(); return;
+  }
+  const S={}; ORDER_K.forEach(c=>{if(instComplete(c))S[c]=scoreAll(c);});
+  const mean=o=>{const v=Object.values(o);return v.reduce((a,b)=>a+b,0)/v.length;};
+  const haveLD=S.LTI&&S.DTI, light=S.LTI?mean(S.LTI):null, dark=S.DTI?mean(S.DTI):null, hh=S.HHP?mean(S.HHP):null;
+  let quad="";
+  if(haveLD){const lx=(light-1)/5*100,dy=(dark-1)/5*100;
+    quad=`<div class="panel" style="--ac:var(--lti);--ac-soft:var(--lti-soft)"><div class="cap">Light × Dark — the balance you actually carry</div>
+      <div class="quad"><span class="qlab tl">antagonistic +<br>warm</span><span class="qlab tr">high both<br>· complex</span><span class="qlab bl">low both<br>· detached</span><span class="qlab br">warm ·<br>low antagonism</span>
+        <span class="axl ax-x">Light →</span><span class="axl ax-y">Dark ↑</span><span class="pt" style="left:${lx}%;bottom:${dy}%"></span></div>
+      <p style="font-size:13px;color:var(--muted);margin:0;line-height:1.55">Your point sits at light <b>${light.toFixed(2)}</b>, dark <b>${dark.toFixed(2)}</b>. Because the two are only loosely opposed in the research, the top-right "high both" region is real and common — being genuinely warm doesn't require having no edge, and having an edge doesn't cancel the warmth.</p></div>`;
+  }
+  const rows=[];
+  if(haveLD){const gap=light-dark;rows.push(["L − D",`Your light runs <b>${gap>=0?'+':''}${gap.toFixed(2)}</b> against your dark. ${gap>1?'A clear prosocial lean.':gap<-0.5?'The antagonistic side is currently louder — worth sitting with rather than explaining away.':'A genuinely mixed profile: both are present at working strength.'}`]);}
+  if(hh!=null&&dark!=null){rows.push(["HH ↔ D",`Honesty–Humility (<b>${hh.toFixed(2)}</b>) is the personality strand most cleanly opposed to the dark core (<b>${dark.toFixed(2)}</b>). ${hh+dark<6.4?'Both low-to-mid — a pragmatic, low-scruple lean worth noting.':hh>dark?'They point the expected opposite ways, which is the coherent pattern.':'Dark sits above your integrity grain here — the one tension most worth examining.'}`]);}
+  if(S.VSP&&hh!=null){const hum=(S.VSP.Humanity+S.VSP.Justice)/2;rows.push(["VSP ↔ HH",`Your other-facing virtues (Humanity + Justice, <b>${hum.toFixed(2)}</b>) and Honesty–Humility (<b>${hh.toFixed(2)}</b>) are two independent roads to the same moral territory. ${Math.abs(hum-hh)<0.6?'They agree — a convergent, credible read.':'They diverge a little, which is where self-report is most worth a second opinion.'}`]);}
+  if(S.VSP){const rank=scoreStrength();rows.push(["Signature",`Across everything, the strengths you lead with are <b>${rank.slice(0,3).map(r=>r.s.toLowerCase()).join(", ")}</b>. Those are the levers most likely to move your own behaviour.`]);}
+  rows.push(["Caution",`Every score here is self-report on a topic where almost no one is a neutral witness to themselves. The reverse-keying discounts straight-line agreement, but the real check on character is <b>how others experience you</b> — an observer form is the natural next build, most of all for the dark and light lenses.`]);
+  M.innerHTML=`<section class="view active"><div class="eyebrow">Synthesis · ${done.length}/4 lenses</div>
+    <h2 style="font-size:clamp(24px,5vw,34px);margin-top:10px">Read together, not one at a time</h2>
+    <p class="headline" style="font-family:var(--display);color:var(--muted);font-size:18px;margin:14px 0 0;max-width:60ch">No single lens is character. The picture is in how your strengths, your edge, and your grain line up — or don't.</p>
+    ${quad}<div class="panel"><div class="cap">Cross-reads</div>${rows.map(([ic,bd])=>`<div class="crossrow"><span class="ic">${ic}</span><span class="bd">${bd}</span></div>`).join('')}</div>
+    ${done.length<4?`<div class="note">Finish the remaining ${4-done.length} lens${4-done.length>1?'es':''} for the complete cross-read: ${ORDER_K.filter(c=>!instComplete(c)).map(c=>BANK[c].code).join(', ')}.</div>`:''}</section>`;
+  bind();
+}
+
+/* ---------- appendix ---------- */
+function appendix(){
+  const rows=ORDER_K.flatMap(c=>Object.keys(BANK[c].subs).map(s=>{
+    const items=BANK[c].subs[s].items,a=(ALPHA[c]||{})[s]||{};
+    return `<tr><td class="n">${c}</td><td>${s}</td><td class="n">${items.length}</td><td class="n">${items.filter(i=>!i.rev).length}F / ${items.filter(i=>i.rev).length}R</td><td class="n">${a.mean!=null?a.mean.toFixed(3):'–'}</td><td class="n">${a.p05!=null?a.p05.toFixed(3):'–'}</td></tr>`;
+  })).join('');
+  const tot=ORDER_K.reduce((a,c)=>a+ORDER[c].length,0),nsub=ORDER_K.reduce((a,c)=>a+Object.keys(BANK[c].subs).length,0);
+  M.innerHTML=`<section class="view active appx"><div class="eyebrow">Method &amp; psychometrics</div>
+    <h2 style="margin-top:10px">How this suite is built — and where it stops</h2>
+    <p style="margin-top:14px">Series VII covers four construct families in ${tot} items across ${nsub} subscales. Every item is <b>clean-room</b>: original wording composed to each construct's published definition, so nothing here reproduces a copyrighted instrument. That keeps the suite free to publish, but it also means these are <b>adaptations, not the validated scales</b> — scores can't be read against published norms or cutoffs, and the reliabilities below are simulated, not established on human samples.</p>
+    <div class="tblwrap"><table><thead><tr><th>Code</th><th>Subscale</th><th>Items</th><th>Keying</th><th>α mean</th><th>α 5th pct</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <h3>Response format &amp; keying</h3>
+    <p>A house 6-point forced-choice agreement scale with no neutral midpoint. Each subscale runs <b>3 forward / 3 reverse</b> items, blind-interleaved across subscales. Reverse items are scored 7 − x. Straight-line agreement on every item lands a subscale at the <b>3.50 midpoint</b>, not the top band, so acquiescence can't masquerade as a high score. The four source scales natively use 5-point formats; the shift to the house 6-point is a documented deviation, taken because clean-room items already forgo item-level norm comparability and the forced choice buys a cleaner acquiescence check in return.</p>
+    <h3>VSP — the hybrid</h3>
+    <p>VIA's 24-strength granularity is incompatible with 6-item balanced keying, so the instrument works on two levels. The <b>six virtues</b> are each scored from a balanced 6-item subscale and banded — the psychometrically defensible layer. The <b>24 strengths</b> are then ranked from those same items (1–2 items each, reverse-scored where negatively worded) as an <b>exploratory signature ranking</b>, explicitly not a measurement. Single-item strengths are flagged. One consequence worth stating: because those single-item strengths aren't keying-balanced, the ranking — unlike the six virtue scores — isn't fully acquiescence-proof, so a straight-line yea-sayer would float the forward-worded strengths upward. The virtue layer stays immune; the strength ranking is a softer signal.</p>
+    <h3>Reliability (simulated)</h3>
+    <p>The α figures come from a Monte-Carlo simulation (N = 1,400 synthetic respondents per subscale, 200 runs) using a one-factor model per subscale — forward loadings drawn from .60–.85, reverse from .50–.75, responses cut to six ordinal points and reverse items rescored. They indicate whether the item <i>structure</i> coheres, not how the items would behave in real people.</p>
+    <h3>Documented judgement calls</h3>
+    <ul>
+      <li><b>Tetrad, not triad.</b> DTI extends the SD3 triad with everyday sadism, the fourth dark trait, for a fuller shadow map.</li>
+      <li><b>VIA's virtue structure is contested.</b> The 24→6 grouping doesn't cleanly replicate factor-analytically (Brdar &amp; Kashdan, 2009; McGrath's 3- and 5-factor revisions). The six virtues are retained as an organising frame, not a validated latent structure.</li>
+      <li><b>SD3 item-saturation critique.</b> The dark items lean on constructs whose short-scale operationalisation has been questioned (Latham &amp; Stephenson, 2025), especially psychopathy.</li>
+      <li><b>The Light Triad is a first-draft measure.</b> Kaufman et al. describe the LTS as preliminary; treat the light lens as the least settled of the four.</li>
+      <li><b>Light and dark are not mirror images.</b> They correlate only modestly and negatively, so the Synthesis treats "high on both" as a real profile rather than a contradiction.</li>
+    </ul>
+    <h3>Where it stops</h3>
+    <p>This is a reflective self-assessment, not a diagnosis, a screen, or a hiring or forensic tool. Character self-report is uniquely prone to self-favourable distortion; the strongest available check is observer report, which remains the natural next build — most of all for the dark and light lenses, where the gap between self-image and how others experience a person is widest.</p>
+    <p class="cite" style="margin-top:22px">Constructs: Peterson &amp; Seligman (2004) · Jones &amp; Paulhus (2014) · Paulhus / Buckels et al. (everyday sadism) · Kaufman, Yaden, Hyde &amp; Tsukayama (2019) · Ashton &amp; Lee (HEXACO). Items original to Series VII.</p>
+  </section>`;
+}
+
+/* ---------- binding ---------- */
+function bind(inst){
+  M.querySelectorAll('[data-tab]').forEach(el=>el.onclick=()=>{STATE.tab=el.dataset.tab;save();scrollTo(0,0);render();});
+  M.querySelectorAll('[data-v]').forEach(el=>el.onclick=()=>answer(inst,+el.dataset.v));
+  M.querySelectorAll('[data-act]').forEach(el=>el.onclick=()=>{
+    const a=el.dataset.act;
+    if(a==="start"){STATE.phase[inst]="q"; if(STATE.pos[inst]>=ORDER[inst].length)STATE.pos[inst]=0; const nx=ORDER[inst].findIndex(x=>STATE.ans[inst][x.id]==null); if(nx>=0)STATE.pos[inst]=nx; save();render();}
+    else if(a==="result"){STATE.phase[inst]="done";save();render();}
+    else if(a==="back"){back(inst);}
+    else if(a==="retake"){ORDER[inst].forEach(o=>delete STATE.ans[inst][o.id]);STATE.pos[inst]=0;STATE.phase[inst]="intro";save();render();}
+    else if(a==="next"){STATE.tab=nextInst();save();scrollTo(0,0);render();}
+  });
+}
+
+/* ---------- legal ---------- */
+document.getElementById('legal').innerHTML=`<div class="lh">Disclaimer</div>
+  <p>This assessment is provided for educational, self-reflection, and research purposes only. It is <b>not</b> a psychological, medical, or diagnostic instrument; it has not been clinically validated or normed on a population sample, and it must not be used to diagnose, screen, select, evaluate, or make decisions about any person in any clinical, employment, educational, forensic, custody, or similar context.</p>
+  <p>The items are original adaptations written to published personality-psychology constructs (VIA character strengths, the Dark Tetrad, the Light Triad, and HEXACO Honesty–Humility); they are not the validated instruments themselves, and the reliability figures shown are simulated rather than established on human respondents. Results are not professional advice and create no clinician–client or other professional relationship. If you are in distress or have concerns about your mental health or safety, please contact a qualified professional or your local emergency services.</p>
+  <p>Use is entirely at your own discretion and risk. To the fullest extent permitted by law, the author and contributors disclaim all warranties and any liability for decisions or actions taken on the basis of these results. © 2026. All rights reserved.</p>`;
+
+window.__SVII={BANK,ORDER,ORDER_K,SCALE,ALPHA,scoreSub,scoreAll,composite,scoreStrength,band:bandOf,buildQueue,instComplete,answered,render,answer,back,get S(){return STATE;}};
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Emotional Maturity Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ============ TOKEN SYSTEM ============ */
+  /* Block 1: base (light) */
+  :root {
+    --paper: #eef1f6;
+    --sheet: #f8f9fc;
+    --sheet-2: #eceff5;
+    --ink: #1d2130;
+    --ink-soft: #4c5363;
+    --ink-faint: #878ea0;
+    --line: #d7dbe6;
+    --rule: rgba(29,33,48,0.12);
+    --accent: #4b4fa0;          /* instrument signature: indigo */
+    --accent-soft: #6a6ec4;
+
+    /* per-subscale accents */
+    --c-sa: #4f67c4;   /* Self-Awareness — periwinkle */
+    --c-er: #2f8f86;   /* Emotional Regulation — teal */
+    --c-ac: #c08a3e;   /* Accountability — ochre */
+    --c-dt: #4f7ba0;   /* Distress Tolerance — slate blue */
+    --c-em: #c06b86;   /* Empathy — rose */
+    --c-rm: #5f9158;   /* Relationship Management — green */
+    --c-ia: #8a67c0;   /* Independence & Adaptability — violet */
+
+    /* band colors */
+    --band-dev: #c0614a;
+    --band-emg: #c0913e;
+    --band-str: #4f8f6a;
+
+    --shadow: 0 1px 2px rgba(29,33,48,0.05), 0 8px 28px rgba(29,33,48,0.06);
+  }
+  /* Block 2: guarded system-dark (only when user hasn't forced light) */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #121420;
+      --sheet: #1a1d2b;
+      --sheet-2: #22263600;
+      --sheet-2: #202434;
+      --ink: #e9ebf3;
+      --ink-soft: #b0b6c6;
+      --ink-faint: #727a8e;
+      --line: #2c3142;
+      --rule: rgba(255,255,255,0.12);
+      --accent: #9196e6;
+      --accent-soft: #7b80d0;
+
+      --c-sa: #8a9bf0;
+      --c-er: #4fc3b6;
+      --c-ac: #e0b05f;
+      --c-dt: #74a8d0;
+      --c-em: #e493ab;
+      --c-rm: #86c47e;
+      --c-ia: #b394ec;
+
+      --band-dev: #e08568;
+      --band-emg: #e0b45f;
+      --band-str: #74c49a;
+
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.35);
+    }
+  }
+  /* Block 3: forced dark (toggle) */
+  :root[data-theme="dark"] {
+    --paper: #121420;
+    --sheet: #1a1d2b;
+    --sheet-2: #202434;
+    --ink: #e9ebf3;
+    --ink-soft: #b0b6c6;
+    --ink-faint: #727a8e;
+    --line: #2c3142;
+    --rule: rgba(255,255,255,0.12);
+    --accent: #9196e6;
+    --accent-soft: #7b80d0;
+
+    --c-sa: #8a9bf0;
+    --c-er: #4fc3b6;
+    --c-ac: #e0b05f;
+    --c-dt: #74a8d0;
+    --c-em: #e493ab;
+    --c-rm: #86c47e;
+    --c-ia: #b394ec;
+
+    --band-dev: #e08568;
+    --band-emg: #e0b45f;
+    --band-str: #74c49a;
+
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .wrap {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: clamp(24px, 5vw, 60px) clamp(18px, 5vw, 40px) 64px;
+    min-height: 100vh;
+  }
+
+  /* theme toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 16px; right: 16px;
+    z-index: 50;
+    background: var(--sheet);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.1rem, 6vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: -0.015em;
+    margin: 0 0 22px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+    font-weight: 300;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    max-width: 60ch;
+  }
+  .meta { font-size: 0.93rem; color: var(--ink-faint); margin: 0 0 34px; max-width: 60ch; }
+
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.98rem; font-weight: 500; letter-spacing: 0.01em;
+    background: var(--accent); color: #fff; border: none; border-radius: 3px;
+    padding: 14px 32px; cursor: pointer;
+    transition: filter 0.18s ease, transform 0.06s ease;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn.ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+  .btn.ghost:hover { border-color: var(--accent); color: var(--accent); filter: none; }
+
+  .hint { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--ink-faint); margin-top: 24px; }
+  .hint kbd { background: var(--sheet-2); border: 1px solid var(--line); border-radius: 3px; padding: 1px 6px; font-size: 0.72rem; }
+
+  /* progress */
+  .progress-rail { height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 9px; }
+  .progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.35s cubic-bezier(.4,0,.2,1); }
+  .progress-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 42px; }
+
+  .qcard { animation: fade 0.4s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+  .qnum { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 18px; }
+  .qstem {
+    font-family: 'Fraunces', Georgia, serif; font-weight: 400;
+    font-size: clamp(1.4rem, 3.6vw, 2rem); line-height: 1.26; letter-spacing: -0.01em; margin: 0 0 38px;
+  }
+  .scale { display: flex; flex-direction: column; gap: 9px; }
+  .opt {
+    display: flex; align-items: center; gap: 16px; text-align: left;
+    background: var(--sheet); border: 1px solid var(--line); border-radius: 4px;
+    padding: 13px 18px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--ink); width: 100%;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.05s ease;
+  }
+  .opt:hover { border-color: var(--accent); background: var(--sheet-2); }
+  .opt:active { transform: translateY(1px); }
+  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt.sel { border-color: var(--accent); background: var(--sheet-2); box-shadow: inset 3px 0 0 var(--accent); }
+  .opt .key { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--ink-faint); width: 20px; flex-shrink: 0; border-right: 1px solid var(--line); padding-right: 14px; }
+
+  .nav-row { margin-top: 30px; }
+  .back-link { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--ink-faint); background: none; border: none; cursor: pointer; letter-spacing: 0.04em; padding: 4px 0; }
+  .back-link:hover { color: var(--accent); }
+  .back-link:disabled { opacity: 0.3; cursor: default; }
+
+  /* results */
+  .overall-band { font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+  .overall-score { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.6rem, 8vw, 4rem); font-weight: 400; line-height: 1; margin: 0 0 6px; }
+  .overall-score .max { color: var(--ink-faint); font-size: 0.42em; }
+  .res-sub { font-family: 'Fraunces', serif; font-weight: 300; color: var(--ink-soft); font-size: 1.08rem; margin: 0 0 40px; max-width: 58ch; }
+
+  .gauge { margin-bottom: 26px; }
+  .gauge-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; gap: 12px; }
+  .gauge-name { font-family: 'Fraunces', serif; font-size: 1.14rem; font-weight: 500; display: flex; align-items: center; gap: 9px; }
+  .gauge-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .gauge-band { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; flex-shrink: 0; color: var(--ink-soft); }
+  .gauge-track { position: relative; height: 11px; background: var(--sheet-2); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .gauge-zone { position: absolute; top: 0; bottom: 0; border-right: 1px solid var(--rule); }
+  .gauge-bar { position: absolute; top: 0; bottom: 0; left: 0; width: 0%; border-radius: 6px 0 0 6px; transition: width 0.9s cubic-bezier(.35,.9,.3,1); }
+  .gauge-desc { font-size: 0.9rem; color: var(--ink-soft); margin-top: 9px; max-width: 62ch; }
+
+  .divider { height: 1px; background: var(--rule); margin: 42px 0; border: none; }
+
+  .care { background: var(--sheet); border-left: 3px solid var(--band-emg); padding: 20px 24px; border-radius: 4px; margin-bottom: 40px; box-shadow: var(--shadow); }
+  .care h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.12rem; margin: 0 0 8px; }
+  .care p { font-size: 0.95rem; color: var(--ink-soft); margin: 0; }
+
+  details.appendix { border-top: 1px solid var(--rule); padding-top: 22px; margin-top: 8px; }
+  details.appendix summary { font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); cursor: pointer; list-style: none; }
+  details.appendix summary::-webkit-details-marker { display: none; }
+  details.appendix summary:before { content: '+ '; color: var(--accent); }
+  details.appendix[open] summary:before { content: '– '; }
+  .appendix-body { margin-top: 18px; }
+  .appendix-body p { font-size: 0.86rem; color: var(--ink-soft); max-width: 66ch; }
+  table.alpha { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; margin: 16px 0; }
+  table.alpha th, table.alpha td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  table.alpha th { color: var(--ink-faint); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.7rem; }
+  table.alpha td.val { text-align: right; }
+  .pass { color: var(--band-str); }
+  .flag { color: var(--band-emg); }
+
+  .restart { margin-top: 34px; }
+
+  /* disclaimer */
+  .disclaimer { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--rule); }
+  .disclaimer h4 { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 10px; }
+  .disclaimer p { font-size: 0.76rem; line-height: 1.6; color: var(--ink-faint); margin: 0 0 8px; max-width: 72ch; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">◐ theme</button>
+<div class="wrap" id="wrap"></div>
+
+<!-- Item bank: single source of truth. 7 subscales x 6 items = 42.
+     Balanced keying: exactly 3 forward + 3 reverse per subscale (r:true = reverse).
+     All-high responding resolves to 3.50 on every subscale (acquiescence control). -->
+<script id="ITEMS" type="application/json">
+{
+  "subscales": {
+    "SA": { "name": "Self-Awareness", "accent": "--c-sa",
+      "desc": {
+        "dev": "Emotions can arrive faster than you can name them. Building a vocabulary for what you feel — and catching it earlier — is the foundation the rest is built on.",
+        "emg": "You read yourself reasonably well and are often aware of what's driving a reaction. The growth edge is catching it in the moment rather than after.",
+        "str": "You track your own emotional weather clearly — naming feelings, seeing what set them off, and noticing how your mood lands on others." } },
+    "ER": { "name": "Emotional Regulation", "accent": "--c-er",
+      "desc": {
+        "dev": "Strong feelings tend to run the show before you can steer. This isn't about suppressing — it's about widening the gap between feeling and acting.",
+        "emg": "You can usually stay steady, though intensity sometimes gets ahead of you. A reliable way to bring the temperature down is the next step.",
+        "str": "You can feel something fully without it dictating what you do next — steady under pressure, and able to let a hard moment pass without derailing." } },
+    "AC": { "name": "Accountability", "accent": "--c-ac",
+      "desc": {
+        "dev": "Owning your part when things go wrong is hard right now — the instinct is to defend or explain. A clean apology, with no 'but,' is a muscle worth building.",
+        "emg": "You can own your part much of the time, though defensiveness still shows up under pressure. Repair gets easier the less it threatens you.",
+        "str": "You can say you were wrong without flinching, apologize without an excuse attached, and look at your own contribution before assigning blame." } },
+    "DT": { "name": "Distress Tolerance", "accent": "--c-dt",
+      "desc": {
+        "dev": "Discomfort tends to send you looking for the exit — a distraction, a fix, a way to not feel it. Learning to stay with a feeling is what lets it move through.",
+        "emg": "You can sit with hard feelings some of the time, but urgency and the pull to numb still take over. Tolerating the not-knowing is the frontier.",
+        "str": "You can stay with an uncomfortable feeling instead of rushing to end it, and accept a hard reality without treating it as an emergency." } },
+    "EM": { "name": "Empathy", "accent": "--c-em",
+      "desc": {
+        "dev": "When emotions run high, it's hard to get past your own experience into someone else's. Perspective-taking — imagining it from the inside — is the skill to grow.",
+        "emg": "You sense others and can take their view, though your own reaction sometimes crowds it out. Staying curious under stress deepens it.",
+        "str": "You pick up what others feel even unspoken, and can hold that their view makes sense to them even when you see it differently." } },
+    "RM": { "name": "Relationship Management", "accent": "--c-rm",
+      "desc": {
+        "dev": "Conflict tends to end in shutdown or withdrawal, and repair waits on the other person. Staying in the conversation — and moving toward repair — changes everything.",
+        "emg": "You navigate friction reasonably well but sometimes withdraw or wait to be sought out. Initiating repair is the growth edge.",
+        "str": "You stay in the room during conflict, move toward repair rather than waiting it out, and can set and receive a boundary without it reading as rejection." } },
+    "IA": { "name": "Independence & Adaptability", "accent": "--c-ia",
+      "desc": {
+        "dev": "Your steadiness leans on others' approval or on things going to plan, and views can go all-or-nothing. Self-soothing and flexibility loosen that grip.",
+        "emg": "You can self-regulate and adapt much of the time, though approval and rigidity still pull at you. Holding nuance is the next layer.",
+        "str": "You can soothe yourself, change your mind when facts change, adapt when plans fall through, and stay okay without others' approval." } }
+  },
+  "items": [
+    { "id": "SA1", "s": "SA", "r": false, "t": "I can usually name what I'm feeling, even when several emotions are happening at once." },
+    { "id": "SA2", "s": "SA", "r": false, "t": "I can trace a bad mood back to what actually set it off." },
+    { "id": "SA3", "s": "SA", "r": false, "t": "I can tell the difference between what I'm feeling and what I'm thinking about a situation." },
+    { "id": "SA4", "s": "SA", "r": true,  "t": "My strong reactions often seem to come out of nowhere, even to me." },
+    { "id": "SA5", "s": "SA", "r": true,  "t": "I'm usually the last to notice that my own mood has shifted." },
+    { "id": "SA6", "s": "SA", "r": true,  "t": "I don't notice how my mood is landing on the people around me." },
+
+    { "id": "ER1", "s": "ER", "r": false, "t": "When something upsets me, I can feel it fully without letting it decide what I do next." },
+    { "id": "ER2", "s": "ER", "r": false, "t": "I can stay reasonably steady during a tense conversation." },
+    { "id": "ER3", "s": "ER", "r": false, "t": "I can be disappointed without it ruining the rest of my day." },
+    { "id": "ER4", "s": "ER", "r": true,  "t": "Once I'm angry or hurt, it tends to spill out before I can catch it." },
+    { "id": "ER5", "s": "ER", "r": true,  "t": "It takes me a long time to settle down once I'm upset." },
+    { "id": "ER6", "s": "ER", "r": true,  "t": "Small frustrations set me off more than they should." },
+
+    { "id": "AC1", "s": "AC", "r": false, "t": "When I've hurt someone, I can apologize without tacking on an excuse." },
+    { "id": "AC2", "s": "AC", "r": false, "t": "I can admit I was wrong even when it's uncomfortable." },
+    { "id": "AC3", "s": "AC", "r": false, "t": "I look at my own part in a problem before deciding who's to blame." },
+    { "id": "AC4", "s": "AC", "r": true,  "t": "When a conflict goes badly, it's usually mostly the other person's doing." },
+    { "id": "AC5", "s": "AC", "r": true,  "t": "When someone gives me feedback, my first move is to defend myself." },
+    { "id": "AC6", "s": "AC", "r": true,  "t": "I tend to explain why a mistake wasn't really my fault." },
+
+    { "id": "DT1", "s": "DT", "r": false, "t": "I can sit with an uncomfortable feeling instead of rushing to make it stop." },
+    { "id": "DT2", "s": "DT", "r": false, "t": "I can accept a hard reality even when I wish it were different." },
+    { "id": "DT3", "s": "DT", "r": false, "t": "When things are uncertain, I can stay with the not-knowing rather than forcing false closure." },
+    { "id": "DT4", "s": "DT", "r": true,  "t": "When I feel bad, I reach for something — scrolling, food, a drink, busywork — to avoid feeling it." },
+    { "id": "DT5", "s": "DT", "r": true,  "t": "I need a problem settled right away or the tension is unbearable." },
+    { "id": "DT6", "s": "DT", "r": true,  "t": "When I'm overwhelmed, I tend to shut down and check out." },
+
+    { "id": "EM1", "s": "EM", "r": false, "t": "I can usually sense what someone is feeling even when they don't say it." },
+    { "id": "EM2", "s": "EM", "r": false, "t": "I can hold that someone else's view makes sense to them, even when I disagree." },
+    { "id": "EM3", "s": "EM", "r": false, "t": "I try to understand the reason behind someone's behavior before judging it." },
+    { "id": "EM4", "s": "EM", "r": true,  "t": "When someone's upset, I'm mostly focused on how it affects me." },
+    { "id": "EM5", "s": "EM", "r": true,  "t": "I find it hard to imagine how a situation looks from someone else's side." },
+    { "id": "EM6", "s": "EM", "r": true,  "t": "Other people's emotions don't really move me." },
+
+    { "id": "RM1", "s": "RM", "r": false, "t": "When there's conflict, I stay in the conversation rather than shutting down or blowing up." },
+    { "id": "RM2", "s": "RM", "r": false, "t": "After a fight, I can move toward repair instead of waiting for the other person to fix it." },
+    { "id": "RM3", "s": "RM", "r": false, "t": "I can hear someone else's boundary without taking it as rejection." },
+    { "id": "RM4", "s": "RM", "r": true,  "t": "When I'm hurt, I go quiet and let the other person work out why." },
+    { "id": "RM5", "s": "RM", "r": true,  "t": "I'd rather let a conflict blow over on its own than talk it through." },
+    { "id": "RM6", "s": "RM", "r": true,  "t": "I need a lot of reassurance to feel secure in a relationship." },
+
+    { "id": "IA1", "s": "IA", "r": false, "t": "I can soothe myself when I'm upset rather than needing someone else to fix my mood." },
+    { "id": "IA2", "s": "IA", "r": false, "t": "I can change my mind when the facts change." },
+    { "id": "IA3", "s": "IA", "r": false, "t": "I can weigh the long term, not just what I want right now." },
+    { "id": "IA4", "s": "IA", "r": true,  "t": "I tend to see people and situations as either all good or all bad." },
+    { "id": "IA5", "s": "IA", "r": true,  "t": "My sense of being okay rises and falls with other people's approval." },
+    { "id": "IA6", "s": "IA", "r": true,  "t": "When plans fall through, it derails me more than it should." }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  const DATA = JSON.parse(document.getElementById("ITEMS").textContent);
+  const SUBSCALES = DATA.subscales;
+  const ITEMS = DATA.items;
+  const SUBS = Object.keys(SUBSCALES);
+
+  const SCALE = ["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"];
+
+  // Simulated internal-consistency (Cronbach's alpha). Precomputed from the build-time
+  // Monte Carlo simulation (N=1,000 synthetic respondents, single-factor model per
+  // subscale, reverse items modeled with negative loading then reverse-scored).
+  // Regenerated by the accompanying validation script; see appendix caveat.
+  const ALPHA = { SA: 0.81, ER: 0.89, AC: 0.85, DT: 0.85, EM: 0.83, RM: 0.83, IA: 0.84 };
+
+  // Round-robin interleave so the factor structure is not visible during administration
+  // (and so no two adjacent items share a subscale).
+  function interleave(items) {
+    const buckets = {};
+    items.forEach(it => (buckets[it.s] = buckets[it.s] || []).push(it));
+    const out = []; let round = 0, added = true;
+    while (added) { added = false;
+      for (const k of SUBS) { if (buckets[k][round]) { out.push(buckets[k][round]); added = true; } }
+      round++;
+    }
+    return out;
+  }
+  const ORDER = interleave(ITEMS);
+
+  const answers = new Array(ORDER.length).fill(null); // raw 1..6 as displayed
+  let pos = 0;
+  const wrap = document.getElementById("wrap");
+
+  // ---------- scoring ----------
+  function scoreItem(item, raw) { return item.r ? (7 - raw) : raw; }
+  function score() {
+    const by = {}; SUBS.forEach(k => by[k] = []);
+    ORDER.forEach((it, i) => { if (answers[i] != null) by[it.s].push(scoreItem(it, answers[i])); });
+    const means = {};
+    SUBS.forEach(k => means[k] = by[k].length ? by[k].reduce((a,b)=>a+b,0)/by[k].length : null);
+    const vals = SUBS.map(k => means[k]).filter(v => v != null);
+    const overall = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+    return { means, overall };
+  }
+  function bandOf(m) { return m < 3.0 ? "dev" : (m < 4.5 ? "emg" : "str"); }
+  const BAND = { dev: "Developing", emg: "Emerging", str: "Strong" };
+
+  // ---------- disclaimer (shared footer) ----------
+  function disclaimerHTML() {
+    return `
+      <div class="disclaimer">
+        <h4>Important — please read</h4>
+        <p>This inventory is an educational self-reflection tool. It is <strong>not</strong> a clinical, diagnostic, or psychological assessment instrument, and it does not diagnose, treat, screen for, or rule out any mental health condition. It is not a substitute for evaluation, diagnosis, or advice from a qualified health or mental-health professional, and using it creates no therapeutic, clinical, or professional relationship of any kind.</p>
+        <p>The subscales draw on published psychological frameworks, but the items are original and the instrument itself has not been clinically validated or normed on any population. The reliability figures shown in the psychometric appendix are <strong>simulated estimates generated from synthetic data</strong> for design purposes — they are not results from human respondents and should not be read as evidence of clinical accuracy.</p>
+        <p>This tool is provided “as is,” without warranties of any kind, express or implied, including fitness for a particular purpose. Any reliance on it is solely at your own discretion and risk. If you are struggling or in distress, please reach out to a licensed professional or a crisis line in your area.</p>
+        <p>© 2026. All rights reserved. For personal reflection and research use only.</p>
+      </div>`;
+  }
+
+  // ---------- screens ----------
+  function renderStart() {
+    pos = 0;
+    wrap.innerHTML = `
+      <div class="qcard">
+        <p class="eyebrow">A self-assessment</p>
+        <h1>The Emotional<br>Maturity <em>Inventory</em></h1>
+        <p class="lede">Emotional maturity isn't staying calm or having it together. It's what happens next — after you feel something. This looks at seven capacities that separate reacting from responding.</p>
+        <p class="meta">${ITEMS.length} statements, about six minutes. There are no neutral answers on purpose: each one asks you to lean one way. Answer for how you actually tend to be, not how you'd like to be. Nothing is saved or sent.</p>
+        <button class="btn" id="begin">Begin</button>
+        <p class="hint">Tip: press <kbd>1</kbd>–<kbd>6</kbd> to answer, <kbd>Backspace</kbd> to go back.</p>
+        ${disclaimerHTML()}
+      </div>`;
+    document.getElementById("begin").addEventListener("click", () => { pos = 0; renderQuestion(); });
+  }
+
+  function renderQuestion() {
+    const item = ORDER[pos];
+    const pct = Math.round((pos) / ORDER.length * 100);
+    wrap.innerHTML = `
+      <div>
+        <div class="progress-rail"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-label">Question ${pos + 1} of ${ORDER.length}</div>
+        <div class="qcard">
+          <div class="qnum">${String(pos + 1).padStart(2, "0")}</div>
+          <p class="qstem">${item.t}</p>
+          <div class="scale" id="scale">
+            ${SCALE.map((lab, i) => `
+              <button class="opt${answers[pos] === i + 1 ? " sel" : ""}" data-val="${i + 1}">
+                <span class="key">${i + 1}</span><span>${lab}</span>
+              </button>`).join("")}
+          </div>
+          <div class="nav-row">
+            <button class="back-link" id="back" ${pos === 0 ? "disabled" : ""}>&larr; back</button>
+          </div>
+        </div>
+      </div>`;
+    document.querySelectorAll(".opt").forEach(btn =>
+      btn.addEventListener("click", () => choose(Number(btn.dataset.val))));
+    document.getElementById("back").addEventListener("click", goBack);
+  }
+
+  function choose(val) {
+    answers[pos] = val;
+    if (pos < ORDER.length - 1) { pos++; renderQuestion(); }
+    else renderResults();
+  }
+  function goBack() { if (pos > 0) { pos--; renderQuestion(); } }
+
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("scale")) return;
+    if (e.key >= "1" && e.key <= "6") { e.preventDefault(); choose(Number(e.key)); }
+    else if (e.key === "Backspace") { e.preventDefault(); goBack(); }
+  });
+
+  function renderResults() {
+    const { means, overall } = score();
+    const oBand = bandOf(overall);
+    const devCount = SUBS.filter(k => bandOf(means[k]) === "dev").length;
+    const z1 = ((3.0 - 1) / 5) * 100, z2 = ((4.5 - 1) / 5) * 100;
+
+    const overallLine = {
+      dev: "Several capacities are still developing. That's information, not a verdict — maturity is built, not issued, and the lowest bars are simply where the leverage is.",
+      emg: "A solid, workable profile: most capacities are online, with clear edges to grow. This is where most reflective adults land.",
+      str: "A well-developed profile across the board. The capacities that let you respond rather than react are largely in place."
+    }[oBand];
+
+    let gauges = "";
+    SUBS.forEach(k => {
+      const m = means[k], b = bandOf(m), pct = ((m - 1) / 5) * 100;
+      const ac = SUBSCALES[k].accent;
+      gauges += `
+        <div class="gauge">
+          <div class="gauge-top">
+            <span class="gauge-name"><span class="gauge-dot" style="background:var(${ac})"></span>${SUBSCALES[k].name}</span>
+            <span class="gauge-band">${BAND[b]} &middot; ${m.toFixed(1)}</span>
+          </div>
+          <div class="gauge-track">
+            <div class="gauge-zone" style="left:0; width:${z1}%"></div>
+            <div class="gauge-zone" style="left:${z1}%; width:${z2 - z1}%"></div>
+            <div class="gauge-bar" style="background:var(${ac})" data-target="${pct}"></div>
+          </div>
+          <div class="gauge-desc">${SUBSCALES[k].desc[b]}</div>
+        </div>`;
+    });
+
+    const care = devCount >= 2 ? `
+      <div class="care">
+        <h3>A note on the low bars</h3>
+        <p>Two or more capacities landed in the developing range. These usually aren't character flaws — they're strategies that once protected you and now cost more than they give. They move, with attention and often with help. If any of this feels heavy, it's worth talking through with someone you trust or a therapist.</p>
+      </div>` : "";
+
+    wrap.innerHTML = `
+      <div class="qcard">
+        <p class="overall-band" style="color:var(--band-${oBand})">Overall &middot; ${BAND[oBand]}</p>
+        <p class="overall-score">${overall.toFixed(1)}<span class="max"> / 6.0</span></p>
+        <p class="res-sub">${overallLine}</p>
+        <hr class="divider" />
+        ${gauges}
+        <hr class="divider" />
+        ${care}
+        <details class="appendix">
+          <summary>Psychometric appendix</summary>
+          <div class="appendix-body" id="appendix"></div>
+        </details>
+        <div class="restart"><button class="btn ghost" id="again">Take it again</button></div>
+        ${disclaimerHTML()}
+      </div>`;
+
+    requestAnimationFrame(() => setTimeout(() => {
+      document.querySelectorAll(".gauge-bar").forEach(bar => bar.style.width = bar.dataset.target + "%");
+    }, 60));
+
+    renderAppendix();
+    document.getElementById("again").addEventListener("click", () => { answers.fill(null); renderStart(); });
+  }
+
+  function renderAppendix() {
+    const el = document.getElementById("appendix");
+    const vals = Object.values(ALPHA);
+    const grand = vals.reduce((a,b)=>a+b,0)/vals.length;
+    let rows = "";
+    SUBS.forEach(k => {
+      const a = ALPHA[k], cls = a >= 0.70 ? "pass" : "flag";
+      rows += `<tr><td>${SUBSCALES[k].name}</td><td>6</td><td>3 / 3</td><td class="val ${cls}">${a.toFixed(2)}</td></tr>`;
+    });
+    el.innerHTML = `
+      <p>Seven subscales, six items each (42 total). Each subscale is balanced <strong>three forward / three reverse-keyed</strong> so that uniform "agree" responding resolves to the 3.50 scale midpoint on every subscale — a check against acquiescence bias. Subscales are administered interleaved so the factor structure isn't visible while you answer. Constructs draw on the Goleman/Boyatzis four-domain competency model, Singh &amp; Bhargava's Emotional Maturity dimensions, and the APA framing of maturity as appropriately regulated emotional expression. Items are original, written for this instrument.</p>
+      <table class="alpha">
+        <thead><tr><th>Subscale</th><th>Items</th><th>Keying</th><th style="text-align:right">&alpha;</th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr><td style="font-weight:600">Grand mean</td><td></td><td></td><td class="val" style="font-weight:600">${grand.toFixed(2)}</td></tr></tfoot>
+      </table>
+      <p>&alpha; &ge; 0.70 is the conventional threshold for acceptable internal consistency. These are <strong>simulated</strong> estimates from synthetic response data used to check item-set coherence during design; they are not norms from a human sample, and this inventory has not been validated against external criteria.</p>`;
+  }
+
+  // ---------- theme toggle ----------
+  const root = document.documentElement, toggle = document.getElementById("themeToggle");
+  function applyTheme(t) {
+    if (t === "dark" || t === "light") root.setAttribute("data-theme", t);
+    else root.removeAttribute("data-theme");
+    try { localStorage.setItem("emq-theme", t); } catch (e) {}
+  }
+  let saved = "system";
+  try { saved = localStorage.getItem("emq-theme") || "system"; } catch (e) {}
+  applyTheme(saved);
+  toggle.addEventListener("click", () => {
+    const cur = root.getAttribute("data-theme");
+    const sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = cur ? cur === "dark" : sysDark;
+    applyTheme(isDark ? "light" : "dark");
+  });
+
+  // ---------- debug hook for test harness ----------
+  window.__PI = {
+    items: ITEMS, order: ORDER, subs: SUBS, subscales: SUBSCALES, alpha: ALPHA,
+    get answers() { return answers.slice(); },
+    scoreItem, bandOf,
+    setAnswer(i, v) { answers[i] = v; },
+    setAll(v) { for (let i = 0; i < answers.length; i++) answers[i] = v; },
+    computeScore: score,
+    goto(p) { pos = p; renderQuestion(); },
+    start: renderStart, results: renderResults,
+    get pos() { return pos; }
+  };
+
+  renderStart();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Adverse Childhood Experiences</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single centered column (one question per screen); results as a tabbed ledger + ACE×PCE grid. */
+:root{
+  --bg:#f1f3ef; --panel:#fbfcf9; --panel-hi:#ffffff; --ink:#1c2220; --muted:#5b6560; --faint:#8a938e;
+  --line:#d5dbd5; --track:#e4e8e3;
+  --ace:#8a3a34; --ace-soft:#f1dedb;
+  --exp:#3c5a74; --exp-soft:#dce5ee;
+  --pce:#4a6a44; --pce-soft:#dfe9db;
+  --syn:#94681c; --syn-soft:#f0e5cf;
+  --accent:var(--syn); --accent-soft:var(--syn-soft); --on-accent:#ffffff;
+  --warn:#9a5a12; --warn-soft:#f5e7d2;
+  --f-display:"Fraunces", Georgia, "Times New Roman", serif;
+  --f-body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:4px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151918; --panel:#1d2220; --panel-hi:#242a28; --ink:#e5e9e4; --muted:#a3ada7; --faint:#7b857f;
+  --line:#343c39; --track:#2b3230;
+  --ace:#e3a59c; --ace-soft:#3a2523; --exp:#9fbbd6; --exp-soft:#22303c;
+  --pce:#a6c79a; --pce-soft:#243122; --syn:#dfb466; --syn-soft:#36301f;
+  --on-accent:#151918; --warn:#e2ad6a; --warn-soft:#3a2d1a;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#151918; --panel:#1d2220; --panel-hi:#242a28; --ink:#e5e9e4; --muted:#a3ada7; --faint:#7b857f;
+  --line:#343c39; --track:#2b3230;
+  --ace:#e3a59c; --ace-soft:#3a2523; --exp:#9fbbd6; --exp-soft:#22303c;
+  --pce:#a6c79a; --pce-soft:#243122; --syn:#dfb466; --syn-soft:#36301f;
+  --on-accent:#151918; --warn:#e2ad6a; --warn-soft:#3a2d1a;
+  color-scheme:dark;
+}
+body[data-accent="ace"]{--accent:var(--ace);--accent-soft:var(--ace-soft)}
+body[data-accent="exp"]{--accent:var(--exp);--accent-soft:var(--exp-soft)}
+body[data-accent="pce"]{--accent:var(--pce);--accent-soft:var(--pce-soft)}
+body[data-accent="syn"]{--accent:var(--syn);--accent-soft:var(--syn-soft)}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);letter-spacing:-.01em}
+h2{font-size:1.55rem}
+h3{font-size:1.15rem}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.muted{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.btn{font:600 .95rem var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:var(--r);padding:10px 18px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent}
+.btn:focus-visible,.opt:focus-visible,.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn[disabled]{opacity:.4;cursor:default}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.lenses{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.lens{border-top:3px solid var(--c);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.lens b{font-family:var(--f-display);font-size:1.05rem}
+.lens span{font-size:.9rem;color:var(--muted)}
+.note{background:var(--warn-soft);border-left:3px solid var(--warn);padding:14px 16px;border-radius:var(--r);font-size:.95rem}
+.disclaimer{font-size:.78rem;color:var(--muted);border-top:1px solid var(--line);padding-top:18px;display:flex;flex-direction:column;gap:10px}
+.disclaimer strong{font-family:var(--f-mono);letter-spacing:.1em;font-weight:500;color:var(--ink)}
+
+/* question screen */
+.progress{height:4px;background:var(--track);border-radius:2px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qmeta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lede{font-size:.95rem;color:var(--muted);max-width:60ch}
+.qtext{font-family:var(--f-display);font-size:clamp(1.3rem,4vw,1.65rem);font-weight:400;line-height:1.35;max-width:34ch}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:14px;align-items:center;text-align:left;font:500 1rem var(--f-body);color:var(--ink);background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;cursor:pointer}
+.opt kbd{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:3px;min-width:24px;text-align:center;padding:1px 5px;background:var(--bg)}
+.opt.soft{color:var(--muted);font-weight:400}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel kbd{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.linkbtn{background:none;border:0;color:var(--muted);font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+.support{font-size:.9rem}
+.support dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:8px 0 0}
+.support dt{font-family:var(--f-mono);font-size:.85rem;user-select:all}
+.support dd{margin:0;color:var(--muted)}
+
+/* results */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{font:500 .92rem var(--f-body);background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:10px 12px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.scores{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:560px){.scores{grid-template-columns:1fr}}
+.score{border-left:3px solid var(--c);padding:4px 0 4px 14px;display:flex;flex-direction:column;gap:2px}
+.score .n{font-family:var(--f-display);font-size:2.3rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.score .n small{font-family:var(--f-mono);font-size:.85rem;font-weight:400;color:var(--muted)}
+.score .band{font-size:.88rem;color:var(--muted)}
+.ledger{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:620px){.ledger{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:6px;min-width:0}
+.col h4{margin:0 0 4px;font:500 .74rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--c)}
+.tile{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.88rem;padding:7px 10px;border:1px solid var(--line);border-radius:3px;color:var(--faint);background:var(--panel)}
+.tile.on{border-color:var(--c);background:var(--cs);color:var(--ink)}
+.tile .mk{font-family:var(--f-mono);font-size:.75rem}
+.tile.skip{border-style:dashed}
+.gridwrap{overflow-x:auto}
+svg text{font-family:var(--f-mono);font-size:10px;fill:var(--muted)}
+.reading{display:flex;flex-direction:column;gap:12px;max-width:62ch}
+.reading p{line-height:1.65}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(0,190px) 1fr auto;gap:12px;align-items:center;font-size:.9rem}
+@media (max-width:520px){.bar{grid-template-columns:1fr auto}.bar .trk{grid-column:1/-1}}
+.trk{height:8px;background:var(--track);border-radius:4px;overflow:hidden}
+.trk i{display:block;height:100%;background:var(--c)}
+.tag{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+.flag{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 14px;border-radius:var(--r);font-size:.93rem}
+.appx h3{margin-top:8px}
+.appx p,.appx li{font-size:.92rem;max-width:65ch}
+.appx ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+@media (prefers-reduced-motion:reduce){.progress i{transition:none}}
+</style>
+
+<div class="wrap" id="app" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- response sets (native scales preserved) ---------- */
+const SETS = {
+  YN:   [["Yes","yes"],["No","no"],["Don't know / not sure","dk",1],["Prefer not to answer","pna",1]],
+  SEP:  [["Yes","yes"],["No","no"],["Parents were not married","nm"],["Don't know / not sure","dk",1],["Prefer not to answer","pna",1]],
+  F3:   [["Never","never"],["Once","once"],["More than once","more"],["Don't know / not sure","dk",1],["Prefer not to answer","pna",1]],
+  T5:   [["Never","never"],["A little of the time","little"],["Some of the time","some"],["Most of the time","most"],["All of the time","all"],["Don't know / not sure","dk",1],["Prefer not to answer","pna",1]],
+  YN2:  [["Yes","yes"],["No","no"],["Prefer not to answer","pna",1]],
+  O5:   [["Never","never"],["Rarely","rarely"],["Sometimes","sometimes"],["Often","often"],["Always","always"],["Prefer not to answer","pna",1]],
+  P5:   [["Never","never"],["Rarely","rarely"],["Sometimes","sometimes"],["Usually","usually"],["Always","always"],["Prefer not to answer","pna",1]],
+  P5HS: [["Never","never"],["Rarely","rarely"],["Sometimes","sometimes"],["Usually","usually"],["Always","always"],["Did not attend high school / home-schooled","na",1],["Prefer not to answer","pna",1]]
+};
+
+const PARTS = {
+  ace:{label:"At home", n:1, lede:"These questions come from the CDC's Behavioral Risk Factor Surveillance System ACE module, word for word. All of them refer to the time before you were 18. You can skip any question."},
+  exp:{label:"Beyond the home", n:2, lede:"The original ACE study looked only inside the household. These questions cover adversity in the wider world a child grows up in: the neighborhood, school, and community. Still before age 18."},
+  pce:{label:"What held", n:3, lede:"The last seven questions ask about the good things: the people and places that held you up. Adversity is half the picture; these are the other half."}
+};
+
+/* ---------- item bank ---------- */
+const ITEMS = [
+  // Part 1: BRFSS ACE module 2021–current, verbatim (U.S. federal work, public domain). Item 6 typo "you parents" corrected.
+  {id:"B1", part:"ace", set:"YN", text:"Did you live with anyone who was depressed, mentally ill, or suicidal?"},
+  {id:"B2", part:"ace", set:"YN", text:"Did you live with anyone who was a problem drinker or alcoholic?"},
+  {id:"B3", part:"ace", set:"YN", text:"Did you live with anyone who used illegal street drugs or who abused prescription medications?"},
+  {id:"B4", part:"ace", set:"YN", text:"Did you live with anyone who served time or was sentenced to serve time in a prison, jail, or other correctional facility?"},
+  {id:"B5", part:"ace", set:"SEP", text:"Were your parents separated or divorced?"},
+  {id:"B6", part:"ace", set:"F3", text:"How often did your parents or adults in your home ever slap, hit, kick, punch or beat each other up?"},
+  {id:"B7", part:"ace", set:"F3", text:"Not including spanking, (before age 18), how often did a parent or adult in your home ever hit, beat, kick, or physically hurt you in any way?"},
+  {id:"B8", part:"ace", set:"F3", text:"How often did a parent or adult in your home ever swear at you, insult you, or put you down?"},
+  {id:"B9", part:"ace", set:"F3", text:"How often did anyone at least 5 years older than you or an adult, ever touch you sexually?"},
+  {id:"B10",part:"ace", set:"F3", text:"How often did anyone at least 5 years older than you or an adult, try to make you touch them sexually?"},
+  {id:"B11",part:"ace", set:"F3", text:"How often did anyone at least 5 years older than you or an adult, force you to have sex?"},
+  {id:"B12",part:"ace", set:"T5", text:"For how much of your childhood was there an adult in your household who made you feel safe and protected?"},
+  {id:"B13",part:"ace", set:"T5", text:"For how much of your childhood was there an adult in your household who tried hard to make sure your basic needs were met?"},
+  // Part 2: original items mapped to Philadelphia Expanded ACE + NSCH domains (clean-room)
+  {id:"E1", part:"exp", set:"F3", text:"Before you were 18, how often did you see or hear someone being shot, stabbed, or badly beaten outside your home — in your neighborhood, at school, or elsewhere?"},
+  {id:"E2", part:"exp", set:"F3", text:"Before you were 18, how often were you treated badly or unfairly because of your race, ethnicity, religion, sexual orientation, disability, or another part of who you are?"},
+  {id:"E3", part:"exp", set:"O5", text:"How often did you feel unsafe in the neighborhood where you lived?"},
+  {id:"E4", part:"exp", set:"O5", text:"How often could you count on adults in your neighborhood to look out for the kids around them?"},
+  {id:"E5", part:"exp", set:"F3", text:"How often were you bullied by other kids or teens — hit, threatened, mocked, shut out, or harassed, in person or online?"},
+  {id:"E6", part:"exp", set:"YN2", text:"Did you ever live in foster care, in a group home, or with relatives because a court or agency placed you there?"},
+  {id:"E7", part:"exp", set:"O5", text:"How often was it very hard for your household to cover basics like food, rent, or utilities?"},
+  {id:"E8", part:"exp", set:"YN2", text:"Did a parent or main caregiver die while you were growing up?"},
+  // Part 3: Positive Childhood Experiences (Bethell et al., 2019; Wisconsin BRFS 2015)
+  {id:"P1", part:"pce", set:"P5", text:"Before you were 18, how often did you feel able to talk to your family about your feelings?"},
+  {id:"P2", part:"pce", set:"P5", text:"How often did you feel your family stood by you during difficult times?"},
+  {id:"P3", part:"pce", set:"P5", text:"How often did you enjoy taking part in community traditions?"},
+  {id:"P4", part:"pce", set:"P5HS", text:"How often did you feel a sense of belonging in high school?"},
+  {id:"P5", part:"pce", set:"P5", text:"How often did you feel supported by friends?"},
+  {id:"P6", part:"pce", set:"P5", text:"How often were there at least two adults, other than your parents, who took a genuine interest in you?"},
+  {id:"P7", part:"pce", set:"P5", text:"How often did you feel safe and protected by an adult in your home?"}
+];
+
+/* ---------- category definitions (scoring keys) ---------- */
+const any = (ids, codes) => a => ids.some(id => codes.includes(a[id]));
+const CATS = {
+  ace:[
+    {id:"mental",    label:"Household mental illness", grp:"Household", ids:["B1"], hit:any(["B1"],["yes"])},
+    {id:"substance", label:"Household substance use",  grp:"Household", ids:["B2","B3"], hit:any(["B2","B3"],["yes"])},
+    {id:"incarc",    label:"Incarcerated household member", grp:"Household", ids:["B4"], hit:any(["B4"],["yes"])},
+    {id:"separation",label:"Parental separation or divorce", grp:"Household", ids:["B5"], hit:any(["B5"],["yes"])},
+    {id:"dv",        label:"Violence between adults", grp:"Abuse", ids:["B6"], hit:any(["B6"],["once","more"])},
+    {id:"physical",  label:"Physical abuse", grp:"Abuse", ids:["B7"], hit:any(["B7"],["once","more"])},
+    {id:"emotional", label:"Emotional abuse", grp:"Abuse", ids:["B8"], hit:any(["B8"],["once","more"])},
+    {id:"sexual",    label:"Sexual abuse", grp:"Sexual", ids:["B9","B10","B11"], hit:any(["B9","B10","B11"],["once","more"])},
+    {id:"eneglect",  label:"Emotional neglect", grp:"Neglect", ids:["B12"], hit:any(["B12"],["never","little"])},
+    {id:"pneglect",  label:"Physical neglect", grp:"Neglect", ids:["B13"], hit:any(["B13"],["never","little"])}
+  ],
+  exp:[
+    {id:"witness",  label:"Witnessed community violence", ids:["E1"], hit:any(["E1"],["once","more"])},
+    {id:"discrim",  label:"Discrimination", ids:["E2"], hit:any(["E2"],["once","more"])},
+    {id:"neighbor", label:"Unsafe or unsupportive neighborhood", ids:["E3","E4"], hit:a => ["often","always"].includes(a.E3) || ["never","rarely"].includes(a.E4)},
+    {id:"bullied",  label:"Repeated bullying", ids:["E5"], hit:any(["E5"],["more"])},
+    {id:"foster",   label:"Out-of-home placement", ids:["E6"], hit:any(["E6"],["yes"])},
+    {id:"hardship", label:"Economic hardship", ids:["E7"], hit:any(["E7"],["often","always"])},
+    {id:"loss",     label:"Death of a parent or caregiver", ids:["E8"], hit:any(["E8"],["yes"])}
+  ],
+  pce:[
+    {id:"talk",    label:"Could talk to family about feelings", ids:["P1"]},
+    {id:"stood",   label:"Family stood by me in hard times", ids:["P2"]},
+    {id:"trad",    label:"Enjoyed community traditions", ids:["P3"]},
+    {id:"belong",  label:"Belonged in high school", ids:["P4"]},
+    {id:"friends", label:"Supported by friends", ids:["P5"]},
+    {id:"adults",  label:"Two non-parent adults who cared", ids:["P6"]},
+    {id:"safe",    label:"Felt safe and protected at home", ids:["P7"]}
+  ].map(c => Object.assign(c,{hit:any(c.ids,["usually","always"])}))
+};
+
+/* ---------- bands ---------- */
+function aceBand(n){ return n===0?{k:"none",t:"No ACEs reported"}: n===1?{k:"one",t:"One ACE"}: n<=3?{k:"some",t:"2–3 ACEs"}:{k:"high",t:"4 or more ACEs"}; }
+function expBand(n){ return n===0?{k:"none",t:"None reported"}: n<=2?{k:"some",t:"1–2 expanded ACEs"}:{k:"high",t:"3 or more expanded ACEs"}; }
+function pceBand(n){ return n<=2?{k:"low",t:"0–2 PCEs"}: n<=5?{k:"mid",t:"3–5 PCEs"}:{k:"high",t:"6–7 PCEs"}; }
+
+/* ---------- pure scoring ---------- */
+const T5V = {never:0,little:1,some:2,most:3,all:4};
+const P5V = {never:0,rarely:1,sometimes:2,usually:3,always:4};
+function score(a){
+  const out = {};
+  for (const lens of ["ace","exp","pce"]){
+    const cats = CATS[lens].map(c => {
+      const answered = c.ids.filter(id => a[id] !== undefined && a[id] !== "pna");
+      return {id:c.id,label:c.label,grp:c.grp,on:!!c.hit(a),skipped:answered.length===0};
+    });
+    out[lens] = {cats, n:cats.filter(c=>c.on).length, max:cats.length,
+      skipped: ITEMS.filter(i=>i.part===lens && a[i.id]==="pna").length};
+  }
+  out.ace.band = aceBand(out.ace.n); out.exp.band = expBand(out.exp.n); out.pce.band = pceBand(out.pce.n);
+  const g = k => out.ace.cats.filter(c=>c.grp===k);
+  out.ace.groups = ["Household","Abuse","Sexual","Neglect"].map(k=>({k,n:g(k).filter(c=>c.on).length,max:g(k).length}));
+  // Consistency: B12 and P7 ask about the same thing on different scales
+  out.flags = {};
+  if (a.B12 in T5V && a.P7 in P5V && Math.abs(T5V[a.B12]-P5V[a.P7]) >= 3) out.flags.safeMismatch = true;
+  out.flags.hsNA = a.P4 === "na";
+  out.flags.anySkipped = out.ace.skipped + out.exp.skipped + out.pce.skipped > 0;
+  out.flags.sexualSkipped = ["B9","B10","B11"].some(id => a[id]==="pna");
+  out.combined = out.ace.n + out.exp.n;
+  return out;
+}
+
+function quadrant(s){
+  const hiA = s.ace.n >= 4, midA = s.ace.n >= 1 && s.ace.n <= 3;
+  const p = s.pce.band.k;
+  if (hiA && p==="high") return {k:"buffered-high", t:"Heavy adversity, strong buffers"};
+  if (hiA && p==="mid")  return {k:"partial-high",  t:"Heavy adversity, partial buffers"};
+  if (hiA)               return {k:"unbuffered",    t:"Heavy adversity, few buffers"};
+  if (midA && p==="low") return {k:"thin",          t:"Some adversity, few buffers"};
+  if (midA)              return {k:"buffered-mid",  t:"Some adversity, buffered"};
+  if (p==="low")         return {k:"quiet",         t:"Little adversity, few buffers"};
+  return {k:"steady", t:"Little adversity, solid buffers"};
+}
+
+const READINGS = {
+  "buffered-high":"You reported four or more household ACEs and six or seven positive experiences. In Bethell's statewide data, high PCE counts were linked to lower odds of adult depression and poor mental health at every ACE level, including the highest. Both things are true of your childhood: a lot went wrong, and real people and places held you anyway. Those buffers are worth naming specifically, because they are often the template for what helps now.",
+  "partial-high":"You reported four or more household ACEs alongside a moderate number of positive experiences. Some protection was present, unevenly. Look at which PCE tiles are filled and which are empty: the empty ones often point to what was missing at the time, and to what adults with this pattern most often find themselves building later (a trusted friend, a mentor, a community).",
+  "unbuffered":"You reported four or more household ACEs and two or fewer positive experiences. This is the combination the research flags most clearly: a lot of adversity with little to absorb it. That is a description of what a child was given, not a forecast about who that child became. If any of it still weighs on you, this is the profile where talking to a trauma-informed professional tends to help most.",
+  "thin":"You reported one to three household ACEs and few positive experiences. The ACE count alone looks moderate, but the buffer side is thin. Bethell's data suggest the absence of good things carries weight of its own, so this pattern can feel heavier than the ACE number implies.",
+  "buffered-mid":"You reported one to three household ACEs alongside a moderate-to-strong set of positive experiences. This is the most common shape in population surveys: some adversity, met with some protection.",
+  "quiet":"You reported no household ACEs but two or fewer positive experiences. Nothing on the standard ACE list happened, yet much of what helps a child feel connected was missing. Bethell found that adults with no ACEs but few PCEs still had notably lower rates of feeling emotionally supported as adults. The ACE score would call this a clean childhood; the PCE score says otherwise, and that gap is often hard to name.",
+  "steady":"You reported no household ACEs and a moderate-to-strong set of positive experiences. By both measures this is a well-supported childhood. The expanded panel may still show adversity from outside the home, which the standard ACE score does not count."
+};
+
+/* ---------- state ---------- */
+const S = {screen:"intro", i:0, a:{}, tab:"syn", support:false};
+window.__BE = {ITEMS, SETS, CATS, score, quadrant, aceBand, expBand, pceBand, S};
+
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const DISCLAIMER = `<section class="disclaimer" id="disclaimer">
+<strong>LEGAL DISCLAIMER</strong>
+<p>This instrument is provided for general educational and self-reflective purposes only. It is not a medical device, a psychological or clinical assessment, or a diagnostic tool, and it is not a substitute for professional evaluation, diagnosis, or treatment by a qualified health-care or mental-health provider. Your use of it does not create any clinician–client, therapist–patient, or other professional relationship.</p>
+<p>The subscales, scores, thresholds, and interpretive text are derived from published psychological constructs but have not been clinically validated, standardized, or normed on any population. Any reliability figures shown are produced by statistical simulation, not by data collected from respondents. Results describe general tendencies and patterns — not fixed traits, and not statements of fact about any identified person.</p>
+<p>To the fullest extent permitted by law, the author and distributors make no warranties, express or implied, including as to accuracy, completeness, or fitness for a particular purpose, and disclaim all liability for any decision made or action taken in reliance on this instrument or its output. If you have concerns about your safety or mental health, seek the advice of a licensed professional or your local emergency services.</p>
+<p>© 2026 Erica Campbell. All rights reserved.</p>
+</section>`;
+
+const SUPPORT = `<div class="support"><b>If this stirred something up</b>
+<dl><dt>988</dt><dd>Suicide &amp; Crisis Lifeline (call or text, U.S.)</dd>
+<dt>1-800-422-4453</dt><dd>Childhelp National Child Abuse Hotline, including adult survivors</dd>
+<dt>1-800-656-4673</dt><dd>RAINN National Sexual Assault Hotline</dd></dl></div>`;
+
+function themeBtn(){
+  const next = curTheme()==="dark" ? "Light" : "Dark";
+  return `<button class="btn ghost" id="themeBtn" type="button" aria-label="Switch to ${next.toLowerCase()} mode">${next} mode</button>`;
+}
+function curTheme(){
+  const r = document.documentElement.getAttribute("data-theme");
+  if (r) return r;
+  try { return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch(e){ return "light"; }
+}
+function bindTheme(){
+  const b = document.getElementById("themeBtn"); if(!b) return;
+  b.onclick = () => {
+    const nt = curTheme()==="dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", nt);
+    const n = nt==="dark" ? "Light" : "Dark";
+    b.textContent = n + " mode";
+    b.setAttribute("aria-label", "Switch to " + n.toLowerCase() + " mode");
+  };
+}
+
+/* ---------- screens ---------- */
+function renderIntro(){
+  document.body.dataset.accent = "syn";
+  app.innerHTML = `
+  <div class="topbar"><span class="eyebrow">Series XI · Childhood experience</span>${themeBtn()}</div>
+  <header class="stack">
+    <h1>Adverse Childhood Experiences</h1>
+    <p class="lede" style="font-size:1.05rem;color:var(--ink)">An Adverse Childhood Experiences screener that also counts what protected you. Twenty-eight questions, about five minutes.</p>
+  </header>
+  <div class="lenses">
+    <div class="lens" style="--c:var(--ace)"><b>At home</b><span>The CDC ACE module, 13 items verbatim. Scored 0–10.</span></div>
+    <div class="lens" style="--c:var(--exp)"><b>Beyond the home</b><span>Community and peer adversity the original study left out. Scored 0–7.</span></div>
+    <div class="lens" style="--c:var(--pce)"><b>What held</b><span>Bethell's Positive Childhood Experiences. Scored 0–7.</span></div>
+  </div>
+  <div class="note">Some of these questions ask about abuse and violence in childhood. Every question has a <em>Prefer not to answer</em> option, and you can stop at any time. Your answers stay in this browser tab and are not sent anywhere.</div>
+  <div class="row"><button class="btn primary" id="startBtn" type="button">Begin</button><span class="muted" style="font-size:.88rem">Keys 1–7 answer · Backspace goes back</span></div>
+  ${DISCLAIMER}`;
+  bindTheme();
+  document.getElementById("startBtn").onclick = () => { S.screen="q"; S.i=0; render(); };
+}
+
+function renderQ(){
+  const it = ITEMS[S.i], part = PARTS[it.part], opts = SETS[it.set];
+  document.body.dataset.accent = it.part;
+  const first = S.i===0 || ITEMS[S.i-1].part !== it.part;
+  const sel = S.a[it.id];
+  app.innerHTML = `
+  <div class="topbar"><span class="eyebrow">Part ${part.n} of 3 · ${part.label}</span>${themeBtn()}</div>
+  <div class="progress" aria-hidden="true"><i style="width:${(S.i/ITEMS.length*100).toFixed(1)}%"></i></div>
+  <div class="qmeta"><span class="tag">Question ${S.i+1} of ${ITEMS.length}</span>${it.part==="ace"?'<span class="tag">Looking back before age 18</span>':''}</div>
+  ${first?`<p class="lede" id="lede">${part.lede}</p>`:""}
+  <h2 class="qtext" id="qtext">${esc(it.text)}</h2>
+  <div class="opts" role="radiogroup" aria-labelledby="qtext">
+    ${opts.map((o,k)=>`<button type="button" role="radio" class="opt${o[2]?" soft":""}${sel===o[1]?" sel":""}" aria-checked="${sel===o[1]}" data-code="${o[1]}" id="opt-${k+1}"><kbd>${k+1}</kbd><span>${esc(o[0])}</span></button>`).join("")}
+  </div>
+  <div class="qfoot">
+    <button class="btn ghost" id="backBtn" type="button" ${S.i===0?"":""}>← Back</button>
+    <button class="linkbtn" id="supBtn" type="button">${S.support?"Hide support lines":"Need support?"}</button>
+  </div>
+  ${S.support?`<div class="panel">${SUPPORT}</div>`:""}`;
+  bindTheme();
+  app.querySelectorAll(".opt").forEach(b => b.onclick = () => choose(b.dataset.code));
+  document.getElementById("backBtn").onclick = back;
+  document.getElementById("supBtn").onclick = () => { S.support=!S.support; render(); };
+}
+
+function choose(code){
+  const it = ITEMS[S.i]; S.a[it.id] = code;
+  if (S.i < ITEMS.length-1){ S.i++; } else { S.screen="results"; S.tab="syn"; }
+  render();
+}
+function back(){
+  if (S.screen==="results"){ S.screen="q"; S.i=ITEMS.length-1; }
+  else if (S.i===0){ S.screen="intro"; }
+  else S.i--;
+  render();
+}
+
+/* ---------- results ---------- */
+function ledgerCol(lens, s, title, c, cs){
+  return `<div class="col" style="--c:var(${c});--cs:var(${cs})"><h4>${title} · ${s[lens].n}/${s[lens].max}</h4>
+  ${s[lens].cats.map(x=>`<div class="tile${x.on?" on":""}${x.skipped?" skip":""}" data-cat="${x.id}"><span>${esc(x.label)}</span><span class="mk">${x.on?"●":x.skipped?"skipped":"○"}</span></div>`).join("")}</div>`;
+}
+
+function gridSVG(s){
+  // x: ACE 0–10, y: PCE 0–7. Bands shaded by ACE band columns.
+  const W=440,H=260,L=40,B=34,T=12,R=12, cw=(W-L-R)/11, ch=(H-T-B)/8;
+  let g="";
+  for(let x=0;x<=10;x++) for(let y=0;y<=7;y++){
+    const fill = x>=4 ? "var(--ace-soft)" : "var(--track)";
+    const op = y>=6 ? .55 : y>=3 ? .8 : 1;
+    g+=`<rect x="${L+x*cw+1}" y="${T+(7-y)*ch+1}" width="${cw-2}" height="${ch-2}" fill="${fill}" opacity="${op}" rx="2"/>`;
+  }
+  // PCE band separators
+  [3,6].forEach(y=>{ const yy=T+(8-y)*ch; g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--pce)" stroke-dasharray="3 3" stroke-width="1"/>`; });
+  const xx=L+4*cw; g+=`<line x1="${xx}" x2="${xx}" y1="${T}" y2="${H-B}" stroke="var(--ace)" stroke-dasharray="3 3" stroke-width="1"/>`;
+  for(let x=0;x<=10;x++) g+=`<text x="${L+x*cw+cw/2}" y="${H-B+14}" text-anchor="middle">${x}</text>`;
+  for(let y=0;y<=7;y++) g+=`<text x="${L-8}" y="${T+(7-y)*ch+ch/2+3}" text-anchor="end">${y}</text>`;
+  g+=`<text x="${L+(W-L-R)/2}" y="${H-4}" text-anchor="middle">ACE score (at home) →</text>`;
+  g+=`<text transform="translate(11 ${T+(H-T-B)/2}) rotate(-90)" text-anchor="middle">PCE score →</text>`;
+  const cx=L+s.ace.n*cw+cw/2, cy=T+(7-s.pce.n)*ch+ch/2;
+  g+=`<circle cx="${cx}" cy="${cy}" r="9" fill="var(--syn)" stroke="var(--panel-hi)" stroke-width="2" id="you"/>`;
+  return `<div class="gridwrap"><svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;min-width:320px" role="img" aria-label="Your position: ACE ${s.ace.n}, PCE ${s.pce.n}">${g}</svg></div>`;
+}
+
+function catBars(s){
+  return `<div class="bars">${s.ace.groups.map(g=>`<div class="bar" style="--c:var(--ace)"><span>${g.k==="Household"?"Household dysfunction":g.k==="Abuse"?"Violence &amp; emotional/physical abuse":g.k==="Sexual"?"Sexual abuse":"Neglect"}</span><div class="trk"><i style="width:${g.n/g.max*100}%"></i></div><span class="tag">${g.n}/${g.max}</span></div>`).join("")}</div>`;
+}
+
+function flagsHTML(s){
+  let h="";
+  if (s.flags.safeMismatch) h+=`<div class="flag">Two questions asked about the same thing: whether an adult at home made you feel safe and protected. Your answers to them sit far apart on the scale. That can happen when childhood had distinct periods, or when the wording landed differently. It may be worth a second look.</div>`;
+  if (s.flags.anySkipped) h+=`<div class="flag">You chose <em>Prefer not to answer</em> on ${s.ace.skipped+s.exp.skipped+s.pce.skipped} question(s). Following CDC convention, a skipped question does not count toward a score, so your totals may be lower than they would otherwise be.</div>`;
+  return h;
+}
+
+const ACE_TEXT = {
+  none:"You reported none of the ten standard ACE categories. In CDC surveillance data, roughly four in ten U.S. adults report none.",
+  one:"You reported one of the ten categories. About six in ten U.S. adults report at least one ACE, so a single ACE is common.",
+  some:"You reported two or three categories. ACEs tend to cluster: when one is present, others often are too, which is why the count matters more than any single item.",
+  high:"You reported four or more categories. Four is the threshold used in the original Kaiser–CDC study, where risk for a range of adult health outcomes rose noticeably. Nearly one in six U.S. adults report four or more. These are population odds, not a personal forecast."
+};
+const EXP_TEXT = {
+  none:"You reported none of the community-level adversities.",
+  some:"You reported one or two community-level adversities. In Philadelphia's survey, many adults with no conventional ACEs still had expanded ones, which is why this panel exists.",
+  high:"You reported three or more community-level adversities, the top band used in the Philadelphia Expanded ACE survey. None of these count toward the standard ACE score, so the standard number alone understates what you lived through."
+};
+const PCE_TEXT = {
+  low:"You reported two or fewer positive childhood experiences at the usually-or-always level.",
+  mid:"You reported three to five. In Bethell's study, adults in this range had about 50% lower odds of depression or frequent poor mental health than adults with 0–2.",
+  high:"You reported six or seven. In Bethell's study, adults in this range had about 72% lower odds of depression or frequent poor mental health than adults with 0–2."
+};
+
+function renderResults(){
+  const s = score(S.a), q = quadrant(s);
+  const accent = {syn:"syn",ace:"ace",exp:"exp",pce:"pce",apx:"syn"}[S.tab];
+  document.body.dataset.accent = accent;
+  const tabs = [["syn","Overview"],["ace","At home"],["exp","Beyond the home"],["pce","What held"],["apx","Appendix"]];
+  let body="";
+  if (S.tab==="syn"){
+    body = `
+    <div class="scores">
+      <div class="score" style="--c:var(--ace)"><span class="eyebrow">ACE · at home</span><span class="n" id="aceN">${s.ace.n}<small> /10</small></span><span class="band">${s.ace.band.t}</span></div>
+      <div class="score" style="--c:var(--exp)"><span class="eyebrow">Beyond the home</span><span class="n" id="expN">${s.exp.n}<small> /7</small></span><span class="band">${s.exp.band.t}</span></div>
+      <div class="score" style="--c:var(--pce)"><span class="eyebrow">PCE · what held</span><span class="n" id="pceN">${s.pce.n}<small> /7</small></span><span class="band">${s.pce.band.t}</span></div>
+    </div>
+    <section class="panel stack"><h3>The ledger</h3><p class="muted" style="font-size:.9rem">Filled tiles are categories you reported. Adversity on the left, protection on the right.</p>
+      <div class="ledger">${ledgerCol("ace",s,"At home","--ace","--ace-soft")}${ledgerCol("exp",s,"Beyond","--exp","--exp-soft")}${ledgerCol("pce",s,"What held","--pce","--pce-soft")}</div>
+    </section>
+    <section class="stack"><span class="eyebrow">Adversity against buffers</span><h3 id="quad">${q.t}</h3>
+      ${gridSVG(s)}
+      <div class="reading"><p id="reading">${READINGS[q.k]}</p></div>
+    </section>
+    ${flagsHTML(s)}`;
+  } else if (S.tab==="ace"){
+    body = `<div class="reading"><span class="eyebrow">CDC BRFSS ACE module · 0–10</span><h2>${s.ace.n} of 10 · ${s.ace.band.t}</h2><p>${ACE_TEXT[s.ace.band.k]}</p></div>
+    ${catBars(s)}
+    <p class="muted" style="font-size:.9rem;max-width:62ch">The groupings follow the three factors CDC researchers found in the BRFSS items (Ford et al., 2014), with the two neglect items, added later, shown separately.</p>
+    <div class="ledger" style="grid-template-columns:1fr">${ledgerCol("ace",s,"Categories","--ace","--ace-soft")}</div>
+    ${s.ace.n>=4 || s.ace.cats.find(c=>c.id==="sexual").on ? `<div class="panel">${SUPPORT}</div>`:""}`;
+  } else if (S.tab==="exp"){
+    body = `<div class="reading"><span class="eyebrow">Expanded ACEs · 0–7</span><h2>${s.exp.n} of 7 · ${s.exp.band.t}</h2><p>${EXP_TEXT[s.exp.band.k]}</p>
+    <p class="muted">Combined with the household score, you reported <b>${s.combined}</b> of 17 adversity categories. No published norms exist for that combined number; it is shown for your own reference.</p></div>
+    <div class="ledger" style="grid-template-columns:1fr">${ledgerCol("exp",s,"Categories","--exp","--exp-soft")}</div>`;
+  } else if (S.tab==="pce"){
+    body = `<div class="reading"><span class="eyebrow">Positive Childhood Experiences · 0–7</span><h2>${s.pce.n} of 7 · ${s.pce.band.t}</h2><p>${PCE_TEXT[s.pce.band.k]}</p>
+    <p>A PCE counts when you answered <em>usually</em> or <em>always</em>. ${s.flags.hsNA?"You marked that you did not attend high school, so that item could not count; your maximum here is effectively 6.":""}</p></div>
+    <div class="ledger" style="grid-template-columns:1fr">${ledgerCol("pce",s,"Experiences","--pce","--pce-soft")}</div>`;
+  } else {
+    body = APPENDIX;
+  }
+  app.innerHTML = `
+  <div class="topbar"><span class="eyebrow">Series XI · Results</span>${themeBtn()}</div>
+  <h1 style="font-size:clamp(1.8rem,5vw,2.4rem)">Adverse Childhood Experiences</h1>
+  <nav class="tabs" role="tablist">${tabs.map(([k,l])=>`<button class="tab" role="tab" type="button" id="tab-${k}" aria-selected="${S.tab===k}" data-tab="${k}">${l}</button>`).join("")}</nav>
+  <div class="stack" style="gap:22px" id="tabbody">${body}</div>
+  <div class="row"><button class="btn" id="backBtn" type="button">← Change last answer</button><button class="btn ghost" id="restartBtn" type="button">Start over</button></div>
+  ${DISCLAIMER}`;
+  bindTheme();
+  app.querySelectorAll(".tab").forEach(b => b.onclick = () => { S.tab=b.dataset.tab; render(); });
+  document.getElementById("backBtn").onclick = back;
+  document.getElementById("restartBtn").onclick = () => { S.a={}; S.i=0; S.screen="intro"; render(); };
+}
+
+const APPENDIX = `<div class="appx stack">
+<span class="eyebrow">Psychometric appendix</span><h2>Sources, scoring, and decisions</h2>
+
+<h3>Lens 1 · At home (13 items, 10 categories)</h3>
+<p>Items are the CDC Behavioral Risk Factor Surveillance System ACE module, 2021–current version, reproduced verbatim with native response options (a U.S. federal work in the public domain). One typographical error in the CDC fact sheet ("you parents") is corrected. Scoring follows CDC rules: <em>Yes</em>, or <em>Once</em>/<em>More than once</em>, counts as exposure; the two substance items combine into one category; the three sexual-abuse items combine into one; <em>Parents not married</em> does not count as separation; the neglect items count when the answer is <em>Never</em> or <em>A little of the time</em>. <em>Don't know</em> and <em>Prefer not to answer</em> count as non-exposure, as in CDC analyses.</p>
+<p><b>Published reliability.</b> In 2010 BRFSS data (N≈57,700), the 11 original items gave Cronbach's α = .78 overall; the three factors gave α = .61 (household dysfunction), .70 (emotional/physical abuse) and .80 (sexual abuse), with configural and metric invariance across gender and age (Ford et al., 2014). The neglect items post-date that analysis. Bands (0, 1, 2–3, 4+) follow the convention of the original Kaiser–CDC study (Felitti et al., 1998).</p>
+
+<h3>Lens 2 · Beyond the home (8 items, 7 categories)</h3>
+<p>Original items written to the five community domains of the Philadelphia Expanded ACE survey (witnessed violence, discrimination, neighborhood, bullying, foster care; Cronholm et al., 2015), plus two domains from the National Survey of Children's Health ACE list (economic hardship, caregiver death). The Philadelphia wording draws on several copyrighted sources, so these are clean-room items mapped to the construct definitions. Bands (0, 1–2, 3+) follow Philadelphia's convention.</p>
+<ul>
+<li>Bullying counts only at <em>More than once</em>, because repetition is part of the definition of bullying.</li>
+<li>Neighborhood counts if the respondent felt unsafe often or always, <em>or</em> could rarely or never count on neighborhood adults. The second item is reverse-direction, as in Philadelphia's two-item neighborhood measure.</li>
+<li>Thresholds for this lens are provisional. These items have no published reliability or norms.</li>
+</ul>
+
+<h3>Lens 3 · What held (7 items)</h3>
+<p>Positive Childhood Experiences (Bethell et al., 2019), first fielded on the 2015 Wisconsin Behavioral Risk Factor Survey and adapted from the Child and Youth Resilience Measure. Items are phrased as questions with the original content. A PCE counts at <em>usually</em> or <em>always</em>. Published α = .77; factor loadings .57 (felt safe at home) to .72 (family stood by me). Bands 0–2, 3–5, 6–7, with the odds ratios cited in results, are from the same study. Respondents who did not attend high school cannot score item 4; Bethell's handling of that case is not published in the sources consulted, so it is treated as not endorsed and flagged.</p>
+
+<h3>Documented deviations from the series standard</h3>
+<ul>
+<li><b>No 6-point Likert, no balanced keying.</b> All three lenses are event checklists, scored as cumulative counts. Each item records whether something happened, not a trait, so acquiescence control does not apply in the usual way. Reverse-keying event questions would change what they measure and break comparability with CDC and Bethell norms.</li>
+<li><b>No Monte Carlo alpha.</b> A count of distinct events is a formative index: categories are not expected to correlate, and a low α would not mean the score is unreliable. The figures above are published values from source studies. No simulation was run for this instrument.</li>
+<li><b>No blind interleaving.</b> Items run in the BRFSS order, which was designed to ease into sensitive content, and the protective items come last so the session ends on what helped.</li>
+<li><b>Built-in consistency check.</b> BRFSS item 12 and PCE item 7 ask the same question on different scales. A gap of three or more scale steps raises a note.</li>
+<li><b>Retrospective self-report.</b> Prospective studies show adults tend to under-report documented childhood abuse. Scores are best read as a floor.</li>
+</ul>
+
+<h3>What the ACE score is not</h3>
+<p>The ACE score was built for population surveillance. It does not capture severity, duration, age at onset, or what happened afterward, and two people with the same number can have had very different childhoods. It predicts risk across groups and is a poor predictor for any one person. It is not a diagnosis of anything.</p>
+
+<h3>References</h3>
+<ul>
+<li>Bethell, C., Jones, J., Gombojav, N., Linkenbach, J., &amp; Sege, R. (2019). Positive childhood experiences and adult mental and relational health in a statewide sample. <em>JAMA Pediatrics, 173</em>(11), e193007.</li>
+<li>Centers for Disease Control and Prevention. BRFSS Adverse Childhood Experience (ACE) Module, 2021–Current.</li>
+<li>Cronholm, P. F., et al. (2015). Adverse childhood experiences: Expanding the concept of adversity. <em>American Journal of Preventive Medicine, 49</em>(3), 354–361.</li>
+<li>Felitti, V. J., et al. (1998). Relationship of childhood abuse and household dysfunction to many of the leading causes of death in adults. <em>American Journal of Preventive Medicine, 14</em>(4), 245–258.</li>
+<li>Ford, D. C., et al. (2014). Examination of the factorial structure of adverse childhood experiences and recommendations for three subscale scores. <em>Psychology of Violence, 4</em>(4), 432–444.</li>
+<li>Merrick, M. T., et al. (2019). Vital Signs: Estimated proportion of adult health problems attributable to adverse childhood experiences. <em>MMWR, 68</em>(44), 999–1005.</li>
+</ul>
+</div>`;
+
+function render(){
+  if (S.screen==="intro") renderIntro();
+  else if (S.screen==="q") renderQ();
+  else renderResults();
+  try{ window.scrollTo(0,0); }catch(e){}
+}
+
+document.addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (S.screen==="q"){
+    const n = parseInt(e.key,10), opts = SETS[ITEMS[S.i].set];
+    if (n>=1 && n<=opts.length){ e.preventDefault(); choose(opts[n-1][1]); }
+    else if (e.key==="Backspace"){ e.preventDefault(); back(); }
+  } else if (S.screen==="results" && e.key==="Backspace" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); back(); }
+});
+
+render();
+})();
+</script>
+
+</body></html>

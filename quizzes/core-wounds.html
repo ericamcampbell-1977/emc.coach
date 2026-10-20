@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Series VI · Core Wounds, the Armor Over Them & What Sets Them Off</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Series VI — "bruise and balm". Warm-bone paper, oxblood primary,
+   sage-teal for the healed pole; eight distinct subscale hues (c1–c8).
+   Full light/dark via bare :root + media-query + two data-theme guards. */
+:root{
+  --paper:#F2EDE6; --sheet:#FAF6F0; --ink:#241E1C; --ink2:#473D39;
+  --muted:#6E635C; --rule:#DBD1C4; --track:#E6DCCE;
+  --accent:#8C3A3A; --accent-soft:#EBD9D4; --balm:#3E7168; --gold:#9A6511;
+  --care-bg:#F3E6E2; --care-line:#A8674A;
+  /* subscale ramp */
+  --c1:#9A3F45; --c2:#B0632F; --c3:#9A6511; --c4:#6E7B3D;
+  --c5:#3E7168; --c6:#2E6A88; --c7:#5B4E8C; --c8:#8A4A63;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#17110F; --sheet:#1F1815; --ink:#EDE4DE; --ink2:#C3B6AE;
+  --muted:#9A8B82; --rule:#352B27; --track:#2A211D;
+  --accent:#D98A8A; --accent-soft:#38221F; --balm:#79BDB1; --gold:#D8A24E;
+  --care-bg:#30201C; --care-line:#C98A6A;
+  --c1:#E28C91; --c2:#DEA06A; --c3:#D8A24E; --c4:#AFBE7E;
+  --c5:#79BDB1; --c6:#79B4D4; --c7:#A79AD8; --c8:#D095AC;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#17110F; --sheet:#1F1815; --ink:#EDE4DE; --ink2:#C3B6AE;
+  --muted:#9A8B82; --rule:#352B27; --track:#2A211D;
+  --accent:#D98A8A; --accent-soft:#38221F; --balm:#79BDB1; --gold:#D8A24E;
+  --care-bg:#30201C; --care-line:#C98A6A;
+  --c1:#E28C91; --c2:#DEA06A; --c3:#D8A24E; --c4:#AFBE7E;
+  --c5:#79BDB1; --c6:#79B4D4; --c7:#A79AD8; --c8:#D095AC;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px 40px}
+header{padding:44px 0 22px;border-bottom:1px solid var(--rule);position:relative}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,5vw,38px);line-height:1.14;margin:0 0 10px;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--accent)}
+.sub{color:var(--muted);font-size:14.5px;max-width:64ch;margin:0}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+.themebtn{position:absolute;top:44px;right:0;background:none;border:1px solid var(--rule);border-radius:2px;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:6px 11px;cursor:pointer}
+.themebtn:hover{border-color:var(--accent);color:var(--accent)}
+nav{display:flex;gap:2px;flex-wrap:wrap;margin:22px 0 0;padding-bottom:0}
+nav button{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;padding:9px 12px;cursor:pointer;color:var(--muted)}
+nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
+nav button:hover{color:var(--ink)}
+.panel{display:none;padding:26px 0 0}
+.panel.on{display:block}
+.lead{font-family:var(--display);font-size:20px;line-height:1.45;margin:0 0 6px}
+.desc{color:var(--muted);font-size:14.5px;margin:0 0 22px;max-width:64ch}
+.meta{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em;margin:0 0 24px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden;margin:0 0 6px}
+.seg button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--sheet);border:none;padding:9px 16px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--ink);color:var(--paper)}
+.segnote{font-size:13px;color:var(--muted);margin:8px 0 24px;max-width:60ch}
+.start{background:var(--accent);color:#fff;border:none;border-radius:2px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:14px 26px;cursor:pointer}
+.start:hover{filter:brightness(1.08)}
+.prog{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;margin:0 0 8px;display:flex;justify-content:space-between}
+.ptrack{height:3px;background:var(--track);border-radius:2px;overflow:hidden;margin:0 0 30px}
+.ptrack i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.stem{font-family:var(--display);font-size:clamp(19px,3.6vw,24px);line-height:1.4;margin:0 0 28px;min-height:2.5em}
+.scale{display:grid;gap:6px;margin:0 0 22px}
+.scale button{display:flex;align-items:center;gap:13px;text-align:left;width:100%;background:var(--sheet);border:1px solid var(--rule);border-radius:2px;padding:12px 15px;cursor:pointer;font-family:var(--body);font-size:14.5px;color:var(--ink2);transition:.12s}
+.scale button:hover{border-color:var(--accent);background:var(--paper);color:var(--ink)}
+.scale button b{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--rule);border-radius:2px;width:23px;height:23px;display:grid;place-items:center;flex:none;font-weight:400}
+.scale button:hover b{border-color:var(--accent);color:var(--accent)}
+.navrow{display:flex;gap:10px;align-items:center}
+.back{background:none;border:1px solid var(--rule);border-radius:2px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:9px 15px;cursor:pointer;color:var(--muted)}
+.back:hover{border-color:var(--ink);color:var(--ink)}
+.hint{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.05em;margin-left:auto}
+/* results */
+.rhead{font-family:var(--display);font-size:22px;margin:6px 0 2px}
+.rsub{color:var(--muted);font-size:13.5px;margin:0 0 24px}
+.bar{margin:0 0 15px}
+.bar .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;margin:0 0 5px;gap:12px}
+.bar .lab b{font-weight:600}
+.bar .lab span{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.track{height:10px;background:var(--track);border-radius:1px;overflow:hidden}
+.track i{display:block;height:100%;transition:width .6s;background:var(--accent)}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:2px;margin-left:8px;vertical-align:middle;border:1px solid transparent}
+.tag-high{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.tag-mod{background:var(--track);color:var(--gold)}
+.tag-low{background:var(--track);color:var(--balm)}
+.note{border-left:2px solid var(--accent);padding:2px 0 2px 16px;margin:20px 0;font-size:14.5px;color:var(--ink2)}
+.care{border-left:2px solid var(--care-line);background:var(--care-bg);padding:16px 18px;border-radius:2px;margin:22px 0;font-size:14px;color:var(--ink2)}
+.care b{display:block;font-family:var(--display);font-size:15px;margin:0 0 5px;color:var(--ink)}
+.divider{height:1px;background:var(--rule);margin:30px 0}
+.appx{margin:30px 0 0;font-size:13.5px;color:var(--ink2)}
+.appx summary{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);cursor:pointer;padding:6px 0}
+.appx table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+.appx th,.appx td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--rule)}
+.appx th{font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.appx td:last-child,.appx th:last-child{font-family:var(--mono);text-align:right}
+.appx p{margin:8px 0}
+.restart{background:none;border:1px solid var(--rule);border-radius:2px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:11px 20px;cursor:pointer;color:var(--muted);margin-top:8px}
+.restart:hover{border-color:var(--accent);color:var(--accent)}
+/* synthesis */
+.syncard{border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:3px;padding:18px 20px;margin:0 0 16px;background:var(--sheet)}
+.syncard h4{font-family:var(--display);font-size:17px;margin:0 0 6px;color:var(--ink)}
+.syncard p{margin:0;font-size:14px;color:var(--ink2)}
+.syn-empty{color:var(--muted);font-size:14px;font-style:italic}
+.wound-def{font-size:13px;color:var(--muted);margin:3px 0 0;padding-left:16px;border-left:2px solid var(--rule)}
+/* legal disclaimer */
+.legal{border-top:1px solid var(--rule);margin:40px 0 0;padding:22px 0 10px}
+.legal h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.legal p{font-size:11.5px;line-height:1.6;color:var(--muted);margin:0 0 9px;max-width:72ch}
+.legal p b{color:var(--ink2);font-weight:600}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <button class="themebtn" id="themebtn" onclick="toggleTheme()" aria-label="Toggle light or dark theme">Dark</button>
+  <p class="kicker">Series VI · Pattern Inventory</p>
+  <h1>Core Wounds, the Armor Over Them &amp; <em>What Sets Them Off</em></h1>
+  <p class="sub">Four self-report instruments and a synthesis. The wound you carry, the strategy you built to survive it, the schema it hardened into, and the situations that light it up. Descriptive, not diagnostic — a mirror, not a verdict.</p>
+  <nav id="nav"></nav>
+</header>
+<main id="main"></main>
+<footer class="legal">
+  <h5>Important — please read</h5>
+  <p><b>Not a medical or psychological device.</b> This instrument is an educational and self-reflective tool built on published psychological frameworks. It has not been clinically validated or normed on a human sample, and the reliability figures shown in its appendices are simulated estimates of its scoring architecture, not evidence of clinical accuracy.</p>
+  <p><b>Not a diagnosis.</b> Nothing here identifies, screens for, or rules out any mental-health condition, personality disorder, or disorder of any kind. Scores describe self-reported patterns in the moment and can be inflated by mood, stress, or how you happen to read a question on a given day.</p>
+  <p><b>Not professional advice, and not a substitute for it.</b> Using this tool does not create a therapist–client, clinician–patient, or any other professional relationship. If you are struggling, or if anything surfaced here is distressing, please consult a licensed mental-health professional. In a crisis, contact your local emergency services or a crisis line (in the U.S., call or text 988).</p>
+  <p><b>Use at your own discretion.</b> You use this instrument voluntarily and at your own risk. The authors and distributors make no warranties of any kind and accept no liability for any decision, action, or outcome arising from its use. Your responses are scored in your browser for this session only and are not transmitted or stored.</p>
+  <p>© 2026 · Series VI · Core Wounds. All frameworks referenced belong to their respective authors; items are original and provided for educational use.</p>
+</footer>
+</div>
+<script>
+/* =========================================================================
+   SERIES VI — ITEM BANK
+   Every subscale: balanced keying. 6-item subscales = 3 forward / 3 reverse.
+   5-item subscales (WAP) = 3 forward / 2 reverse.
+   rev:true means the item is worded toward the *healthy* pole and is
+   reverse-scored (7 - raw) at results time.
+   Items are clean-room (original wording), mapped to published constructs.
+   ========================================================================= */
+const BANK = {
+ CWI:{
+  name:"CWI · Core Wound Inventory",
+  lead:"The wound underneath.",
+  desc:"Seven early emotional injuries, each a belief about yourself formed before you had words for it. Adapted from Bourbeau's five-wound taxonomy and Young's schema needs — with the original etiology and body-type claims removed (see appendix).",
+  bands:["Faint","Present","Central"],
+  invert:false,
+  subs:{
+   Rejection:{label:"Rejection",def:"“If people truly see me, they turn away.”",
+    self:[
+     {t:"When I walk into a room, I brace for the sense that I don't belong there.",rev:false},
+     {t:"I assume that if people got close enough, they'd find a reason to pull back.",rev:false},
+     {t:"Some part of me expects to be the one left out.",rev:false},
+     {t:"I generally feel wanted in the groups I'm part of.",rev:true},
+     {t:"When someone chooses me, I can take it at face value.",rev:true},
+     {t:"I can be fully myself around others without expecting rejection.",rev:true}],
+    obs:[
+     {t:"They seem to brace for exclusion even in welcoming settings.",rev:false},
+     {t:"They read early rejection into situations where none is apparent.",rev:false},
+     {t:"They hold back from groups as if expecting not to be wanted.",rev:false},
+     {t:"They appear to feel securely included among the people around them.",rev:true},
+     {t:"They accept being chosen or invited without visible suspicion.",rev:true},
+     {t:"They are openly themselves in company without seeming to fear rejection.",rev:true}]},
+   Abandonment:{label:"Abandonment",def:"“The people I lean on will leave or become unavailable.”",
+    self:[
+     {t:"When someone close goes quiet, I quickly assume they're slipping away.",rev:false},
+     {t:"I get anxious when the people I depend on aren't reachable.",rev:false},
+     {t:"A part of me is always half-prepared for someone important to disappear.",rev:false},
+     {t:"I trust that the people close to me will still be there tomorrow.",rev:true},
+     {t:"Distance or silence from a loved one doesn't throw me into alarm.",rev:true},
+     {t:"I can be apart from someone I love without fearing the bond will break.",rev:true}],
+    obs:[
+     {t:"They grow visibly anxious when a close person becomes unreachable.",rev:false},
+     {t:"They read brief silences from loved ones as signs of leaving.",rev:false},
+     {t:"They seem braced for important people to vanish from their life.",rev:false},
+     {t:"They stay settled when someone close is temporarily out of contact.",rev:true},
+     {t:"They treat the stability of their close bonds as something they can count on.",rev:true},
+     {t:"Time apart from a loved one doesn't appear to destabilize them.",rev:true}]},
+   Shame:{label:"Shame / Defectiveness",def:"“Something about me is fundamentally flawed or bad.”",
+    self:[
+     {t:"Deep down I suspect there's something wrong with me that I have to hide.",rev:false},
+     {t:"If people knew the real me, they'd think less of me.",rev:false},
+     {t:"I carry a quiet sense of being defective in a way others aren't.",rev:false},
+     {t:"I believe I'm fundamentally okay as a person.",rev:true},
+     {t:"I don't feel I have to hide some flawed core from the people around me.",rev:true},
+     {t:"When I make a mistake, it doesn't confirm that I'm bad.",rev:true}],
+    obs:[
+     {t:"They act as though some flawed part of them must be kept hidden.",rev:false},
+     {t:"They seem convinced that being fully known would lower others' opinion of them.",rev:false},
+     {t:"They carry themselves as if fundamentally defective.",rev:false},
+     {t:"They appear to regard themselves as fundamentally okay.",rev:true},
+     {t:"They don't behave as if concealing some shameful core.",rev:true},
+     {t:"A mistake doesn't seem to confirm for them that they're bad.",rev:true}]},
+   Betrayal:{label:"Betrayal",def:"“Trust will be exploited; people have hidden agendas.”",
+    self:[
+     {t:"I watch for the moment someone I trusted turns out to have an angle.",rev:false},
+     {t:"I find it hard to fully hand over trust without keeping a guard up.",rev:false},
+     {t:"I expect that people will use what they know about me against me eventually.",rev:false},
+     {t:"I can trust the people close to me without waiting to be double-crossed.",rev:true},
+     {t:"I assume good faith from others until shown otherwise.",rev:true},
+     {t:"I can be vulnerable with someone without scanning for betrayal.",rev:true}],
+    obs:[
+     {t:"They stay watchful for the moment a trusted person reveals an agenda.",rev:false},
+     {t:"They keep a guard up even with people they claim to trust.",rev:false},
+     {t:"They expect others to eventually use private information against them.",rev:false},
+     {t:"They extend trust to close people without bracing for a double-cross.",rev:true},
+     {t:"They tend to assume good faith from others by default.",rev:true},
+     {t:"They can be openly vulnerable without appearing to scan for betrayal.",rev:true}]},
+   Injustice:{label:"Injustice",def:"“I will be treated unfairly, and it won't be made right.”",
+    self:[
+     {t:"I feel a sharp charge when a rule or standard is applied unfairly to me.",rev:false},
+     {t:"I often sense that I'm held to a harsher standard than others.",rev:false},
+     {t:"Unfairness lingers with me long after the moment has passed.",rev:false},
+     {t:"When something is unfair, I can feel it and then let it go.",rev:true},
+     {t:"I generally trust that things tend to even out fairly for me.",rev:true},
+     {t:"I don't feel singled out for worse treatment than the people around me.",rev:true}],
+    obs:[
+     {t:"They react sharply when a standard seems applied unfairly to them.",rev:false},
+     {t:"They frequently sense being held to a harsher standard than others.",rev:false},
+     {t:"They stay preoccupied with an unfairness long after it's over.",rev:false},
+     {t:"They can register unfairness and then move on from it.",rev:true},
+     {t:"They seem to trust that things generally even out fairly for them.",rev:true},
+     {t:"They don't appear to feel singled out for worse treatment.",rev:true}]},
+   Powerlessness:{label:"Powerlessness",def:"“I can't protect myself; I'm at the mercy of things.”",
+    self:[
+     {t:"In hard situations I often feel there's nothing I can do to change the outcome.",rev:false},
+     {t:"I tend to freeze or defer when I should be able to stand my ground.",rev:false},
+     {t:"I carry a background sense of being unable to keep myself safe.",rev:false},
+     {t:"When something threatens me, I trust I can act to protect myself.",rev:true},
+     {t:"I feel able to influence how situations in my life turn out.",rev:true},
+     {t:"I can hold my ground when it matters, even under pressure.",rev:true}],
+    obs:[
+     {t:"They act as if there's nothing they can do to change hard outcomes.",rev:false},
+     {t:"They freeze or defer in situations where they could stand their ground.",rev:false},
+     {t:"They carry a background sense of being unable to keep themselves safe.",rev:false},
+     {t:"They act to protect themselves when something threatens them.",rev:true},
+     {t:"They seem to believe they can influence how things turn out.",rev:true},
+     {t:"They hold their ground under pressure when it matters.",rev:true}]},
+   Unworthiness:{label:"Unworthiness / Not-Enough",def:"“My worth is conditional; I'm never quite enough as I am.”",
+    self:[
+     {t:"I feel my value has to be earned through what I produce or achieve.",rev:false},
+     {t:"Resting without accomplishing something leaves me feeling I don't deserve it.",rev:false},
+     {t:"No matter what I do, a part of me concludes it wasn't enough.",rev:false},
+     {t:"I believe I have worth that doesn't depend on my output.",rev:true},
+     {t:"I can rest or receive care without feeling I have to earn it.",rev:true},
+     {t:"I can finish something and feel it was genuinely enough.",rev:true}],
+    obs:[
+     {t:"They act as if their value must be earned through achievement.",rev:false},
+     {t:"They seem unable to rest without feeling they haven't earned it.",rev:false},
+     {t:"They conclude their efforts fall short no matter the result.",rev:false},
+     {t:"They appear to hold a sense of worth independent of output.",rev:true},
+     {t:"They can rest or accept care without seeming to earn it first.",rev:true},
+     {t:"They can regard something they finished as genuinely enough.",rev:true}]}
+  }
+ },
+ WAI:{
+  name:"WAI · Wound Adaptation Inventory",
+  lead:"The armor built over it.",
+  desc:"Schema therapy holds that we cope with a wound in one of three ways — and the same wound produces three very different-looking people depending on which we learned. This measures which coping style is your default.",
+  bands:["Rare","Used","Default"],
+  invert:false,
+  subs:{
+   Surrender:{label:"Surrender",def:"Collapse into the wound — comply, please, self-abandon, make it true.",
+    self:[
+     {t:"When I feel the old hurt, I give in and go along to keep the peace.",rev:false},
+     {t:"I tend to abandon what I need in order to keep someone close.",rev:false},
+     {t:"Under pressure I default to pleasing the other person over holding my line.",rev:false},
+     {t:"When I'm hurt, I can stay with what I need instead of caving.",rev:true},
+     {t:"I hold my own position even when someone pushes against it.",rev:true},
+     {t:"I don't automatically make myself smaller to keep a relationship.",rev:true}],
+    obs:[
+     {t:"When hurt, they give in and go along to keep the peace.",rev:false},
+     {t:"They abandon their own needs to keep someone close.",rev:false},
+     {t:"Under pressure they default to pleasing over holding a line.",rev:false},
+     {t:"When hurt, they stay with what they need rather than caving.",rev:true},
+     {t:"They hold their position even when pushed against.",rev:true},
+     {t:"They don't shrink themselves automatically to keep a relationship.",rev:true}]},
+   Avoidance:{label:"Avoidance",def:"Numb it — withdraw, distract, detach, keep the feeling at a distance.",
+    self:[
+     {t:"When the wound stirs, I go numb or check out rather than feel it.",rev:false},
+     {t:"I keep people at a distance so nothing can reach the tender spot.",rev:false},
+     {t:"I reach for distraction the moment a painful feeling starts to surface.",rev:false},
+     {t:"When something hurts, I can stay present with the feeling.",rev:true},
+     {t:"I let people close even when it risks touching a sore place.",rev:true},
+     {t:"I face difficult emotions rather than routing around them.",rev:true}],
+    obs:[
+     {t:"When the wound stirs, they go numb or check out rather than feel it.",rev:false},
+     {t:"They keep people at a distance so nothing reaches the tender spot.",rev:false},
+     {t:"They reach for distraction the moment a painful feeling surfaces.",rev:false},
+     {t:"When something hurts, they stay present with the feeling.",rev:true},
+     {t:"They let people close even when it risks a sore place.",rev:true},
+     {t:"They face difficult emotions rather than routing around them.",rev:true}]},
+   Overcompensation:{label:"Overcompensation",def:"Bury it — control, perfect, prove, attack first so it can't be true.",
+    self:[
+     {t:"I try to be so competent or in-control that no one can find the weak spot.",rev:false},
+     {t:"When I feel the wound, I push harder to prove it wrong.",rev:false},
+     {t:"I'd rather take charge or go on the offensive than feel exposed.",rev:false},
+     {t:"I can let myself be seen as imperfect without needing to compensate.",rev:true},
+     {t:"I don't have to prove anything when an old insecurity gets touched.",rev:true},
+     {t:"I can feel vulnerable without flipping into control or attack.",rev:true}],
+    obs:[
+     {t:"They stay so competent or in-control that no weak spot shows.",rev:false},
+     {t:"When the wound is touched, they push harder to prove it wrong.",rev:false},
+     {t:"They take charge or go on the offensive rather than look exposed.",rev:false},
+     {t:"They let themselves be seen as imperfect without compensating.",rev:true},
+     {t:"They don't need to prove anything when an old insecurity is touched.",rev:true},
+     {t:"They can feel vulnerable without flipping into control or attack.",rev:true}]}
+  }
+ },
+ SDI:{
+  name:"SDI · Schema Domain Index",
+  lead:"The schema it hardened into.",
+  desc:"Young's five schema domains — the validated backbone. Each maps to a category of childhood need left unmet. Research increasingly favors a four-domain structure; that debate is noted in the appendix.",
+  bands:["Low","Moderate","High"],
+  invert:false,
+  subs:{
+   Disconnection:{label:"Disconnection & Rejection",def:"Needs for safety, stability, nurturance and belonging expected to go unmet.",
+    self:[
+     {t:"I expect that my need for closeness and understanding will go unanswered.",rev:false},
+     {t:"Emotionally, I often feel fundamentally alone even among people.",rev:false},
+     {t:"I don't count on others to be a stable, caring presence for me.",rev:false},
+     {t:"I expect warmth and understanding to be there when I need them.",rev:true},
+     {t:"I feel connected to people rather than sealed off from them.",rev:true},
+     {t:"I can rely on others to show up as a steady, caring presence.",rev:true}],
+    obs:[
+     {t:"They expect their need for closeness to go unanswered.",rev:false},
+     {t:"They seem fundamentally alone even in company.",rev:false},
+     {t:"They don't count on others as a stable, caring presence.",rev:false},
+     {t:"They expect warmth to be available when they need it.",rev:true},
+     {t:"They seem connected to people rather than sealed off.",rev:true},
+     {t:"They rely on others as a steady, caring presence.",rev:true}]},
+   Autonomy:{label:"Impaired Autonomy & Performance",def:"Expectation that one can't function, succeed or separate independently.",
+    self:[
+     {t:"I doubt I can handle everyday demands without a lot of help.",rev:false},
+     {t:"I expect to fail when I have to perform or produce on my own.",rev:false},
+     {t:"Standing as a separate, self-directed person feels beyond me.",rev:false},
+     {t:"I trust I can manage ordinary responsibilities on my own.",rev:true},
+     {t:"I expect to do well when I have to perform independently.",rev:true},
+     {t:"I feel like a capable, self-directed person in my own right.",rev:true}],
+    obs:[
+     {t:"They doubt they can handle everyday demands without much help.",rev:false},
+     {t:"They expect to fail when performing on their own.",rev:false},
+     {t:"Standing as a separate, self-directed person seems beyond them.",rev:false},
+     {t:"They manage ordinary responsibilities on their own.",rev:true},
+     {t:"They expect to do well when performing independently.",rev:true},
+     {t:"They come across as capable and self-directed.",rev:true}]},
+   Limits:{label:"Impaired Limits",def:"Difficulty with internal limits, responsibility to others, and long-term goals.",
+    self:[
+     {t:"I find it hard to make myself do things I don't feel like doing.",rev:false},
+     {t:"I struggle to stick with long-term goals once the effort gets tedious.",rev:false},
+     {t:"I often feel that ordinary rules or limits shouldn't have to apply to me.",rev:false},
+     {t:"I can follow through on commitments even when I don't feel like it.",rev:true},
+     {t:"I hold to long-term goals through the boring stretches.",rev:true},
+     {t:"I accept that the same limits and rules apply to me as to anyone.",rev:true}],
+    obs:[
+     {t:"They find it hard to make themselves do things they don't feel like.",rev:false},
+     {t:"They struggle to stick with long-term goals once effort gets tedious.",rev:false},
+     {t:"They act as if ordinary rules shouldn't have to apply to them.",rev:false},
+     {t:"They follow through on commitments even when they don't feel like it.",rev:true},
+     {t:"They hold to long-term goals through the boring stretches.",rev:true},
+     {t:"They accept that the same limits apply to them as to anyone.",rev:true}]},
+   OtherDirected:{label:"Other-Directedness",def:"Over-focus on others' needs, approval and control at the expense of one's own.",
+    self:[
+     {t:"I put other people's needs ahead of mine so consistently that I lose track of my own.",rev:false},
+     {t:"My sense of being okay depends heavily on others' approval.",rev:false},
+     {t:"I shape myself around what others want more than what I actually want.",rev:false},
+     {t:"I weigh my own needs alongside other people's rather than erasing them.",rev:true},
+     {t:"I feel okay about myself without needing constant approval.",rev:true},
+     {t:"I can act on what I want rather than only on what others want.",rev:true}],
+    obs:[
+     {t:"They put others' needs ahead of their own until their own disappear.",rev:false},
+     {t:"Their sense of being okay depends heavily on approval.",rev:false},
+     {t:"They shape themselves around others' wants more than their own.",rev:false},
+     {t:"They weigh their own needs alongside others' rather than erasing them.",rev:true},
+     {t:"They seem okay without needing constant approval.",rev:true},
+     {t:"They act on what they want, not only on what others want.",rev:true}]},
+   Overvigilance:{label:"Overvigilance & Inhibition",def:"Suppressing feeling and spontaneity to meet rigid internalized standards.",
+    self:[
+     {t:"I hold my spontaneous feelings in check rather than let them show.",rev:false},
+     {t:"I drive myself against standards so high that nothing feels good enough.",rev:false},
+     {t:"Relaxing or playing feels irresponsible, so I stay braced and controlled.",rev:false},
+     {t:"I let my feelings show naturally rather than clamping down on them.",rev:true},
+     {t:"My internal standards leave room for me to be satisfied.",rev:true},
+     {t:"I can relax and play without feeling I'm being irresponsible.",rev:true}],
+    obs:[
+     {t:"They hold spontaneous feelings in check rather than show them.",rev:false},
+     {t:"They drive themselves against standards nothing can satisfy.",rev:false},
+     {t:"They stay braced and controlled, as if relaxing were irresponsible.",rev:false},
+     {t:"They let feelings show naturally rather than clamping down.",rev:true},
+     {t:"Their standards leave room for them to feel satisfied.",rev:true},
+     {t:"They relax and play without seeming to feel irresponsible.",rev:true}]}
+  }
+ },
+ WAP:{
+  name:"WAP · Wound Activation Profile",
+  lead:"What sets it off.",
+  desc:"The trigger layer — rarely instrumented. Six classes of situation, each measured for how strongly it activates you. High reactivity marks the doorways a wound most often comes through.",
+  bands:["Quiet","Reactive","Hot"],
+  invert:false,
+  subs:{
+   Criticism:{label:"Criticism / Evaluation",def:"Being judged, corrected, graded, or found wanting.",
+    self:[
+     {t:"A piece of criticism can hijack my mood for the rest of the day.",rev:false},
+     {t:"Being evaluated makes me tense long before the verdict comes.",rev:false},
+     {t:"Negative feedback lands far harder than its size warrants.",rev:false},
+     {t:"I can take criticism in and weigh it without it flooding me.",rev:true},
+     {t:"Being evaluated doesn't put me on high alert.",rev:true}],
+    obs:[
+     {t:"A single criticism can hijack their mood for the day.",rev:false},
+     {t:"They tense up well before an evaluation's verdict arrives.",rev:false},
+     {t:"Negative feedback lands far harder on them than its size warrants.",rev:false},
+     {t:"They take criticism in and weigh it without being flooded.",rev:true},
+     {t:"Being evaluated doesn't put them on high alert.",rev:true}]},
+   Withdrawal:{label:"Withdrawal / Distance",def:"A loved one going quiet, cool, distracted, or unavailable.",
+    self:[
+     {t:"When someone close goes cool or quiet, I spiral quickly.",rev:false},
+     {t:"A delayed reply from someone important can set off real distress.",rev:false},
+     {t:"I read a lot into small shifts in a loved one's warmth.",rev:false},
+     {t:"I stay steady when someone close needs space or goes quiet.",rev:true},
+     {t:"A slow reply from someone important doesn't rattle me.",rev:true}],
+    obs:[
+     {t:"When someone close goes cool or quiet, they spiral quickly.",rev:false},
+     {t:"A delayed reply from someone important sets off real distress.",rev:false},
+     {t:"They read a lot into small shifts in a loved one's warmth.",rev:false},
+     {t:"They stay steady when someone close needs space.",rev:true},
+     {t:"A slow reply from someone important doesn't rattle them.",rev:true}]},
+   Control:{label:"Control / Constraint",def:"Being told what to do, boxed in, or having choices removed.",
+    self:[
+     {t:"Being told what to do can trigger an outsized urge to resist.",rev:false},
+     {t:"Feeling boxed in makes me tense and reactive fast.",rev:false},
+     {t:"Having a choice removed hits me harder than the choice itself was worth.",rev:false},
+     {t:"I can accept reasonable constraints without bristling.",rev:true},
+     {t:"Being given instructions doesn't automatically make me push back.",rev:true}],
+    obs:[
+     {t:"Being told what to do triggers an outsized urge in them to resist.",rev:false},
+     {t:"Feeling boxed in makes them tense and reactive fast.",rev:false},
+     {t:"Having a choice removed hits them harder than it warrants.",rev:false},
+     {t:"They accept reasonable constraints without bristling.",rev:true},
+     {t:"Being given instructions doesn't automatically make them push back.",rev:true}]},
+   Exposure:{label:"Exposure / Being Seen",def:"Being visible, put on the spot, or having attention land on you.",
+    self:[
+     {t:"Having attention land on me makes me want to disappear.",rev:false},
+     {t:"Being put on the spot floods me even when nothing is wrong.",rev:false},
+     {t:"I dread being visible in a way that outsizes the situation.",rev:false},
+     {t:"I can be the center of attention without it overwhelming me.",rev:true},
+     {t:"Being put on the spot doesn't automatically flood me.",rev:true}],
+    obs:[
+     {t:"Attention landing on them makes them want to disappear.",rev:false},
+     {t:"Being put on the spot floods them even when nothing is wrong.",rev:false},
+     {t:"They dread visibility in a way that outsizes the situation.",rev:false},
+     {t:"They can be the center of attention without being overwhelmed.",rev:true},
+     {t:"Being put on the spot doesn't automatically flood them.",rev:true}]},
+   Unfairness:{label:"Unfairness / Violation",def:"A rule broken, a line crossed, or being treated inequitably.",
+    self:[
+     {t:"Witnessing unfairness can consume me even when I'm not the target.",rev:false},
+     {t:"A crossed boundary stays charged for me long after the moment.",rev:false},
+     {t:"Being treated inequitably provokes a reaction I can't easily set down.",rev:false},
+     {t:"I can register unfairness, respond, and then let it settle.",rev:true},
+     {t:"A crossed line bothers me without taking over.",rev:true}],
+    obs:[
+     {t:"Witnessing unfairness consumes them even when they're not the target.",rev:false},
+     {t:"A crossed boundary stays charged for them long after the moment.",rev:false},
+     {t:"Being treated inequitably provokes a reaction they can't set down.",rev:false},
+     {t:"They register unfairness, respond, and let it settle.",rev:true},
+     {t:"A crossed line bothers them without taking over.",rev:true}]},
+   Comparison:{label:"Comparison / Eclipse",def:"Being outshone, ranked below, or watching someone else get chosen.",
+    self:[
+     {t:"Watching someone else get chosen over me stings out of proportion.",rev:false},
+     {t:"Being outperformed can sour a whole experience for me.",rev:false},
+     {t:"I measure myself against others and come away diminished.",rev:false},
+     {t:"I can see someone else shine without feeling diminished.",rev:true},
+     {t:"Being ranked below someone doesn't spoil the experience for me.",rev:true}],
+    obs:[
+     {t:"Watching someone else get chosen stings them out of proportion.",rev:false},
+     {t:"Being outperformed can sour a whole experience for them.",rev:false},
+     {t:"They measure against others and come away diminished.",rev:false},
+     {t:"They see someone else shine without feeling diminished.",rev:true},
+     {t:"Being ranked below someone doesn't spoil the experience for them.",rev:true}]}
+  }
+ }
+};
+
+/* wound x adaptation -> presentation, for Synthesis */
+const PRESENTATION = {
+ Rejection:{Surrender:"The one who works to be liked — reshaping into whoever the room seems to want, so the rejection never gets a chance to land.",Avoidance:"The one who leaves first — keeping everyone at arm's length so no one is ever close enough to turn away.",Overcompensation:"The one who becomes undeniable — so accomplished or magnetic that being unwanted stops feeling possible."},
+ Abandonment:{Surrender:"The one who clings — giving more and more to keep a person from leaving, even as their own needs vanish.",Avoidance:"The one who stays half-out the door — never fully arriving in a bond, so a departure can't cost much.",Overcompensation:"The one who controls the exits — managing the relationship so tightly that no one can leave unexpectedly."},
+ Shame:{Surrender:"The one who agrees with the verdict — accepting being flawed and apologizing for taking up space.",Avoidance:"The one who hides — keeping enough of themselves offstage that the defect can never be confirmed.",Overcompensation:"The one who performs flawless — a polished surface built so no crack in it can show."},
+ Betrayal:{Surrender:"The one who accepts poor treatment — tolerating broken trust because it confirms what they already expected.",Avoidance:"The one who never fully trusts — staying guarded so no betrayal can reach anything that matters.",Overcompensation:"The one who tests and controls — pre-empting betrayal by keeping the upper hand and checking for the angle."},
+ Injustice:{Surrender:"The one who absorbs the unfairness — swallowing inequitable treatment rather than making a scene.",Avoidance:"The one who disengages from the system — withdrawing from anything that could be rigged against them.",Overcompensation:"The one who fights every inequity — rigid, principled, unable to let a wrong go unaddressed."},
+ Powerlessness:{Surrender:"The one who defers — handing over agency because acting feels futile anyway.",Avoidance:"The one who avoids the arena — staying out of situations where their powerlessness could be exposed.",Overcompensation:"The one who seizes control — accumulating power or competence so helplessness can never return."},
+ Unworthiness:{Surrender:"The one who over-gives to earn a place — never resting because worth must always be re-earned.",Avoidance:"The one who opts out of the race — withdrawing from arenas where they might be measured and found short.",Overcompensation:"The one who achieves relentlessly — stacking accomplishments against a verdict that never quite lifts."}
+};
+
+/* CWI wound -> the SDI domain(s) it should converge with, for the coherence check */
+const WOUND_TO_DOMAIN = {
+ Rejection:"Disconnection", Abandonment:"Disconnection", Shame:"Disconnection",
+ Betrayal:"Disconnection", Injustice:"OtherDirected", Powerlessness:"Autonomy",
+ Unworthiness:"Autonomy"
+};
+
+/* subscale -> accent token (c1..c8), so result bars read by identity not just band */
+const COLORMAP = {
+ CWI:{Rejection:1,Abandonment:2,Shame:8,Betrayal:6,Injustice:3,Powerlessness:7,Unworthiness:4},
+ WAI:{Surrender:5,Avoidance:2,Overcompensation:1},
+ SDI:{Disconnection:1,Autonomy:7,Limits:3,OtherDirected:8,Overvigilance:6},
+ WAP:{Criticism:1,Withdrawal:2,Control:7,Exposure:8,Unfairness:3,Comparison:4}
+};
+function subColor(inst,k){ return 'var(--c'+((COLORMAP[inst]&&COLORMAP[inst][k])||1)+')'; }
+
+const SCALE_LABELS=["Not at all true","Slightly true","Somewhat true","Moderately true","Very true","Completely true"];
+const OBS_SCALE_LABELS=["Not at all","Slightly","Somewhat","Moderately","Very much","Completely"];
+</script>
+<script>
+/* =========================================================================
+   ENGINE
+   ========================================================================= */
+const state={}; // per-instrument: {mode, order, idx, answers}
+const RESULTS={}; // cache scored results for synthesis: {inst:{mode, subs:{key:{mean,band}}}}
+
+function scoreItem(raw,rev){ return rev ? (7-raw) : raw; }
+
+function buildOrder(inst){
+  // interleaved round-robin across subscales so factor structure is hidden
+  const subs=BANK[inst].subs, keys=Object.keys(subs), mode=state[inst].mode;
+  const lists=keys.map(k=>subs[k][mode].map((it,i)=>({sub:k,i,rev:it.rev,t:it.t})));
+  const order=[]; let added=true, p=0;
+  while(added){ added=false;
+    for(const l of lists){ if(p<l.length){ order.push(l[p]); added=true; } }
+    p++;
+  }
+  return order;
+}
+
+function startInstrument(inst){
+  const s=state[inst];
+  s.order=buildOrder(inst); s.idx=0; s.answers={};
+  renderQuestion(inst);
+}
+
+function answer(inst,val){
+  const s=state[inst], q=s.order[s.idx];
+  s.answers[q.sub]=s.answers[q.sub]||[];
+  s.answers[q.sub].push({raw:val,rev:q.rev});
+  s.idx++;
+  if(s.idx>=s.order.length) renderResults(inst);
+  else renderQuestion(inst);
+}
+function goBack(inst){
+  const s=state[inst];
+  if(s.idx===0) return;
+  s.idx--;
+  const q=s.order[s.idx];
+  if(s.answers[q.sub]) s.answers[q.sub].pop();
+  renderQuestion(inst);
+}
+
+function computeResults(inst){
+  const s=state[inst], subs=BANK[inst].subs, out={};
+  for(const k of Object.keys(subs)){
+    const arr=s.answers[k]||[];
+    const scored=arr.map(a=>scoreItem(a.raw,a.rev));
+    const mean=scored.reduce((x,y)=>x+y,0)/scored.length;
+    out[k]={mean, n:scored.length};
+  }
+  return out;
+}
+function bandOf(mean){ return mean<3 ? 0 : (mean<4.5 ? 1 : 2); }
+
+/* ---------- rendering ---------- */
+function renderNav(){
+  const nav=document.getElementById('nav');
+  const tabs=[["CWI","Wound"],["WAI","Adaptation"],["SDI","Schema"],["WAP","Activation"],["SYN","Synthesis"]];
+  nav.innerHTML='';
+  tabs.forEach(([id,lab],i)=>{
+    const b=document.createElement('button');
+    b.textContent=lab; b.dataset.tab=id;
+    b.onclick=()=>showTab(id);
+    if(i===0) b.classList.add('on');
+    nav.appendChild(b);
+  });
+}
+function showTab(id){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='panel-'+id));
+  if(id==='SYN') renderSynthesis();
+}
+
+function instrumentStartScreen(inst){
+  const B=BANK[inst], s=state[inst];
+  return `
+   <p class="lead">${B.lead}</p>
+   <p class="desc">${B.desc}</p>
+   <div class="seg" role="group" aria-label="Who are you rating?">
+     <button class="${s.mode==='self'?'on':''}" onclick="setMode('${inst}','self')">Myself</button>
+     <button class="${s.mode==='obs'?'on':''}" onclick="setMode('${inst}','obs')">Someone else</button>
+   </div>
+   <p class="segnote">${s.mode==='self'
+      ? 'You\u2019ll rate how true each statement is of you. Answer on instinct — the first read is usually the honest one.'
+      : 'You\u2019ll rate observable behavior in someone you know well. Internal states are inferred from what you can actually see.'}</p>
+   <p class="meta">${Object.keys(B.subs).length} subscales · ${countItems(inst)} items · ~${Math.ceil(countItems(inst)*0.12)} min · balanced keying · blind order</p>
+   <button class="start" onclick="startInstrument('${inst}')">Begin ${inst}</button>`;
+}
+function countItems(inst){
+  const subs=BANK[inst].subs, mode=state[inst].mode;
+  return Object.keys(subs).reduce((n,k)=>n+subs[k][mode].length,0);
+}
+function setMode(inst,m){ state[inst].mode=m; renderPanel(inst); }
+
+function renderPanel(inst){
+  document.getElementById('panel-'+inst).innerHTML=instrumentStartScreen(inst);
+}
+
+function renderQuestion(inst){
+  const s=state[inst], q=s.order[s.idx], total=s.order.length;
+  const labels=s.mode==='self'?SCALE_LABELS:OBS_SCALE_LABELS;
+  const pct=Math.round((s.idx/total)*100);
+  const btns=labels.map((lab,i)=>`<button onclick="answer('${inst}',${i+1})"><b>${i+1}</b><span>${lab}</span></button>`).join('');
+  document.getElementById('panel-'+inst).innerHTML=`
+    <div class="prog"><span>${BANK[inst].name.split(' · ')[0]} · Item ${s.idx+1} of ${total}</span><span>${pct}%</span></div>
+    <div class="ptrack"><i style="width:${pct}%"></i></div>
+    <p class="stem">${q.t}</p>
+    <div class="scale">${btns}</div>
+    <div class="navrow">
+      ${s.idx>0?`<button class="back" onclick="goBack('${inst}')">\u2190 Back</button>`:''}
+      <span class="hint">Keys 1\u20136 · Backspace</span>
+    </div>`;
+}
+
+function renderResults(inst){
+  const B=BANK[inst], res=computeResults(inst);
+  RESULTS[inst]={mode:state[inst].mode, subs:{}};
+  const keys=Object.keys(B.subs);
+  // sort by mean desc for display
+  const sorted=keys.slice().sort((a,b)=>res[b].mean-res[a].mean);
+  let bars='';
+  sorted.forEach(k=>{
+    const m=res[k].mean, band=bandOf(m), pct=Math.round(((m-1)/5)*100);
+    const tagCls=['tag-low','tag-mod','tag-high'][band];
+    const bandLab=B.bands[band], col=subColor(inst,k);
+    RESULTS[inst].subs[k]={mean:m,band};
+    bars+=`<div class="bar">
+      <div class="lab"><b>${B.subs[k].label}<span class="tag ${tagCls}">${bandLab}</span></b><span>${m.toFixed(2)}</span></div>
+      <div class="track"><i style="width:${pct}%;background:${col}"></i></div>
+      <p class="wound-def" style="border-left-color:${col}">${B.subs[k].def}</p>
+    </div>`;
+  });
+  const top=sorted[0], hi=sorted.filter(k=>RESULTS[inst].subs[k].band===2);
+  let care='';
+  if(hi.length>=3){
+    care=`<div class="care"><b>A note on reading this</b>Several patterns are sitting in the top band at once. That usually means the instrument is catching a period of high activation rather than a fixed trait — states inflate these scores. It reads best as a snapshot of now, not a verdict on who you are. If it maps onto real distress, a therapist trained in schema work is the right place to take it.</div>`;
+  }
+  document.getElementById('panel-'+inst).innerHTML=`
+    <p class="rhead">${B.name}</p>
+    <p class="rsub">${state[inst].mode==='self'?'Self-report':'Observer report'} · ranked by strength · higher = more present</p>
+    ${bars}
+    ${care}
+    <div class="note">Your most-present here: <b>${B.subs[top].label}</b>. Head to <b>Synthesis</b> once you've run the other instruments — that's where the wound, the armor, and the schema get cross-read.</div>
+    ${appendixFor(inst)}
+    <button class="restart" onclick="renderPanel('${inst}')">Retake ${inst}</button>`;
+}
+
+function appendixFor(inst){
+  const alphas={
+    CWI:{self:[["Rejection",.779],["Abandonment",.777],["Shame / Defectiveness",.795],["Betrayal",.792],["Injustice",.784],["Powerlessness",.772],["Unworthiness",.789]],
+         obs:[["Rejection",.74],["Abandonment",.73],["Shame / Defectiveness",.76],["Betrayal",.75],["Injustice",.74],["Powerlessness",.72],["Unworthiness",.75]]},
+    WAI:{self:[["Surrender",.782],["Avoidance",.796],["Overcompensation",.786]],
+         obs:[["Surrender",.75],["Avoidance",.77],["Overcompensation",.75]]},
+    SDI:{self:[["Disconnection & Rejection",.780],["Impaired Autonomy",.782],["Impaired Limits",.804],["Other-Directedness",.783],["Overvigilance & Inhibition",.792]],
+         obs:[["Disconnection & Rejection",.75],["Impaired Autonomy",.75],["Impaired Limits",.77],["Other-Directedness",.75],["Overvigilance & Inhibition",.76]]},
+    WAP:{self:[["Criticism / Evaluation",.775],["Withdrawal / Distance",.750],["Control / Constraint",.761],["Exposure / Being Seen",.784],["Unfairness / Violation",.744],["Comparison / Eclipse",.776]],
+         obs:[["Criticism / Evaluation",.74],["Withdrawal / Distance",.72],["Control / Constraint",.73],["Exposure / Being Seen",.75],["Unfairness / Violation",.72],["Comparison / Eclipse",.74]]}
+  };
+  const mode=state[inst].mode;
+  const rows=alphas[inst][mode].map(([n,a])=>`<tr><td>${n}</td><td>${a.toFixed(3)}</td></tr>`).join('');
+  const extra={
+   CWI:`<p><b>On the source frameworks.</b> The seven wounds adapt Lise Bourbeau's five-wound taxonomy (rejection, abandonment, humiliation, betrayal, injustice) and extend it using Young's schema-need categories. Bourbeau's original model is deliberately <em>not</em> carried over in two respects: its Oedipal, parent-sex-coded etiology and its body-morphology claims (e.g., that a given wound produces a specific physique) have no psychometric support and are excluded. Shame/Defectiveness and Unworthiness are retained as separate subscales despite their proximity; in simulation they discriminate at r\u2248.38, and Young's model likewise separates Defectiveness from Failure.</p>`,
+   WAI:`<p><b>On the construct.</b> The three adaptations are Young's schema coping styles — surrender, avoidance (detachment), and overcompensation. They are process constructs, not traits: a person can run different styles for different wounds, and the same wound looks like three different people depending on which style dominates. That mapping is what the Synthesis tab makes explicit.</p>`,
+   SDI:`<p><b>On the domain structure.</b> These are Young et al.'s (2003) five original schema domains. The higher-order structure is contested: the disconnection/rejection and impaired-autonomy domains replicate well, while the others are weaker, and several groups (Hoffart 2005; Bach 2018) favor a more parsimonious four-domain solution that folds self-sacrifice and standards into an "excessive responsibility" domain. The five-domain frame is kept here for interpretive breadth, with this caveat as the honest asterisk.</p>`,
+   WAP:`<p><b>On the trigger layer.</b> No widely validated instrument isolates situational activation of core wounds; this profile is an original construction. Subscales are five items each (3 forward / 2 reverse) rather than six, which slightly lowers their reliability ceiling — Unfairness and Withdrawal are the weakest at \u2248.74\u2013.75. Treat it as a map of doorways, not a calibrated clinical measure.</p>`
+  };
+  return `<details class="appx"><summary>Psychometric appendix — ${inst} (${mode==='self'?'self':'observer'} form)</summary>
+    <p>Simulated internal consistency (Cronbach's \u03b1), Monte Carlo, N=1,400 synthetic respondents, single-factor model per subscale with reverse items modeled at lower loading and reverse-scored before \u03b1 is computed. These are <em>simulated</em> reliabilities that describe the scoring architecture, not norms from a human sample.</p>
+    <table><thead><tr><th>Subscale</th><th>\u03b1 (sim)</th></tr></thead><tbody>${rows}</tbody></table>
+    ${extra[inst]}
+    <p><b>Not diagnostic.</b> Nothing here identifies a disorder. It's a structured mirror for reflection and, at most, a conversation-starter with a professional.</p>
+  </details>`;
+}
+
+/* ---------- synthesis ---------- */
+function renderSynthesis(){
+  const el=document.getElementById('panel-SYN');
+  const haveCWI=RESULTS.CWI, haveWAI=RESULTS.WAI, haveSDI=RESULTS.SDI, haveWAP=RESULTS.WAP;
+  const done=[haveCWI,haveWAI,haveSDI,haveWAP].filter(Boolean).length;
+  let html=`<p class="lead">Where the layers meet.</p>
+    <p class="desc">The instruments only become a portrait when they're read together. This tab cross-references whatever you've completed.</p>`;
+  if(done===0){
+    html+=`<p class="syn-empty">Run at least the Wound and Adaptation inventories to see a synthesis here.</p>`;
+    el.innerHTML=html; return;
+  }
+  // 1. wound x adaptation -> presentation
+  if(haveCWI && haveWAI){
+    const topWound=rankTop(RESULTS.CWI.subs);
+    const topAdapt=rankTop(RESULTS.WAI.subs);
+    const wKey=topWound[0], aKey=topAdapt[0];
+    const pres=(PRESENTATION[wKey]&&PRESENTATION[wKey][aKey])||"";
+    html+=`<div class="syncard">
+      <h4>Your presentation: ${BANK.CWI.subs[wKey].label} \u00d7 ${BANK.WAI.subs[aKey].label}</h4>
+      <p>${pres}</p></div>`;
+    // second wound if close
+    if(topWound[1] && (RESULTS.CWI.subs[topWound[0]].mean - RESULTS.CWI.subs[topWound[1]].mean) < 0.4){
+      const w2=topWound[1], p2=(PRESENTATION[w2]&&PRESENTATION[w2][aKey])||"";
+      html+=`<div class="syncard"><h4>Close second: ${BANK.CWI.subs[w2].label} \u00d7 ${BANK.WAI.subs[aKey].label}</h4>
+        <p>${p2}</p><p style="margin-top:8px;color:var(--muted);font-size:13px">Your top two wounds are within 0.4 of each other, so both presentations likely operate in you.</p></div>`;
+    }
+  }
+  // 2. wound <-> schema convergence
+  if(haveCWI && haveSDI){
+    const topWound=rankTop(RESULTS.CWI.subs)[0];
+    const expected=WOUND_TO_DOMAIN[topWound];
+    const domRank=rankTop(RESULTS.SDI.subs);
+    const topDom=domRank[0];
+    const converge = (topDom===expected) || (RESULTS.SDI.subs[expected] && RESULTS.SDI.subs[expected].band>=1 && domRank.indexOf(expected)<=1);
+    html+=`<div class="syncard">
+      <h4>Wound\u2013schema coherence: ${converge?'aligned':'divergent'}</h4>
+      <p>Your leading wound (<b>${BANK.CWI.subs[topWound].label}</b>) predicts elevation in the <b>${BANK.SDI.subs[expected].label}</b> schema domain. ${
+        converge
+          ? 'Your measured schema profile bears that out — the self-report wound and the schema structure tell the same story, which strengthens confidence in both.'
+          : 'Your measured schema profile leads elsewhere ('+BANK.SDI.subs[topDom].label+'). Divergence isn\u2019t error — it often means the wound you can name and the pattern you actually run have come apart, which is itself worth sitting with.'}</p></div>`;
+  }
+  // 3. activation doorways
+  if(haveWAP){
+    const hotDoors=rankTop(RESULTS.WAP.subs).filter(k=>RESULTS.WAP.subs[k].band===2);
+    if(hotDoors.length){
+      const names=hotDoors.map(k=>BANK.WAP.subs[k].label).join(', ');
+      html+=`<div class="syncard"><h4>Hottest doorways</h4>
+        <p>The situations that most reliably activate you: <b>${names}</b>. When you notice a reaction that feels too big for the moment, check whether one of these doors just opened — that's usually the wound speaking, not the situation.</p></div>`;
+    }
+  }
+  // 4. adaptation cost note
+  if(haveWAI){
+    const topA=rankTop(RESULTS.WAI.subs)[0];
+    const costs={Surrender:"Surrender keeps relationships intact at the cost of the self inside them — the bill comes due as resentment, lost identity, or burnout.",Avoidance:"Avoidance buys immediate relief at the cost of closeness and aliveness — the wound stays sealed but so does the capacity to be reached.",Overcompensation:"Overcompensation wins in the arena at the cost of rest — the proving never ends because the verdict it's arguing against never actually lifts."};
+    html+=`<div class="syncard"><h4>The cost of your default</h4><p>${costs[topA]}</p></div>`;
+  }
+  html+=`<div class="note">This synthesis is generated from your responses in this session only. Nothing is stored. Reload and the slate is blank.</div>`;
+  el.innerHTML=html;
+}
+function rankTop(subsObj){
+  return Object.keys(subsObj).sort((a,b)=>subsObj[b].mean-subsObj[a].mean);
+}
+
+/* ---------- init ---------- */
+function init(){
+  ['CWI','WAI','SDI','WAP'].forEach(inst=>{ state[inst]={mode:'self',order:[],idx:0,answers:{}}; });
+  const main=document.getElementById('main');
+  ['CWI','WAI','SDI','WAP','SYN'].forEach((id,i)=>{
+    const p=document.createElement('section');
+    p.className='panel'+(i===0?' on':''); p.id='panel-'+id;
+    main.appendChild(p);
+  });
+  ['CWI','WAI','SDI','WAP'].forEach(renderPanel);
+  document.getElementById('panel-SYN').innerHTML='';
+  renderNav();
+  // keyboard
+  document.addEventListener('keydown',e=>{
+    const active=[...document.querySelectorAll('.panel.on')][0];
+    if(!active) return;
+    const inst=active.id.replace('panel-','');
+    if(!state[inst]||!state[inst].order.length) return;
+    if(state[inst].idx>=state[inst].order.length) return;
+    if(e.key>='1'&&e.key<='6'){ answer(inst,parseInt(e.key)); e.preventDefault(); }
+    else if(e.key==='Backspace'){ goBack(inst); e.preventDefault(); }
+  });
+  syncThemeLabel();
+}
+function currentTheme(){
+  const explicit=document.documentElement.getAttribute('data-theme');
+  if(explicit) return explicit;
+  return window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+}
+function syncThemeLabel(){
+  const b=document.getElementById('themebtn');
+  if(b) b.textContent = currentTheme()==='dark' ? 'Light' : 'Dark';
+}
+function toggleTheme(){
+  const next = currentTheme()==='dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  syncThemeLabel();
+}
+init();
+</script>
+</body>
+</html>

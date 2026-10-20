@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series VII · Relational Trauma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEFF3;
+  --panel:#FAFBFD;
+  --panel-hi:#FFFFFF;
+  --panel-2:#E2E7ED;
+  --ink:#1E242B;
+  --muted:#58626D;
+  --faint:#8B95A1;
+  --line:#D4DAE1;
+  --track:#DCE2E9;
+  --band-low:#4F7F6B;
+  --band-mod:#C2902F;
+  --band-high:#B23A4C;
+  --danger:#B23A4C;
+  --accent:#1F6E72;         /* default = Cassandra teal */
+  --accent-soft:#D3E6E6;
+  --accent-ink:#FBFDFD;
+  --shadow:0 1px 0 rgba(20,23,27,.04), 0 10px 32px rgba(20,23,27,.08);
+}
+/* per-instrument accent — light */
+body[data-accent="cas"]{--accent:#1F6E72;--accent-soft:#D3E6E6}
+body[data-accent="rii"]{--accent:#3F5668;--accent-soft:#DCE3EB}
+body[data-accent="ccp"]{--accent:#9E3B4E;--accent-soft:#F1DAE0}
+body[data-accent="eii"]{--accent:#6D4680;--accent-soft:#E7DCF0}
+body[data-accent="rep"]{--accent:#44705A;--accent-soft:#D9E8DF}
+body[data-accent="syn"]{--accent:#46557A;--accent-soft:#DCE1EE}
+
+/* dark — follows OS unless a light theme is forced */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#13171C; --panel:#1B2127; --panel-hi:#222932; --panel-2:#252D36;
+  --ink:#E7EBF0; --muted:#9BA6B2; --faint:#6E7A87; --line:#303A44; --track:#293139;
+  --band-low:#74B79A; --band-mod:#E0B257; --band-high:#E58A98; --danger:#E58A98;
+  --accent:#5FB3B8; --accent-soft:#1E2E30; --accent-ink:#11161A;
+  color-scheme:dark;
+}
+:root:not([data-theme="light"]) body[data-accent="cas"]{--accent:#5FB3B8;--accent-soft:#1E2E30}
+:root:not([data-theme="light"]) body[data-accent="rii"]{--accent:#9FB6C8;--accent-soft:#243039}
+:root:not([data-theme="light"]) body[data-accent="ccp"]{--accent:#E08A9A;--accent-soft:#36232A}
+:root:not([data-theme="light"]) body[data-accent="eii"]{--accent:#C4A4D8;--accent-soft:#2C2438}
+:root:not([data-theme="light"]) body[data-accent="rep"]{--accent:#8FC0A2;--accent-soft:#1F2F26}
+:root:not([data-theme="light"]) body[data-accent="syn"]{--accent:#9AA8D8;--accent-soft:#232940}
+}
+/* dark — forced by toggle, regardless of OS */
+:root[data-theme="dark"]{
+  --bg:#13171C; --panel:#1B2127; --panel-hi:#222932; --panel-2:#252D36;
+  --ink:#E7EBF0; --muted:#9BA6B2; --faint:#6E7A87; --line:#303A44; --track:#293139;
+  --band-low:#74B79A; --band-mod:#E0B257; --band-high:#E58A98; --danger:#E58A98;
+  --accent:#5FB3B8; --accent-soft:#1E2E30; --accent-ink:#11161A;
+  color-scheme:dark;
+}
+:root[data-theme="dark"] body[data-accent="cas"]{--accent:#5FB3B8;--accent-soft:#1E2E30}
+:root[data-theme="dark"] body[data-accent="rii"]{--accent:#9FB6C8;--accent-soft:#243039}
+:root[data-theme="dark"] body[data-accent="ccp"]{--accent:#E08A9A;--accent-soft:#36232A}
+:root[data-theme="dark"] body[data-accent="eii"]{--accent:#C4A4D8;--accent-soft:#2C2438}
+:root[data-theme="dark"] body[data-accent="rep"]{--accent:#8FC0A2;--accent-soft:#1F2F26}
+:root[data-theme="dark"] body[data-accent="syn"]{--accent:#9AA8D8;--accent-soft:#232940}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Inter",system-ui,sans-serif;
+  font-size:17px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  transition:background .3s ease,color .3s ease;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.mono{font-family:"IBM Plex Mono",monospace}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:500;line-height:1.1;letter-spacing:-.01em}
+
+/* header */
+header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel-hi),var(--bg))}
+.top .wrap{padding-top:34px;padding-bottom:22px;position:relative}
+.series{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+header.top h1{font-size:40px;margin:.28em 0 .18em;opacity:.96}
+header.top p{margin:0;color:var(--muted);max-width:56ch}
+.theme-toggle{position:absolute;top:30px;right:20px;width:38px;height:38px;border-radius:999px;
+  border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;
+  font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.theme-toggle:hover{color:var(--accent);border-color:var(--accent)}
+.theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* tabs */
+nav.tabs{position:sticky;top:0;z-index:20;background:var(--bg);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto;padding:0 20px}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.06em;padding:14px 12px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:3px}
+
+main{padding:32px 0 90px}
+section.view{display:none}
+section.view.active{display:block}
+
+/* intro cards */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 26px;box-shadow:var(--shadow)}
+.card + .card{margin-top:18px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.lede{font-size:19px;color:var(--ink)}
+.meta{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--faint);letter-spacing:.03em}
+.subs-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+.note{color:var(--muted);font-size:15px}
+.warn{border-left:3px solid var(--band-mod);padding:10px 0 10px 16px;margin:16px 0;color:var(--muted);font-size:15px}
+
+.btn{appearance:none;font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.05em;
+  background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:13px 22px;cursor:pointer;transition:transform .06s ease,opacity .15s}
+.btn:hover{opacity:.92}.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:20px}
+
+/* item runner */
+.runner{min-height:340px}
+.progress{height:3px;background:var(--track);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.progress > i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s ease}
+.counter{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--faint);letter-spacing:.06em;margin-bottom:26px}
+.stem{font-family:"Fraunces",Georgia,serif;font-size:27px;line-height:1.28;font-weight:500;min-height:2.4em;margin:8px 0 30px}
+.likert{display:grid;gap:9px}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;background:var(--panel);border:1px solid var(--line);
+  border-radius:11px;padding:14px 16px;cursor:pointer;font:inherit;color:var(--ink);transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--accent);background:var(--panel-2)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt .k{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--faint);width:20px;flex:none;text-align:center}
+.opt[aria-pressed="true"] .k{color:var(--accent)}
+.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.runner .row{justify-content:space-between}
+.hint{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--faint)}
+
+/* results */
+.gauges{display:grid;gap:16px;margin-top:8px}
+.gauge{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.gauge .g-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.gauge .g-name{font-family:"Fraunces",serif;font-size:19px}
+.gauge .g-band{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+.gauge .g-desc{color:var(--muted);font-size:14.5px;margin-top:4px}
+.track{position:relative;height:9px;background:var(--track);border-radius:6px;margin-top:12px;overflow:hidden}
+.track > i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--accent);transition:width .5s ease}
+.track .mid{position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--faint);opacity:.55}
+.b-low{color:var(--band-low)}
+.b-mod{color:var(--band-mod)}
+.b-high{color:var(--band-high)}
+.scorenum{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--faint)}
+
+/* synthesis */
+.quad-wrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.quad{position:relative;width:100%;max-width:460px;margin:14px auto 6px;aspect-ratio:1/1;
+  border:1px solid var(--line);border-radius:10px;background:var(--panel-2)}
+.quad .axis-x,.quad .axis-y{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.04em}
+.quad .axis-x{bottom:-26px;left:0;right:0;display:flex;justify-content:space-between}
+.quad .axis-y{top:0;bottom:0;left:-14px;transform:rotate(180deg);writing-mode:vertical-rl;display:flex;justify-content:space-between;align-items:center}
+.quad .grid-v,.quad .grid-h{position:absolute;background:var(--faint);opacity:.4}
+.quad .grid-v{left:50%;top:0;bottom:0;width:1px}.quad .grid-h{top:50%;left:0;right:0;height:1px}
+.quad .qlabel{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--faint);letter-spacing:.03em;max-width:44%;line-height:1.3}
+.quad .ql-tl{top:8px;left:8px}.quad .ql-tr{top:8px;right:8px;text-align:right}
+.quad .ql-bl{bottom:8px;left:8px}.quad .ql-br{bottom:8px;right:8px;text-align:right}
+.quad .dot{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--accent);
+  border:3px solid var(--panel);transform:translate(-50%,50%);box-shadow:0 2px 8px rgba(20,23,27,.3)}
+.quad-caption{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);text-align:center;margin-top:34px}
+.sig{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:16px 18px;margin-top:14px}
+.sig.alert{border-left-color:var(--danger)}
+.sig h3{margin:0 0 6px;font-size:19px}
+.sig p{margin:0;color:var(--muted);font-size:15px}
+.sig .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.sig.alert .tag{color:var(--danger)}
+.placeholder{color:var(--faint);font-style:italic}
+
+/* method */
+.method h3{font-size:21px;margin:24px 0 6px}
+.method p{color:var(--muted);font-size:15.5px}
+.method .code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:2px 7px;color:var(--ink)}
+table.alpha{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+table.alpha th,table.alpha td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+table.alpha th{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:500}
+table.alpha td.n{font-family:"IBM Plex Mono",monospace;text-align:right}
+
+footer{border-top:1px solid var(--line);color:var(--muted);padding:26px 0 48px}
+.legal{margin-top:6px}
+.legal h4{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin:0 0 10px;font-weight:500}
+.legal p{font-size:12.5px;line-height:1.6;color:var(--faint);margin:0 0 10px;max-width:70ch}
+.legal .co{color:var(--muted);font-size:12.5px;margin:0}
+.excise{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:14.5px;color:var(--muted);margin-top:12px}
+.excise b{color:var(--ink);font-weight:600}
+@media (max-width:520px){
+  header.top h1{font-size:32px}.stem{font-size:23px}
+  .card{padding:20px 18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme" title="Toggle theme">◐</button>
+  <div class="series">Series VII</div>
+  <h1>Relational Trauma</h1>
+  <p>Four self-report instruments for the injuries a relationship can leave — measured through validated constructs, not popular labels.</p>
+</div></header>
+
+<nav class="tabs" role="tablist"><div class="wrap" id="tabbar"></div></nav>
+
+<main><div class="wrap" id="stage"></div></main>
+
+<footer><div class="wrap legal">
+  <p class="mono" style="color:var(--muted);margin:0 0 18px">Self-report · non-diagnostic · for reflection, not assessment. Higher scores indicate more of the named experience.</p>
+  <h4>Legal Disclaimer</h4>
+  <p>This instrument is provided for general educational and self-reflective purposes only. It is not a medical device, a psychological or clinical assessment, or a diagnostic tool, and it is not a substitute for professional evaluation, diagnosis, or treatment by a qualified health-care or mental-health provider. Your use of it does not create any clinician–client, therapist–patient, or other professional relationship.</p>
+  <p>The subscales, scores, thresholds, and interpretive text are derived from published psychological constructs but have not been clinically validated, standardized, or normed on any population. Any reliability figures shown are produced by statistical simulation, not by data collected from respondents. Results describe general tendencies and patterns — not fixed traits, and not statements of fact about any identified person.</p>
+  <p>To the fullest extent permitted by law, the author and distributors make no warranties, express or implied, including as to accuracy, completeness, or fitness for a particular purpose, and disclaim all liability for any decision made or action taken in reliance on this instrument or its output. If you have concerns about your safety or mental health, seek the advice of a licensed professional or your local emergency services.</p>
+  <p class="co">© 2026 Erica Campbell. All rights reserved.</p>
+</div></footer>
+
+<script>
+/* ============================================================
+   SERIES VII · RELATIONAL TRAUMA
+   Item banks. Each subscale: 6 items, 3 forward / 3 reverse.
+   rev:true  -> item worded toward the healthy pole, reverse-scored (7 - raw).
+   Scored so a higher subscale mean = MORE of the construct.
+   Acquiescent all-6 responding -> subscale mean 3.50 (neutral).
+   ============================================================ */
+const SCALE = {
+  min:1, max:6,
+  labels:["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"]
+};
+
+const BANK = {
+  CAS:{
+    code:"CAS", name:"The Cassandra Experience",
+    lineage:"A focused read of the two threads the 'Cassandra' label names — being disbelieved, and emotional deprivation — drawn from the fuller EII and REP instruments. It describes an experience; it is not a diagnosis, and it makes no claim about its cause.",
+    frame:"The experience behind a term you may have searched for: feeling unseen, unheard, and disbelieved in a relationship. Answer thinking of the relationship where that fits most.",
+    subs:{
+      DB:{label:"Being Disbelieved", items:[
+        {t:"When I've raised a real concern, it's been waved away as if I imagined it."},
+        {t:"People close to me have treated my worries as overreactions."},
+        {t:"I've told the truth about something and simply not been believed."},
+        {t:"When I name a problem, it's taken seriously.",rev:true},
+        {t:"My account of what happened is generally trusted.",rev:true},
+        {t:"People believe me when I say something is wrong.",rev:true},
+      ]},
+      DP:{label:"Emotional Deprivation", items:[
+        {t:"I've gone without the emotional warmth I need for a long time."},
+        {t:"I've felt emotionally starved even while in a relationship."},
+        {t:"My need to feel cared for has gone chronically unmet."},
+        {t:"I've felt emotionally nourished in my relationship.",rev:true},
+        {t:"The warmth I need has been there for me.",rev:true},
+        {t:"I've felt genuinely cared for.",rev:true},
+      ]},
+    }
+  },
+  RII:{
+    code:"RII", name:"Relational Injury Inventory",
+    lineage:"ICD-11 Complex PTSD — the DSO cluster (Cloitre et al., 2018 ITQ), re-anchored to relational trauma, plus the sense-of-threat cluster.",
+    frame:"Answer for yourself, thinking of how close relationships have shaped you.",
+    subs:{
+      AD:{label:"Affect Dysregulation", items:[
+        {t:"Small disagreements with someone close can send me into feelings I can't bring back down."},
+        {t:"Once I'm upset with a partner, it takes me a very long time to settle."},
+        {t:"My emotions in relationships swing further and faster than I'd like."},
+        {t:"When something upsets me with a partner, I can usually calm myself within a reasonable time.",rev:true},
+        {t:"I can feel a strong emotion without being swept away by it.",rev:true},
+        {t:"Even during conflict, I stay fairly steady inside.",rev:true},
+      ]},
+      NS:{label:"Negative Self-Concept", items:[
+        {t:"Deep down I've come to believe there's something wrong with me."},
+        {t:"I often feel like a failure as a partner."},
+        {t:"I carry a sense of shame I can't quite explain."},
+        {t:"I generally think of myself as worthy of love.",rev:true},
+        {t:"I can accept my flaws without feeling worthless.",rev:true},
+        {t:"My sense of my own value holds up even when a relationship is hard.",rev:true},
+      ]},
+      RW:{label:"Relational Withdrawal", items:[
+        {t:"I've pulled back from closeness because it's felt safer to be alone."},
+        {t:"I find it hard to feel truly connected, even to people I care about."},
+        {t:"I keep part of myself hidden in relationships now."},
+        {t:"I can let myself be genuinely close to someone.",rev:true},
+        {t:"I still trust that connection is worth the risk.",rev:true},
+        {t:"I let people I care about see the real me.",rev:true},
+      ]},
+      TV:{label:"Threat Vigilance", items:[
+        {t:"I stay alert for signs that things are about to go wrong with someone close."},
+        {t:"I read small changes in a partner's tone as warnings."},
+        {t:"I brace for conflict even when things seem calm."},
+        {t:"I can relax around people I'm close to without scanning for trouble.",rev:true},
+        {t:"A quiet moment doesn't make me assume something bad is coming.",rev:true},
+        {t:"I feel physically at ease when I'm with a partner.",rev:true},
+      ]},
+    }
+  },
+  CCP:{
+    code:"CCP", name:"Coercive Control Profile",
+    lineage:"Composite Abuse Scale (Hegarty) and the Coercive-Composite Abuse Scale (C-CAS, 2026) — clean-room adaptation. Measures a partner's behavior.",
+    frame:"Answer thinking of the relationship that most shaped these experiences — current or past.",
+    subs:{
+      PC:{label:"Psychological Control", items:[
+        {t:"A partner has decided what I'm allowed to do with my own time."},
+        {t:"I've had to justify ordinary choices to avoid a partner's disapproval."},
+        {t:"A partner has made me feel I need permission for small everyday things."},
+        {t:"My partner has respected my right to make my own decisions.",rev:true},
+        {t:"I've been free to spend my time as I choose.",rev:true},
+        {t:"My choices have been treated as mine to make.",rev:true},
+      ]},
+      IS:{label:"Isolation", items:[
+        {t:"A partner has made it difficult for me to see friends or family."},
+        {t:"I've lost contact with people who matter to me because of a partner's reactions."},
+        {t:"A partner has been jealous or suspicious of the people in my life."},
+        {t:"My partner has encouraged my friendships outside the relationship.",rev:true},
+        {t:"I've freely kept my own ties with family and friends.",rev:true},
+        {t:"My partner has been glad when I spend time with people I care about.",rev:true},
+      ]},
+      IT:{label:"Intimidation & Threat", items:[
+        {t:"A partner's anger has made me afraid of what might happen."},
+        {t:"I've changed my behavior to avoid a partner's temper."},
+        {t:"A partner has used a look, gesture, or tone that frightened me."},
+        {t:"I've felt physically safe with my partner.",rev:true},
+        {t:"I haven't had to manage my behavior out of fear.",rev:true},
+        {t:"A partner's frustration has never made me afraid.",rev:true},
+      ]},
+      DG:{label:"Degradation", items:[
+        {t:"A partner has put me down until I doubted my worth."},
+        {t:"I've been mocked or criticized for who I am."},
+        {t:"A partner has said cruel things about me that stayed with me."},
+        {t:"My partner has spoken to me with basic respect.",rev:true},
+        {t:"I've been treated as an equal, not looked down on.",rev:true},
+        {t:"A partner has built me up rather than torn me down.",rev:true},
+      ]},
+    }
+  },
+  EII:{
+    code:"EII", name:"Epistemic Invalidation Index",
+    lineage:"Betrayal-trauma and DARVO research (Freyd) plus the sociology of gaslighting — the 'Cassandra' core: being disbelieved, measured as experience, not attributed to a partner's neurotype.",
+    frame:"Answer thinking of how your account of things has been received in close relationships.",
+    subs:{
+      BD:{label:"Being Disbelieved", items:[
+        {t:"When I've raised a real concern, it's been waved away as if I imagined it."},
+        {t:"People close to me have treated my worries as overreactions."},
+        {t:"I've told the truth about something and simply not been believed."},
+        {t:"When I name a problem, it's taken seriously.",rev:true},
+        {t:"My account of what happened is generally trusted.",rev:true},
+        {t:"People believe me when I say something is wrong.",rev:true},
+      ]},
+      RE:{label:"Reality Erosion", items:[
+        {t:"I've come to doubt my own memory of events in a relationship."},
+        {t:"I sometimes can't tell whether my read on a situation is accurate."},
+        {t:"I've been told I'm remembering it wrong so often that I no longer trust myself."},
+        {t:"I trust my own read on what happens between me and a partner.",rev:true},
+        {t:"I feel confident about what I saw and heard.",rev:true},
+        {t:"My sense of reality stays steady even when it's questioned.",rev:true},
+      ]},
+      DV:{label:"DARVO Exposure", items:[
+        {t:"When I've raised a hurt, the conversation somehow ended with me apologizing."},
+        {t:"Naming a problem has gotten it turned around so I'm the one at fault."},
+        {t:"A partner has denied something, then attacked me for bringing it up."},
+        {t:"When I raise a hurt, it gets addressed rather than reversed onto me.",rev:true},
+        {t:"My concerns are met without being flipped into accusations.",rev:true},
+        {t:"I can name a problem without becoming the accused.",rev:true},
+      ]},
+      SI:{label:"Silencing", items:[
+        {t:"I've learned to keep concerns to myself because voicing them isn't worth it."},
+        {t:"I've stopped bringing certain things up entirely."},
+        {t:"It's felt safer to stay quiet than to be honest about what I feel."},
+        {t:"I feel free to say what's bothering me.",rev:true},
+        {t:"I can speak openly without bracing for the cost.",rev:true},
+        {t:"Nothing important gets left unsaid out of fear.",rev:true},
+      ]},
+      CF:{label:"Chronic Confusion", items:[
+        {t:"I often leave interactions unsure what actually just happened."},
+        {t:"I feel foggy or disoriented after time with a partner."},
+        {t:"I've spent a lot of energy trying to make sense of things that never add up."},
+        {t:"I come away from conversations with a clear sense of what happened.",rev:true},
+        {t:"My thinking feels clear in my close relationships.",rev:true},
+        {t:"Things between me and a partner generally make sense to me.",rev:true},
+      ]},
+    }
+  },
+  REP:{
+    code:"REP", name:"Relational Erosion & Deprivation",
+    lineage:"Emotional-neglect items from the Complex Trauma Questionnaire and Young's Emotional Deprivation schema — the phenomenology the Cassandra literature describes, held apart from any claim about its cause.",
+    frame:"Answer thinking of what your significant relationship has given, and withheld.",
+    subs:{
+      ED:{label:"Emotional Deprivation", items:[
+        {t:"I've gone without the emotional warmth I need for a long time."},
+        {t:"I've felt emotionally starved even while in a relationship."},
+        {t:"My need to feel cared for has gone chronically unmet."},
+        {t:"I've felt emotionally nourished in my relationship.",rev:true},
+        {t:"The warmth I need has been there for me.",rev:true},
+        {t:"I've felt genuinely cared for.",rev:true},
+      ]},
+      LU:{label:"Loneliness in Union", items:[
+        {t:"I've felt profoundly alone while sharing a life with someone."},
+        {t:"There's a loneliness in my relationship that's hard to explain to others."},
+        {t:"I've felt more alone with my partner than when I'm actually by myself."},
+        {t:"I've felt truly accompanied in my relationship.",rev:true},
+        {t:"Being with my partner eases my loneliness rather than deepening it.",rev:true},
+        {t:"I feel less alone because of my relationship.",rev:true},
+      ]},
+      UA:{label:"Unmet Attachment Needs", items:[
+        {t:"When I've reached for closeness, I've been met with distance."},
+        {t:"My bids for connection often seem to land nowhere."},
+        {t:"I've stopped reaching out because it so rarely gets a response."},
+        {t:"When I reach for my partner, they reach back.",rev:true},
+        {t:"My need for closeness is usually met.",rev:true},
+        {t:"I can count on a response when I seek connection.",rev:true},
+      ]},
+      SA:{label:"Self-Abandonment", items:[
+        {t:"I've set aside my own needs so long I've lost track of them."},
+        {t:"I've made myself smaller to keep the peace."},
+        {t:"I've given up things that matter to me to hold the relationship together."},
+        {t:"I've kept hold of what matters to me inside the relationship.",rev:true},
+        {t:"I've stayed true to my own needs.",rev:true},
+        {t:"I haven't had to disappear to make the relationship work.",rev:true},
+      ]},
+      HR:{label:"Hypervigilant Repair", items:[
+        {t:"I carry most of the effort to keep the relationship working."},
+        {t:"I'm the one who always tries to fix what's wrong between us."},
+        {t:"I stay on alert for problems so I can smooth them over before they grow."},
+        {t:"The work of repair is shared between us.",rev:true},
+        {t:"I don't have to manage the whole relationship on my own.",rev:true},
+        {t:"Keeping us okay isn't a job that falls only to me.",rev:true},
+      ]},
+    }
+  }
+};
+
+const BANDS = [
+  {key:"low", label:"Minimal", cls:"low", hi:3.0},
+  {key:"mod", label:"Present", cls:"mod", hi:4.5},
+  {key:"high",label:"Pronounced", cls:"high", hi:6.01},
+];
+function bandOf(mean){ for(const b of BANDS){ if(mean < b.hi) return b; } return BANDS[BANDS.length-1]; }
+
+/* ---- scoring ---- */
+function scoreItem(raw, rev){ return rev ? (7 - raw) : raw; }
+function subMean(instKey, subKey, answers){
+  const items = BANK[instKey].subs[subKey].items;
+  let s=0; for(let i=0;i<items.length;i++){ s += scoreItem(answers[i], items[i].rev); }
+  return s/items.length;
+}
+function instResults(instKey, answersBySub){
+  const out={}; const subs=BANK[instKey].subs;
+  for(const sk of Object.keys(subs)){ out[sk]=subMean(instKey,sk,answersBySub[sk]); }
+  return out;
+}
+function instOverall(instKey, res){
+  const ks=Object.keys(res); let s=0; ks.forEach(k=>s+=res[k]); return s/ks.length;
+}
+
+/* ---- blind interleave: flatten a instrument's items, tag with sub+index, reorder round-robin ---- */
+function buildOrder(instKey){
+  const subs=BANK[instKey].subs; const cols=Object.keys(subs).map(sk=>
+    subs[sk].items.map((it,idx)=>({sk, idx, t:it.t, rev:!!it.rev})));
+  const maxLen=Math.max(...cols.map(c=>c.length)); const order=[];
+  for(let r=0;r<maxLen;r++){ for(let c=0;c<cols.length;c++){ if(cols[c][r]) order.push(cols[c][r]); } }
+  return order; // length = total items; no two adjacent share a subscale
+}
+
+/* expose for tests */
+window.__SUITE={BANK,SCALE,BANDS,bandOf,scoreItem,subMean,instResults,instOverall,buildOrder};
+
+/* ============================================================
+   UI
+   ============================================================ */
+const STATE = { answers:{}, results:{} }; // answers[inst][sub] = [6]; results[inst]={sub:mean}
+const TABS = [
+  {id:"CAS", label:"Cassandra"},
+  {id:"RII", label:"RII"},
+  {id:"CCP", label:"CCP"},
+  {id:"EII", label:"EII"},
+  {id:"REP", label:"REP"},
+  {id:"SYN", label:"Synthesis"},
+  {id:"MTH", label:"Method"},
+];
+let active="CAS";
+const stage=document.getElementById("stage");
+const tabbar=document.getElementById("tabbar");
+
+function renderTabs(){
+  tabbar.innerHTML="";
+  TABS.forEach(t=>{
+    const b=document.createElement("button");
+    b.className="tab"; b.textContent=t.label; b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", t.id===active ? "true":"false");
+    b.onclick=()=>{ active=t.id; renderTabs(); route(); window.scrollTo({top:0,behavior:"instant"}); };
+    tabbar.appendChild(b);
+  });
+}
+function setAccent(){
+  const map={CAS:"cas",RII:"rii",CCP:"ccp",EII:"eii",REP:"rep",SYN:"syn",MTH:"syn"};
+  document.body.dataset.accent=map[active]||"rii";
+}
+function route(){
+  setAccent();
+  if(active==="SYN") return renderSynthesis();
+  if(active==="MTH") return renderMethod();
+  renderInstrument(active);
+}
+
+/* ---------- instrument flow ---------- */
+function renderInstrument(inst){
+  const done = STATE.results[inst];
+  if(done) return renderInstResults(inst);
+  renderInstIntro(inst);
+}
+function renderInstIntro(inst){
+  const B=BANK[inst]; const nItems=buildOrder(inst).length; const nSub=Object.keys(B.subs).length;
+  stage.innerHTML="";
+  const c=document.createElement("div"); c.className="card";
+  c.innerHTML=`
+    <div class="eyebrow">${B.code} · Instrument</div>
+    <h2 style="font-size:29px;margin:.25em 0 .3em">${B.name}</h2>
+    <p class="lede" style="margin:0 0 12px">${B.frame}</p>
+    <p class="note" style="margin:0 0 4px">${B.lineage}</p>
+    <div class="subs-legend">${Object.values(B.subs).map(s=>`<span class="chip">${s.label}</span>`).join("")}</div>
+    <p class="meta" style="margin-top:16px">${nItems} items · ${nSub} subscales · ~${Math.ceil(nItems*0.12)} min · one at a time · press 1–6 or click</p>
+    <div class="warn">Some items touch difficult relationship experiences. Answer only what you're comfortable with; you can stop anytime. This is a reflection tool, not a diagnosis.</div>
+    <div class="row"><button class="btn" id="startBtn">Begin ${B.code}</button></div>`;
+  stage.appendChild(c);
+  document.getElementById("startBtn").onclick=()=>runInstrument(inst);
+}
+
+function runInstrument(inst){
+  const order=buildOrder(inst);
+  const responses=new Array(order.length).fill(null);
+  let pos=0;
+  const B=BANK[inst];
+
+  function draw(){
+    const q=order[pos];
+    stage.innerHTML="";
+    const c=document.createElement("div"); c.className="card runner";
+    const pct=Math.round((pos)/order.length*100);
+    c.innerHTML=`
+      <div class="progress"><i style="width:${pct}%"></i></div>
+      <div class="counter">${B.code} · ITEM ${String(pos+1).padStart(2,"0")} / ${order.length}</div>
+      <div class="stem">${q.t}</div>
+      <div class="likert" id="lk"></div>
+      <div class="row">
+        <button class="btn ghost" id="backBtn" ${pos===0?"disabled":""}>← Back</button>
+        <span class="hint">1–6 to answer · Backspace to go back</span>
+      </div>`;
+    stage.appendChild(c);
+    const lk=c.querySelector("#lk");
+    SCALE.labels.forEach((lab,i)=>{
+      const val=i+1;
+      const o=document.createElement("button");
+      o.className="opt"; o.type="button";
+      o.setAttribute("aria-pressed", responses[pos]===val ? "true":"false");
+      o.innerHTML=`<span class="k">${val}</span><span>${lab}</span>`;
+      o.onclick=()=>choose(val);
+      lk.appendChild(o);
+    });
+    c.querySelector("#backBtn").onclick=goBack;
+  }
+  function choose(val){ responses[pos]=val; if(pos<order.length-1){pos++; draw();} else finish(); }
+  function goBack(){ if(pos>0){pos--; draw();} }
+  function finish(){
+    // fold responses back into per-subscale arrays in native item order
+    const bySub={}; Object.keys(B.subs).forEach(sk=>bySub[sk]=new Array(B.subs[sk].items.length).fill(null));
+    order.forEach((q,i)=>{ bySub[q.sk][q.idx]=responses[i]; });
+    STATE.answers[inst]=bySub;
+    STATE.results[inst]=instResults(inst,bySub);
+    renderInstResults(inst);
+  }
+  function key(e){
+    if(active!==inst) return;
+    if(e.key>="1"&&e.key<="6"){ e.preventDefault(); choose(parseInt(e.key,10)); }
+    else if(e.key==="Backspace"){ e.preventDefault(); goBack(); }
+  }
+  document.removeEventListener("keydown",window.__kh||(()=>{}));
+  window.__kh=key; document.addEventListener("keydown",key);
+  draw();
+}
+
+function renderInstResults(inst){
+  const B=BANK[inst]; const res=STATE.results[inst];
+  stage.innerHTML="";
+  const head=document.createElement("div"); head.className="card";
+  const overall=instOverall(inst,res); const ob=bandOf(overall);
+  head.innerHTML=`
+    <div class="eyebrow">${B.code} · Result</div>
+    <h2 style="font-size:27px;margin:.25em 0 .2em">${B.name}</h2>
+    <p class="note" style="margin:0">Overall <b class="b-${ob.cls}">${ob.label}</b> · <span class="scorenum">mean ${overall.toFixed(2)}</span>. Each subscale is scored toward its named pole; the centre line marks the neutral midpoint (3.50).</p>`;
+  stage.appendChild(head);
+
+  const g=document.createElement("div"); g.className="gauges";
+  Object.keys(B.subs).forEach(sk=>{
+    const m=res[sk]; const b=bandOf(m); const pct=Math.max(2,Math.min(100,(m-1)/5*100));
+    const el=document.createElement("div"); el.className="gauge"; el.dataset.sub=sk; el.dataset.score=m.toFixed(2);
+    el.innerHTML=`
+      <div class="g-top"><span class="g-name">${B.subs[sk].label}</span>
+        <span class="g-band b-${b.cls}">${b.label} · <span class="scorenum">${m.toFixed(2)}</span></span></div>
+      <div class="track"><span class="mid"></span><i style="width:${pct}%"></i></div>`;
+    g.appendChild(el);
+  });
+  stage.appendChild(g);
+
+  if(inst==="CAS"){
+    const db=res.DB, dp=res.DP, MID=3.5; let msg;
+    if(db>=MID&&dp>=MID) msg="This is the pattern the \"Cassandra\" label points to — feeling both emotionally starved and disbelieved at once. It names a real experience; it isn't a diagnosis, and it makes no claim about who or what is responsible. The other tabs follow each thread further.";
+    else if(db>=MID) msg="The sense of not being believed registers more strongly here than the emotional deprivation. The EII tab opens that thread up.";
+    else if(dp>=MID) msg="The emotional starvation registers more strongly here than the sense of being disbelieved. The REP tab opens that thread up.";
+    else msg="Neither thread — being disbelieved, or emotional deprivation — reads strongly here. Individual items may still be worth sitting with.";
+    const rd=document.createElement("div"); rd.className="sig";
+    rd.innerHTML=`<div class="tag">Cassandra profile</div><h3>What this reads</h3><p>${msg}</p>`;
+    stage.appendChild(rd);
+    const cf=document.createElement("div"); cf.className="card";
+    cf.innerHTML=`<p class="note" style="margin:0 0 12px">A focused front-door read. Go deeper with the full instruments, or jump to any tab above.</p>
+      <div class="row"><button class="btn ghost" id="redo">Retake Cassandra</button>
+      <button class="btn" id="next">Go deeper → RII</button></div>`;
+    stage.appendChild(cf);
+    cf.querySelector("#redo").onclick=()=>{ delete STATE.results.CAS; renderInstIntro("CAS"); };
+    cf.querySelector("#next").onclick=()=>{ active="RII"; renderTabs(); route(); window.scrollTo({top:0}); };
+    return;
+  }
+
+  const foot=document.createElement("div"); foot.className="card";
+  const remaining=["RII","CCP","EII","REP"].filter(k=>!STATE.results[k]);
+  foot.innerHTML=`<p class="note" style="margin:0 0 12px">${remaining.length? `Next: ${remaining.join(", ")}. Complete all four to unlock the Synthesis.` : `All four instruments complete — open the <b>Synthesis</b> tab.`}</p>
+    <div class="row">
+      <button class="btn ghost" id="redo">Retake ${B.code}</button>
+      ${remaining.length? `<button class="btn" id="next">Continue → ${remaining[0]}</button>`:`<button class="btn" id="toSyn">Open Synthesis →</button>`}
+    </div>`;
+  stage.appendChild(foot);
+  const redo=foot.querySelector("#redo"); if(redo) redo.onclick=()=>{ delete STATE.results[inst]; renderInstIntro(inst); };
+  const nx=foot.querySelector("#next"); if(nx) nx.onclick=()=>{ active=remaining[0]; renderTabs(); route(); window.scrollTo({top:0}); };
+  const ts=foot.querySelector("#toSyn"); if(ts) ts.onclick=()=>{ active="SYN"; renderTabs(); route(); window.scrollTo({top:0}); };
+}
+
+/* ---------- synthesis ---------- */
+function renderSynthesis(){
+  stage.innerHTML="";
+  const need=["RII","CCP","EII","REP"].filter(k=>!STATE.results[k]);
+  if(need.length){
+    const c=document.createElement("div"); c.className="card";
+    c.innerHTML=`<div class="eyebrow">Synthesis</div>
+      <h2 style="font-size:27px;margin:.2em 0 .3em">The cross-read</h2>
+      <p class="note">Complete all four instruments to see how they read together. Still to do: <b>${need.join(", ")}</b>.</p>
+      <p class="placeholder">The centrepiece here separates <i>deprivation</i> from <i>coercion</i> — the distinction the "Cassandra" construct collapses.</p>`;
+    stage.appendChild(c); return;
+  }
+  const R=STATE.results;
+  const rep=instOverall("REP",R.REP);      // deprivation axis (y)
+  const ccp=instOverall("CCP",R.CCP);      // coercion axis (x)
+  const xPct=(ccp-1)/5*100, yPct=(rep-1)/5*100;
+
+  // quadrant card
+  const q=document.createElement("div"); q.className="quad-wrap";
+  q.innerHTML=`
+    <div class="eyebrow">Synthesis · signature</div>
+    <h2 style="font-size:25px;margin:.25em 0 .2em">Deprivation is not coercion</h2>
+    <p class="note" style="margin:0 0 6px">A relationship can leave you starved without controlling you — and the two ask for different responses. Your position on both axes:</p>
+    <div class="quad">
+      <span class="grid-v"></span><span class="grid-h"></span>
+      <span class="qlabel ql-tl">Deprivation<br>without coercion<br><i>— mismatch / neglect</i></span>
+      <span class="qlabel ql-tr">Coercive deprivation<br><i>— control + starvation</i></span>
+      <span class="qlabel ql-bl">Neither pronounced</span>
+      <span class="qlabel ql-br">Control<br>without deprivation</span>
+      <span class="dot" style="left:${xPct}%;bottom:${yPct}%"></span>
+      <span class="axis-x"><span>less control →</span><span>more control</span></span>
+      <span class="axis-y"><span>less starved →</span><span>more starved</span></span>
+    </div>
+    <div class="quad-caption">coercion (CCP) ${ccp.toFixed(2)} · deprivation (REP) ${rep.toFixed(2)}</div>`;
+  stage.appendChild(q);
+
+  const sigs=document.createElement("div");
+  const MID=3.5;
+  function add(cond,alert,tag,title,body){ if(cond){ const s=document.createElement("div"); s.className="sig"+(alert?" alert":"");
+    s.innerHTML=`<div class="tag">${tag}</div><h3>${title}</h3><p>${body}</p>`; sigs.appendChild(s);} }
+
+  // quadrant read
+  if(rep>=MID && ccp<MID) add(true,false,"Read","Deprivation without coercion",
+    "You register real emotional starvation, but little sign of a partner controlling you. This is the territory the Cassandra literature describes — and the point where it overreaches: an unmet, lonely, or mismatched relationship is not the same as an abusive one. What it can't tell you is the <i>cause</i>: incompatibility, depression, one partner's difficulty with emotional reciprocity, or drift are all different roads here, and each asks for something different.");
+  if(rep>=MID && ccp>=MID) add(true,true,"Read","Coercive deprivation",
+    "You register both emotional starvation and controlling behavior from a partner. When deprivation sits alongside control, the deprivation is rarely accidental. Both axes reading high is worth taking seriously with someone qualified.");
+  if(rep<MID && ccp>=MID) add(true,true,"Read","Control without marked deprivation",
+    "Controlling behavior registers even though the deprivation axis is lower — sometimes the felt starvation lags behind the control, or gets rationalised. The control axis is the one to trust here.");
+  if(rep<MID && ccp<MID) add(true,false,"Read","Neither axis pronounced",
+    "Neither deprivation nor coercion reads strongly. Individual subscales may still carry signal worth reading on their own.");
+
+  // reality-erosion coupling
+  const RE=(R.EII.RE+R.EII.DV)/2, NS=R.RII.NS;
+  add(RE>=MID && NS>=MID,false,"Coupling","Invalidation has reached your self-concept",
+    `Being disbelieved and having reality turned around (EII ${RE.toFixed(2)}) is tracking with a damaged sense of self (RII Negative Self-Concept ${NS.toFixed(2)}). This is the signature of prolonged invalidation: the doubt stops being about events and becomes about you.`);
+
+  // danger signature
+  const IT=R.CCP.IT, TV=R.RII.TV;
+  add(IT>=MID && TV>=MID,true,"Safety","Fear and vigilance are tracking together",
+    `Intimidation from a partner (CCP ${IT.toFixed(2)}) and a nervous system braced for threat (RII ${TV.toFixed(2)}) are both elevated. If you feel unsafe, support exists — a domestic-abuse helpline or a trusted professional can help you think it through. In an emergency, contact local emergency services.`);
+
+  // Cassandra decomposition callout
+  const ED=R.REP.ED, BD=R.EII.BD;
+  add(ED>=MID && BD>=MID,false,"Named","The Cassandra experience, decomposed",
+    `High emotional deprivation (${ED.toFixed(2)}) alongside the sense of not being believed (${BD.toFixed(2)}) is exactly what the "Cassandra" label points at — the felt experience of being both starved and disbelieved. This suite shows it as two measurable experiences rather than a partner-caused disorder, and deliberately makes no claim about who or what is responsible. The Method tab explains why.`);
+
+  stage.appendChild(sigs);
+
+  const reset=document.createElement("div"); reset.className="card";
+  reset.innerHTML=`<div class="row"><button class="btn ghost" id="resetAll">Clear all responses</button></div>`;
+  stage.appendChild(reset);
+  reset.querySelector("#resetAll").onclick=()=>{ STATE.answers={}; STATE.results={}; active="RII"; renderTabs(); route(); window.scrollTo({top:0}); };
+}
+
+/* ---------- method / appendix ---------- */
+function renderMethod(){
+  stage.innerHTML="";
+  const c=document.createElement("div"); c.className="card method";
+  c.innerHTML=`
+    <div class="eyebrow">Method</div>
+    <h2 style="font-size:27px;margin:.2em 0 .1em">How this suite is built</h2>
+
+    <h3>The excision: the "Cassandra" construct family</h3>
+    <p>This series was requested around Cassandra Syndrome and its neighbours. None of them is instrumented here as a diagnosis, on purpose.</p>
+    <div class="excise">
+      <b>The construct family.</b> Three overlapping, non-diagnostic terms circulate for this distress; none appears in the DSM-5 or ICD-11.<br><br>
+      • <b>Cassandra Syndrome / Phenomenon</b> (popularised by Aston and Attwood) — the experience of not being believed when you describe the relationship.<br>
+      • <b>Affective Deprivation Disorder (AfDD)</b> (proposed by Aston) — the emotional starvation itself.<br>
+      • <b>Ongoing Traumatic Relationship Syndrome (OTRS)</b> (associated with Karen Rodman / FAAAS) — the trauma-like sequelae of chronic relational distress; some sources note it can occur in any chronically distressing relationship, not only neurodiverse ones.<br><br>
+      <b>Removed:</b> all three as diagnostic entities, and — the part that matters most — the shared framing that attributes the distress to an autistic partner's traits (alexithymia, limited emotional reciprocity). That attribution is unvalidated and stigmatising; a neurodiversity-affirming reading treats communication difference as difference, not defect, and leaves cause open.<br><br>
+      <b>Retained and decomposed.</b> The phenomenology each term genuinely names is real and is measured here, mapped onto validated backbones:<br>
+      • Cassandra (disbelief) → <b>EII</b> · Epistemic Invalidation<br>
+      • AfDD (deprivation) → <b>REP</b> · Erosion &amp; Deprivation<br>
+      • OTRS (trauma sequelae) → <b>RII</b> · ICD-11 Complex PTSD<br><br>
+      The fourth instrument, <b>CCP</b>, and the Synthesis quadrant exist to separate deprivation from coercion — the distinction all three popular terms blur. This mirrors clinical practice: some neurodiverse-couples clinicians already prefer C-PTSD over OTRS as the more precise, less blaming frame for the non-autistic partner.<br><br>
+      <b>The Cassandra tab.</b> Because the term is what people actually search for, a focused <b>Cassandra</b> instrument leads the suite — re-presenting the disbelief (EII · Being Disbelieved) and deprivation (REP · Emotional Deprivation) core as an immediate two-axis read. It uses the same validated items as those fuller instruments, names the experience plainly, and keeps the non-attributional stance: it describes what is felt, not who caused it.
+    </div>
+
+    <h3>Validated lineage</h3>
+    <p><b>RII</b> — ICD-11 Complex PTSD, the disturbances-in-self-organization cluster (Cloitre et al., 2018, ITQ) re-anchored to relational trauma, plus the sense-of-threat cluster.<br>
+    <b>CCP</b> — Composite Abuse Scale (Hegarty) and the Coercive-Composite Abuse Scale (2026), as a clean-room adaptation.<br>
+    <b>EII</b> — betrayal-trauma and DARVO research (Freyd) and the sociology of gaslighting.<br>
+    <b>REP</b> — emotional-neglect items from the Complex Trauma Questionnaire and Young's Emotional Deprivation schema.</p>
+
+    <h3>Item format</h3>
+    <p>Each subscale is 6 items on a forced 6-point agreement scale with no neutral option, <span class="code">3 forward / 3 reverse</span>. Reverse items are worded toward the healthy pole and scored <span class="code">7 − raw</span>. Subscale scores are means (1–6); higher = more of the named experience. Native validated instruments (e.g. the ITQ's 5-point format) are <i>not</i> reproduced verbatim: these are adaptations, not norm-referenced administrations, so the house 6-point format is used for cross-suite comparability — a deliberate, documented deviation.</p>
+
+    <h3>Yea-saying defense</h3>
+    <p>Because the balance is genuinely 3/3, a respondent who agrees with everything lands on the neutral midpoint, not the top band: all-6 responding scores <span class="code">(3×6 + 3×1) / 6 = 3.50</span> on every subscale. Acquiescence cancels; only differentiated responding moves a score.</p>
+
+    <h3>Simulated reliability</h3>
+    <p>Cronbach's α below is from a Monte Carlo of synthetic respondents (latent subscale trait + item noise, reverse items modelled with negative loading before reverse-scoring). Simulated, not empirical — no real norms are implied.</p>
+    <table class="alpha"><thead><tr><th>Instrument</th><th>Subscales</th><th>Items</th><th>Mean α</th><th>Min α</th></tr></thead>
+      <tbody id="alphaBody">
+        <tr><td>CAS · Cassandra Experience</td><td class="n">2</td><td class="n">12</td><td class="n">.751</td><td class="n">.747</td></tr>
+        <tr><td>RII · Relational Injury</td><td class="n">4</td><td class="n">24</td><td class="n">.748</td><td class="n">.739</td></tr>
+        <tr><td>CCP · Coercive Control</td><td class="n">4</td><td class="n">24</td><td class="n">.743</td><td class="n">.738</td></tr>
+        <tr><td>EII · Epistemic Invalidation</td><td class="n">5</td><td class="n">30</td><td class="n">.747</td><td class="n">.743</td></tr>
+        <tr><td>REP · Erosion &amp; Deprivation</td><td class="n">5</td><td class="n">30</td><td class="n">.755</td><td class="n">.746</td></tr>
+        <tr><td><b>Suite</b></td><td class="n">20</td><td class="n">120</td><td class="n"><b>.749</b></td><td class="n">.738</td></tr>
+      </tbody></table>
+      <p class="meta" style="margin-top:8px">Monte Carlo, N = 2,000 synthetic respondents per subscale. Simulated, not empirical. CAS re-presents the EII · Being Disbelieved and REP · Emotional Deprivation items, so its two subscales track those.</p>
+
+    <h3>Limitations</h3>
+    <p>Self-report and retrospective; frames experience around a single significant relationship; cannot establish cause or apportion responsibility; not a screen for abuse or for any diagnosis. A high score is a prompt to reflect and, if it helps, to talk with someone qualified — not a verdict.</p>`;
+  stage.appendChild(c);
+}
+
+/* theme toggle — respects OS by default; toggle forces a mode */
+(function(){
+  const root=document.documentElement, btn=document.getElementById("themeToggle");
+  let saved=null; try{ saved=localStorage.getItem("rt-theme"); }catch(e){}
+  if(saved==="dark"||saved==="light") root.dataset.theme=saved;
+  function isDark(){
+    if(root.dataset.theme==="dark") return true;
+    if(root.dataset.theme==="light") return false;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches;
+  }
+  btn.onclick=()=>{ const next=isDark()?"light":"dark"; root.dataset.theme=next;
+    try{ localStorage.setItem("rt-theme",next); }catch(e){} };
+})();
+
+renderTabs(); route();
+</script>
+</body>
+</html>

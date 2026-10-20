@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archetypal Pattern Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#efe7d8; --paper-2:#f7f1e6; --card:#f9f4ea;
+    --ink:#2b2436; --ink-soft:#6a6175; --ink-faint:#948b9c;
+    --indigo:#4a3d6b; --gold:#b0863f; --gold-soft:#c9a24b;
+    /* three developmental clusters — the instrument's real color language */
+    --ego:#b0603c; --soul:#2f7d74; --self:#6a5691;
+    --ego-tint:rgba(176,96,60,0.13); --soul-tint:rgba(47,125,116,0.13); --self-tint:rgba(106,86,145,0.13);
+    --line:rgba(43,36,54,0.12); --line-soft:rgba(43,36,54,0.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(106,86,145,0.07), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;line-height:1.55;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    padding:clamp(16px,4vw,48px) clamp(14px,4vw,32px);
+  }
+  .stage{width:100%;max-width:680px;flex:1;display:flex;flex-direction:column;justify-content:center}
+  .mono{font-family:'IBM Plex Mono',monospace}
+
+  /* tricolor cluster rule — recurring identity mark */
+  .tricolor{height:4px;width:72px;border-radius:4px;background:linear-gradient(90deg,var(--ego) 0 33.3%,var(--soul) 33.3% 66.6%,var(--self) 66.6% 100%)}
+
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-faint)}
+  h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(34px,7vw,54px);line-height:1.02;letter-spacing:-0.015em;margin:16px 0 0}
+  h1 em{font-style:italic;color:var(--indigo)}
+  .lede{color:var(--ink-soft);font-size:clamp(15px,2.4vw,17px);margin-top:20px;max-width:52ch}
+  .lede em{font-style:italic;color:var(--self)}
+
+  .intro-meta{margin-top:30px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:var(--line-soft);border-bottom:1px solid var(--line)}
+  .intro-meta div{background:var(--paper);padding:16px 10px 16px 0}
+  .intro-meta dt{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint)}
+  .intro-meta dd{font-family:'Fraunces',serif;font-size:22px;margin-top:5px}
+  .intro-meta div:nth-child(1) dd{color:var(--ego)}
+  .intro-meta div:nth-child(2) dd{color:var(--soul)}
+  .intro-meta div:nth-child(3) dd{color:var(--self)}
+  .intro-meta div:nth-child(4) dd{color:var(--gold)}
+
+  .note{margin-top:26px;font-size:13.5px;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-left:3px solid var(--self);border-radius:10px;padding:15px 17px}
+  .note b{color:var(--ink);font-weight:600}
+
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .btn{margin-top:30px;background:var(--indigo);color:#f7f1e6;font-size:15px;font-weight:500;letter-spacing:0.01em;padding:15px 30px;border-radius:100px;align-self:flex-start;transition:transform .15s ease,background .15s ease,box-shadow .15s ease;box-shadow:0 6px 20px -8px rgba(74,61,107,.6)}
+  .btn:hover{transform:translateY(-1px);background:#3a2f57}
+  .btn:focus-visible{outline:2.5px solid var(--gold);outline-offset:3px}
+  .kbd-hint{margin-top:16px;font-size:12px;color:var(--ink-faint)}
+  .kbd-hint kbd{font-family:'IBM Plex Mono',monospace;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px}
+
+  /* legal disclaimer */
+  .legal{margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}
+  .legal h4{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px}
+  .legal p{font-size:11.5px;line-height:1.65;color:var(--ink-faint);margin-bottom:11px}
+  .legal .copy{color:var(--ink-soft);font-weight:500}
+
+  /* ---- quiz ---- */
+  .quiz{display:none}
+  .progress-wrap{display:flex;align-items:center;gap:14px;margin-bottom:auto;padding-top:4px}
+  .progress-track{flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--ego),var(--soul),var(--self));transition:width .35s cubic-bezier(.4,0,.2,1)}
+  .progress-num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);white-space:nowrap}
+
+  .item-block{margin:auto 0;padding:8px 0;position:relative}
+  .item-block::before{content:"";position:absolute;left:-18px;top:2px;bottom:2px;width:3px;border-radius:3px;background:var(--gold);opacity:.55}
+  .item-count{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase}
+  .item-stem{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(23px,4.6vw,32px);line-height:1.25;letter-spacing:-0.01em;margin-top:16px;min-height:2.4em}
+  .scale{margin-top:34px;display:flex;flex-direction:column;gap:8px}
+  .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden;font-size:15px;color:var(--ink);transition:border-color .12s ease,background .12s ease,transform .08s ease}
+  .opt .bar{width:5px;align-self:stretch;flex:none}
+  .opt .inner{display:flex;align-items:center;gap:14px;padding:14px 16px 14px 13px;flex:1}
+  .opt:hover{border-color:var(--indigo);background:var(--paper-2);transform:translateX(2px)}
+  .opt:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
+  .opt .num{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);width:22px;height:22px;flex:none;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px}
+  .opt:hover .num{border-color:var(--indigo);color:var(--indigo)}
+  .opt.sel{border-color:var(--indigo);background:var(--paper-2)}
+  .scale-poles{display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em}
+  .backbtn{margin-top:22px;font-size:13px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:6px}
+  .backbtn:hover{color:var(--ink)}
+  .backbtn:disabled{opacity:.3;cursor:default}
+
+  /* ---- results ---- */
+  .results{display:none}
+  .res-head .tricolor{margin-bottom:14px}
+  .res-head h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(28px,5.5vw,40px);line-height:1.05;letter-spacing:-0.01em}
+  .res-head .eyebrow{margin-bottom:10px;display:block}
+  .res-sub{color:var(--ink-soft);margin-top:14px;font-size:15px;max-width:54ch}
+  .res-sub em{font-style:italic;color:var(--self)}
+
+  .mandala-wrap{margin:34px auto 8px;position:relative;width:min(100%,440px)}
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .legend{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-soft)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+  /* cluster balance strip */
+  .clusterbar{display:flex;margin:26px 0 4px;height:40px;border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+  .clusterbar div{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#f7f1e6;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;min-width:0}
+  .clusterbar div b{font-size:13px;font-weight:500}
+
+  .topline{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-faint);margin:42px 0 18px;padding-bottom:8px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  .topline::before{content:"";width:18px;height:2px;background:var(--gold);border-radius:2px}
+
+  .top3{display:flex;flex-direction:column;gap:14px}
+  .arch-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;position:relative;overflow:hidden}
+  .arch-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
+  .arch-card::after{content:"";position:absolute;inset:0;background:var(--c-tint);opacity:.5;pointer-events:none}
+  .arch-card>*{position:relative}
+  .arch-card .rank{position:absolute;top:16px;right:20px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--c);font-weight:500}
+  .arch-card h3{font-family:'Fraunces',serif;font-weight:500;font-size:25px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .arch-card h3 .cluster{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--c);font-weight:500}
+  .arch-card .core{font-style:italic;font-family:'Fraunces',serif;color:var(--indigo);margin-top:4px;font-size:15px}
+  .arch-card p{font-size:14px;color:var(--ink-soft);margin-top:11px}
+  .arch-card .sh{font-size:12.5px;color:var(--ink-faint);margin-top:9px}
+  .arch-card .sh b{color:var(--ink-soft);font-weight:600}
+
+  .profile{margin-top:8px;display:flex;flex-direction:column;gap:0}
+  .prow{display:grid;grid-template-columns:104px 1fr 42px;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+  .prow .pname{font-size:13.5px;display:flex;align-items:center;gap:8px}
+  .prow .pname i{width:8px;height:8px;border-radius:50%;flex:none}
+  .prow .ptrack{height:8px;background:var(--line-soft);border-radius:6px;overflow:hidden}
+  .prow .pfill{height:100%;border-radius:6px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+  .prow .pval{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);text-align:right}
+  .prow.isTop .pname{font-weight:600}
+  .prow.isTop .pname::after{content:"★";color:var(--gold);font-size:11px;margin-left:2px}
+
+  .care{margin-top:30px;background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:18px 20px;font-size:14px;color:var(--ink-soft)}
+  .care b{color:var(--ink);font-weight:600}
+  .care em{font-style:italic}
+
+  details{margin-top:26px;border-top:1px solid var(--line)}
+  summary{cursor:pointer;padding:16px 0 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft);list-style:none;display:flex;justify-content:space-between;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-size:16px}
+  details[open] summary::after{content:"–"}
+  .appendix{font-size:13.5px;color:var(--ink-soft);padding-bottom:8px}
+  .appendix p{margin-bottom:12px}
+  .appendix b{color:var(--ink-soft);font-weight:600}
+  .atable{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;font-size:12px;margin:6px 0 16px}
+  .atable th,.atable td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line-soft)}
+  .atable th{color:var(--ink-faint);font-weight:500;letter-spacing:0.06em}
+  .atable td:last-child,.atable th:last-child{text-align:right}
+  .atable .good{color:var(--soul)}
+  .atable .cl-ego{color:var(--ego)}.atable .cl-soul{color:var(--soul)}.atable .cl-self{color:var(--self)}
+  .astat{display:flex;gap:26px;flex-wrap:wrap;margin:14px 0;font-family:'IBM Plex Mono',monospace}
+  .astat div span{display:block;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .astat div b{font-size:22px;font-weight:500;color:var(--indigo)}
+
+  .legal.res{margin-top:28px}
+  .restart{margin:30px 0 8px;font-size:13px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;display:inline-block}
+  .restart:hover{color:var(--ink)}
+  .foot{margin-top:18px;font-size:11.5px;color:var(--ink-faint);line-height:1.6}
+
+  @media (max-width:520px){
+    .intro-meta{grid-template-columns:1fr 1fr}
+    .prow{grid-template-columns:92px 1fr 38px;gap:9px}
+    .btn{align-self:stretch;text-align:center}
+    .item-block::before{left:-12px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage">
+
+  <!-- ============ START ============ -->
+  <section id="start" class="start">
+    <div class="tricolor"></div>
+    <span class="eyebrow" style="display:block;margin-top:16px">Depth-Psychological Self-Inventory · Self-Report</span>
+    <h1>The Archetypal <em>Pattern</em> Inventory</h1>
+    <p class="lede">A twelve-archetype instrument in the tradition of Jung and Carol Pearson's <em>Awakening the Heroes Within</em>. It doesn't sort you into one type — it maps which archetypal patterns are most <em>active</em> in you right now, across the three stages of the individuation journey.</p>
+
+    <dl class="intro-meta">
+      <div><dt>Items</dt><dd>72</dd></div>
+      <div><dt>Archetypes</dt><dd>12</dd></div>
+      <div><dt>Scale</dt><dd>6-point</dd></div>
+      <div><dt>Time</dt><dd>~9 min</dd></div>
+    </dl>
+
+    <div class="note">
+      <b>This is a well-person instrument.</b> It measures the salience of ordinary human patterns — not disorder, deficiency, or fixed identity. Archetypes shift across a lifetime; a low score simply means that pattern is quieter in you today. Answer for how you actually are, not how you'd like to be.
+    </div>
+
+    <button class="btn" id="beginBtn">Begin the inventory →</button>
+    <p class="kbd-hint">Tip: use keys <kbd>1</kbd>–<kbd>6</kbd> to answer and <kbd>⌫</kbd> to go back.</p>
+
+    <div class="legal">
+      <h4>Legal Disclaimer</h4>
+      <p>This instrument is provided for general educational and self-reflective purposes only. It is not a medical device, a psychological or clinical assessment, or a diagnostic tool, and it is not a substitute for professional evaluation, diagnosis, or treatment by a qualified health-care or mental-health provider. Your use of it does not create any clinician–client, therapist–patient, or other professional relationship.</p>
+      <p>The subscales, scores, thresholds, and interpretive text are derived from published psychological constructs but have not been clinically validated, standardized, or normed on any population. Any reliability figures shown are produced by statistical simulation, not by data collected from respondents. Results describe general tendencies and patterns — not fixed traits, and not statements of fact about any identified person.</p>
+      <p>To the fullest extent permitted by law, the author and distributors make no warranties, express or implied, including as to accuracy, completeness, or fitness for a particular purpose, and disclaim all liability for any decision made or action taken in reliance on this instrument or its output. If you have concerns about your safety or mental health, seek the advice of a licensed professional or your local emergency services.</p>
+      <p class="copy">© 2026 Erica Campbell. All rights reserved.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="quiz" class="quiz">
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+      <span class="progress-num" id="pnum">01 / 72</span>
+    </div>
+    <div class="item-block">
+      <div class="item-count" id="icount">Statement 01</div>
+      <p class="item-stem" id="stem">…</p>
+      <div class="scale" id="scale"></div>
+      <div class="scale-poles"><span>1 · strongly disagree</span><span>strongly agree · 6</span></div>
+      <button class="backbtn" id="backBtn" disabled>← previous</button>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section id="results" class="results">
+    <div class="res-head">
+      <div class="tricolor"></div>
+      <span class="eyebrow">Your Archetypal Profile</span>
+      <h2 id="resTitle">The stories most active in you</h2>
+      <p class="res-sub">Your profile is a <em>constellation</em>, not a single label. The wheel below shows all twelve patterns; the three brightest are the archetypes currently shaping how you see and move through the world.</p>
+    </div>
+
+    <div class="mandala-wrap">
+      <svg id="mandala" viewBox="0 0 440 440" role="img" aria-label="Archetype wheel"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ego)"></i>Ego · survival</span>
+      <span><i style="background:var(--soul)"></i>Soul · the journey</span>
+      <span><i style="background:var(--self)"></i>Self · wholeness</span>
+    </div>
+
+    <div class="clusterbar" id="clusterbar"></div>
+
+    <div class="topline">Your three most active archetypes</div>
+    <div class="top3" id="top3"></div>
+
+    <div class="topline">Full profile — all twelve, ranked</div>
+    <div class="profile" id="profile"></div>
+
+    <div class="care" id="careNote"></div>
+
+    <details>
+      <summary>Psychometric appendix</summary>
+      <div class="appendix">
+        <p>This instrument follows the structure of the Pearson-Marr Archetype Indicator: twelve archetype subscales, six items each, clustered developmentally into <b>Ego</b> (Innocent, Orphan, Warrior, Caregiver), <b>Soul</b> (Seeker, Lover, Destroyer, Creator), and <b>Self</b> (Ruler, Magician, Sage, Jester). Items are original (clean-room) and mapped to each archetype's core motivation. They are administered round-robin so the factor structure stays blind during response, with <b>balanced keying — three forward and three reverse items per subscale</b>, so uniform high responding resolves to the 3.50 scale midpoint on every archetype rather than inflating any score.</p>
+        <p>Scoring is <b>ipsative-leaning</b>: because archetype salience is relative, your <em>ranking</em> carries more signal than any single absolute score. Each subscale mean (1–6) is banded within your own profile — Dominant, Active, Latent, or Dormant.</p>
+        <div class="astat">
+          <div><span>Grand mean α</span><b>0.802</b></div>
+          <div><span>Range</span><b>.794–.811</b></div>
+          <div><span>Subscales &lt; .70</span><b>0</b></div>
+          <div><span>Sim. N</span><b>2,000</b></div>
+        </div>
+        <p>Internal-consistency reliability (Cronbach's α) estimated by Monte Carlo simulation: single-factor model per subscale, forward-item loadings .68–.74 and reverse items modeled at a lower loading (.60–.64) to reflect method variance, reverse-scored before α is computed, across N = 2,000 synthetic respondents:</p>
+        <table class="atable" id="atable">
+          <thead><tr><th>Archetype</th><th>Cluster</th><th>α</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <p style="font-size:12.5px;color:var(--ink-faint)">These are simulated values for a clean-room instrument, not norms from a standardization sample. Treat the results as a mirror for reflection, not a clinical measurement or a fixed verdict.</p>
+      </div>
+    </details>
+
+    <div class="legal res">
+      <h4>Legal Disclaimer</h4>
+      <p>For general educational and self-reflective purposes only. Not a medical device, clinical assessment, or diagnostic tool, and not a substitute for professional evaluation, diagnosis, or treatment by a qualified provider. Subscales, scores, and interpretive text derive from published constructs but have not been clinically validated, standardized, or normed; any reliability figures are produced by statistical simulation, not respondent data. To the fullest extent permitted by law, the author and distributors disclaim all warranties and all liability for decisions made in reliance on this instrument. If you have concerns about your safety or mental health, consult a licensed professional or your local emergency services.</p>
+      <p class="copy">© 2026 Erica Campbell. All rights reserved.</p>
+    </div>
+
+    <a class="restart" id="restartBtn" role="button" tabindex="0">↺ Retake the inventory</a>
+    <p class="foot">After Jung's theory of archetypes and Carol Pearson &amp; Hugh Marr's twelve-archetype developmental model. Original instrument for reflection and personal growth — not affiliated with the published PMAI®.</p>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   ARCHETYPE DATA — 12 archetypes × 6 items
+   each subscale: 3 forward + 3 reverse (alternating F,R,F,R,F,R)
+   cluster: ego | soul | self
+   ============================================================ */
+const ARCH = [
+  {key:"Innocent", cluster:"ego", core:"Faith & optimism",
+   gift:"Trust, hope, and an openness that lets you begin things others are too wary to try.",
+   shadow:"denial and naïveté — refusing to see what's actually there",
+   desc:"You meet the world expecting good, and you keep faith even when the ground gets shaky. Your optimism is a real form of courage.",
+   items:[
+    {t:"I trust that things will work out well in the end, even when a situation looks difficult.",r:false},
+    {t:"I assume most people are quietly out to take advantage of me.",r:true},
+    {t:"I tend to see the good in people before I notice their flaws.",r:false},
+    {t:"Experience has taught me to expect the worst from how things turn out.",r:true},
+    {t:"I approach new situations with hope rather than suspicion.",r:false},
+    {t:"It strikes me as naïve to believe things will simply work out.",r:true}]},
+
+  {key:"Orphan", cluster:"ego", core:"Realism & belonging",
+   gift:"Resilience, empathy for the wounded, and a grounded honesty about how life actually works.",
+   shadow:"cynicism and a pull toward victimhood",
+   desc:"Experience has taught you that things don't always go your way — and that's made you real, resilient, and loyal to fellow ordinary people.",
+   items:[
+    {t:"I've learned to expect that things won't always go my way.",r:false},
+    {t:"It rarely crosses my mind that a situation could go badly wrong.",r:true},
+    {t:"I feel most at ease among down-to-earth people rather than elites.",r:false},
+    {t:"I tend to assume I'll be looked after if things get hard.",r:true},
+    {t:"I relate to others through the struggles and setbacks we share.",r:false},
+    {t:"I find it easy to trust institutions to do right by me.",r:true}]},
+
+  {key:"Warrior", cluster:"ego", core:"Courage & resolve",
+   gift:"Discipline, clear boundaries, and the will to pursue a goal against resistance.",
+   shadow:"ruthlessness — treating too much of life as a battle to win",
+   desc:"When something matters, you fight for it. You set the goal, hold the line, and rise to a challenge instead of shrinking from it.",
+   items:[
+    {t:"When something matters to me, I'm willing to fight for it.",r:false},
+    {t:"I tend to back down rather than confront a hard situation head-on.",r:true},
+    {t:"I set ambitious goals and push hard to achieve them.",r:false},
+    {t:"I'd rather avoid a challenge than risk the struggle of taking it on.",r:true},
+    {t:"I stand my ground when someone tries to cross a line with me.",r:false},
+    {t:"I let obstacles stop me more often than I push through them.",r:true}]},
+
+  {key:"Caregiver", cluster:"ego", core:"Compassion & service",
+   gift:"Generosity, attunement to others' pain, and the instinct to nurture and protect.",
+   shadow:"martyrdom and self-neglect — giving until nothing's left",
+   desc:"You feel others' needs as your own and move to meet them. People come to you when they're hurting, because you actually notice.",
+   items:[
+    {t:"I feel a strong pull to help people who are struggling.",r:false},
+    {t:"I find it hard to feel much concern about other people's problems.",r:true},
+    {t:"Noticing and tending to others' needs gives my life meaning.",r:false},
+    {t:"I tend to put my own needs well ahead of anyone else's.",r:true},
+    {t:"People come to me when they need support or comfort.",r:false},
+    {t:"Looking after other people mostly feels like a burden to me.",r:true}]},
+
+  {key:"Seeker", cluster:"soul", core:"Freedom & authenticity",
+   gift:"Independence, ambition, and the nerve to leave the familiar in search of something truer.",
+   shadow:"restlessness — never able to arrive or commit",
+   desc:"You're pulled toward the horizon. You need room to be your own person, even when that sets you apart, and the unknown draws you more than it scares you.",
+   items:[
+    {t:"I feel a restless urge to explore places and ideas beyond the familiar.",r:false},
+    {t:"I prefer the comfort of familiar surroundings to the risk of the unknown.",r:true},
+    {t:"I need room to be my own person, even if it sets me apart from others.",r:false},
+    {t:"I'd rather have security and roots than freedom and open horizons.",r:true},
+    {t:"The unknown excites me more than it frightens me.",r:false},
+    {t:"I feel no particular pull to venture beyond what I already know.",r:true}]},
+
+  {key:"Lover", cluster:"soul", core:"Intimacy & passion",
+   gift:"Devotion, deep connection, and an alive appreciation of beauty and pleasure.",
+   shadow:"losing yourself in others — jealousy, or disappearing into a relationship",
+   desc:"Connection is where you come most alive. You give yourself fully to what you love and you're willing to make real commitments to it.",
+   items:[
+    {t:"Deep emotional connection is one of the most important things in my life.",r:false},
+    {t:"I keep an emotional distance even inside my closest relationships.",r:true},
+    {t:"I give myself fully to the people and things I love.",r:false},
+    {t:"Intense passion matters less to me than keeping things measured.",r:true},
+    {t:"I'm drawn to beauty, sensuality, and things that stir my passion.",r:false},
+    {t:"I hold back from fully committing myself to the people I care about.",r:true}]},
+
+  {key:"Destroyer", cluster:"soul", core:"Transformation & release",
+   gift:"The courage to end what's over and let something new be born.",
+   shadow:"recklessness — tearing down more than needs to fall",
+   desc:"You can let go. When something has outlived its purpose, you're willing to end it cleanly and accept that some things must fall apart before better ones begin.",
+   items:[
+    {t:"When something in my life stops working, I'm willing to end it completely.",r:false},
+    {t:"I hold on to situations long after I know they're no longer good for me.",r:true},
+    {t:"I accept that some things must fall apart before something better begins.",r:false},
+    {t:"I'd rather preserve what's familiar than let it end, even when it's failing.",r:true},
+    {t:"I'm not afraid to dismantle structures that have outlived their purpose.",r:false},
+    {t:"Endings unsettle me so much that I put them off as long as I can.",r:true}]},
+
+  {key:"Creator", cluster:"soul", core:"Imagination & making",
+   gift:"Vision, originality, and the drive to give ideas a form that lasts.",
+   shadow:"perfectionism and overwork — never finished, never enough",
+   desc:"You have an urge to make what didn't exist before. Your imagination is central to who you are, and self-expression through what you build is essential to you.",
+   items:[
+    {t:"I have a strong urge to make or build things that didn't exist before.",r:false},
+    {t:"I rarely feel any pull to create something of my own.",r:true},
+    {t:"My imagination is one of my defining qualities.",r:false},
+    {t:"I'd rather follow a proven model than invent something original.",r:true},
+    {t:"I feel driven to give form to my ideas and visions.",r:false},
+    {t:"Making things from scratch holds little appeal for me.",r:true}]},
+
+  {key:"Ruler", cluster:"self", core:"Sovereignty & order",
+   gift:"Leadership, responsibility, and the stewardship to build things that endure.",
+   shadow:"rigidity and control — order enforced past the point of life",
+   desc:"You take charge when a situation lacks direction and feel responsible for turning chaos into working order. People look to you to set the course.",
+   items:[
+    {t:"I naturally take charge when a situation lacks direction.",r:false},
+    {t:"I'd rather let others take the lead than run things myself.",r:true},
+    {t:"I feel responsible for creating order out of chaos.",r:false},
+    {t:"I feel uneasy being the one held responsible for how things turn out.",r:true},
+    {t:"I'm comfortable making decisions that affect other people.",r:false},
+    {t:"Imposing order on a messy situation isn't something I reach for.",r:true}]},
+
+  {key:"Magician", cluster:"self", core:"Transformation & consciousness",
+   gift:"Insight, intuition, and the ability to change outer reality by changing inner state.",
+   shadow:"manipulation, or drifting so far inward you lose the ground",
+   desc:"You sense the patterns beneath surface events and trust that shifting your own consciousness can shift what happens. You catalyze change from the inside out.",
+   items:[
+    {t:"I believe I can change my circumstances by changing how I think.",r:false},
+    {t:"I doubt that changing my mindset can meaningfully change my life.",r:true},
+    {t:"I look for the deeper patterns beneath surface events.",r:false},
+    {t:"I take events at face value rather than looking for hidden patterns.",r:true},
+    {t:"I trust my intuition to guide transformations in my life.",r:false},
+    {t:"I put little stock in intuition when something needs to change.",r:true}]},
+
+  {key:"Sage", cluster:"self", core:"Truth & wisdom",
+   gift:"Discernment, objectivity, and the patience to understand before deciding.",
+   shadow:"detachment and over-analysis — knowing about life instead of living it",
+   desc:"The pursuit of truth moves you. You try to see clearly past your own biases, form your own opinions, and understand how things really work.",
+   items:[
+    {t:"The pursuit of truth and understanding motivates me deeply.",r:false},
+    {t:"I'm content to accept things without needing to understand them.",r:true},
+    {t:"I value thinking clearly and critically above almost everything.",r:false},
+    {t:"I'd rather act on a gut feeling than analyze something thoroughly.",r:true},
+    {t:"I want to understand how things really work, not just how they appear.",r:false},
+    {t:"Chasing the full truth of a matter rarely seems worth the effort to me.",r:true}]},
+
+  {key:"Jester", cluster:"self", core:"Joy & presence",
+   gift:"Humor, spontaneity, and the gift of being fully here, now.",
+   shadow:"using play to dodge depth and responsibility",
+   desc:"You bring lightness into ordinary life and believe in enjoying the present rather than always deferring it. Wit is how you connect and ease tension.",
+   items:[
+    {t:"I find ways to bring humor and lightness into everyday life.",r:false},
+    {t:"I tend to take life too seriously to relax and play.",r:true},
+    {t:"I believe in enjoying the present moment rather than always planning ahead.",r:false},
+    {t:"I put off enjoying myself now in favor of working toward later.",r:true},
+    {t:"I use wit and humor to connect with people and ease tension.",r:false},
+    {t:"Being playful feels out of place to me in most situations.",r:true}]}
+];
+
+const CLUSTER = {
+  ego:{name:"Ego",  color:getVar('--ego'),  tint:getVar('--ego-tint')},
+  soul:{name:"Soul",color:getVar('--soul'), tint:getVar('--soul-tint')},
+  self:{name:"Self",color:getVar('--self'), tint:getVar('--self-tint')}
+};
+const ALPHA = {Innocent:0.804,Orphan:0.806,Warrior:0.798,Caregiver:0.800,Seeker:0.811,
+  Lover:0.798,Destroyer:0.802,Creator:0.794,Ruler:0.797,Magician:0.807,Sage:0.809,Jester:0.798};
+
+/* response-anchor color ramp (disagree → agree); keyed to agreement, not subscale */
+const RAMP = ["#9a90a2","#8f8a9e","#7f7c96","#6e6a8e","#5b5181","#4a3d6b"];
+
+function getVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+/* blind round-robin order: pass p (0..5), archetype a (0..11) → item (p+a)%6.
+   Interleaves subscales (no adjacent same-subscale) and spreads keying across passes. */
+const ORDER=[];
+for(let p=0;p<6;p++)for(let a=0;a<ARCH.length;a++)ORDER.push({a,idx:(p+a)%6});
+const TOTAL=ORDER.length;
+
+let pos=0;
+const answers=new Array(TOTAL).fill(null);
+const SCALE_LABELS=["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"];
+
+const $=s=>document.querySelector(s);
+const startEl=$("#start"),quizEl=$("#quiz"),resEl=$("#results");
+
+const scaleEl=$("#scale");
+SCALE_LABELS.forEach((lab,i)=>{
+  const b=document.createElement("button");
+  b.className="opt";b.setAttribute("data-val",i+1);
+  b.innerHTML=`<span class="bar" style="background:${RAMP[i]}"></span><span class="inner"><span class="num">${i+1}</span><span>${lab}</span></span>`;
+  b.addEventListener("click",()=>choose(i+1));
+  scaleEl.appendChild(b);
+});
+
+function render(){
+  const {a,idx}=ORDER[pos];
+  $("#stem").textContent=ARCH[a].items[idx].t;
+  $("#icount").textContent="Statement "+String(pos+1).padStart(2,"0");
+  $("#pnum").textContent=String(pos+1).padStart(2,"0")+" / "+TOTAL;
+  $("#pfill").style.width=(pos/TOTAL*100)+"%";
+  $("#backBtn").disabled=pos===0;
+  [...scaleEl.children].forEach(c=>c.classList.toggle("sel",answers[pos]===Number(c.dataset.val)));
+}
+function choose(v){answers[pos]=v; if(pos<TOTAL-1){pos++;render();}else finish();}
+function back(){if(pos>0){pos--;render();}}
+
+$("#beginBtn").addEventListener("click",()=>{startEl.style.display="none";quizEl.style.display="block";render();window.scrollTo(0,0);});
+$("#backBtn").addEventListener("click",back);
+document.addEventListener("keydown",e=>{
+  if(quizEl.style.display!=="block")return;
+  if(e.key>="1"&&e.key<="6")choose(Number(e.key));
+  else if(e.key==="Backspace"){e.preventDefault();back();}
+});
+
+/* ============ SCORING ============ */
+function score(){
+  return ARCH.map((arch,a)=>{
+    let sum=0;
+    for(let idx=0;idx<6;idx++){
+      const opos=ORDER.findIndex(o=>o.a===a&&o.idx===idx);
+      let raw=answers[opos];
+      if(arch.items[idx].r)raw=7-raw;
+      sum+=raw;
+    }
+    return {key:arch.key,cluster:arch.cluster,mean:sum/6,arch};
+  });
+}
+function band(m){return m>=4.5?"Dominant":m>=3.5?"Active":m>=2.5?"Latent":"Dormant";}
+
+function finish(){
+  const s=score();
+  const ranked=[...s].sort((x,y)=>y.mean-x.mean);
+  const top3=ranked.slice(0,3);
+  $("#pfill").style.width="100%";
+  quizEl.style.display="none";resEl.style.display="block";window.scrollTo(0,0);
+  buildMandala(s,top3.map(t=>t.key));
+  buildClusterBar(s);
+  buildTop3(top3);
+  buildProfile(ranked,top3.map(t=>t.key));
+  buildCare(top3,ranked);
+  buildAppendix();
+}
+
+/* ---- archetype wheel (signature element) ---- */
+function buildMandala(s,topKeys){
+  const svg=$("#mandala");const cx=220,cy=220,R=150,n=ARCH.length;
+  const map={};s.forEach(x=>map[x.key]=x);
+  const pts=ARCH.map((arch,i)=>{
+    const ang=(-90+i*(360/n))*Math.PI/180;
+    const val=map[arch.key].mean, rr=((val-1)/5)*R;
+    return {arch,ang,
+      px:cx+Math.cos(ang)*rr,py:cy+Math.sin(ang)*rr,
+      gx:cx+Math.cos(ang)*R, gy:cy+Math.sin(ang)*R,
+      isTop:topKeys.includes(arch.key)};
+  });
+  let h="";
+  for(let g=1;g<=5;g++)h+=`<circle cx="${cx}" cy="${cy}" r="${g/5*R}" fill="none" stroke="rgba(43,36,54,0.06)" stroke-width="1"/>`;
+  // cluster arcs on the outer ring
+  pts.forEach((p,i)=>{
+    const col=CLUSTER[p.arch.cluster].color;
+    h+=`<line x1="${cx}" y1="${cy}" x2="${p.gx}" y2="${p.gy}" stroke="rgba(43,36,54,0.08)" stroke-width="1"/>`;
+    const lx=cx+Math.cos(p.ang)*(R+22),ly=cy+Math.sin(p.ang)*(R+22);
+    let anchor="middle";if(Math.cos(p.ang)>0.3)anchor="start";else if(Math.cos(p.ang)<-0.3)anchor="end";
+    h+=`<text x="${lx}" y="${ly+4}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="0.03em" fill="${p.isTop?getVar('--gold'):col}" font-weight="${p.isTop?600:400}">${p.arch.key}</text>`;
+  });
+  const poly=pts.map(p=>`${p.px},${p.py}`).join(" ");
+  h+=`<defs><radialGradient id="mg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="${getVar('--gold')}" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="${getVar('--self')}" stop-opacity="0.16"/></radialGradient></defs>`;
+  h+=`<polygon points="${poly}" fill="url(#mg)" stroke="${getVar('--indigo')}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  pts.forEach(p=>{
+    const col=CLUSTER[p.arch.cluster].color,r=p.isTop?5.5:3.5;
+    h+=`<circle cx="${p.px}" cy="${p.py}" r="${r}" fill="${p.isTop?getVar('--gold'):col}" stroke="${getVar('--paper')}" stroke-width="1.5"/>`;
+    if(p.isTop)h+=`<circle cx="${p.px}" cy="${p.py}" r="9" fill="none" stroke="${getVar('--gold')}" stroke-width="1" opacity="0.55"/>`;
+  });
+  svg.innerHTML=h;
+}
+
+/* cluster balance strip */
+function buildClusterBar(s){
+  const agg={ego:0,soul:0,self:0};
+  s.forEach(x=>agg[x.cluster]+=x.mean);
+  const order=["ego","soul","self"];
+  const total=order.reduce((t,k)=>t+agg[k],0);
+  $("#clusterbar").innerHTML=order.map(k=>{
+    const pct=agg[k]/total*100;
+    const avg=(agg[k]/4).toFixed(2);
+    return `<div style="flex:${pct};background:${CLUSTER[k].color}">
+      <b>${avg}</b>${CLUSTER[k].name}</div>`;
+  }).join("");
+}
+
+function buildTop3(top3){
+  const wrap=$("#top3");wrap.innerHTML="";
+  top3.forEach(t=>{
+    const el=document.createElement("div");el.className="arch-card";
+    el.style.setProperty("--c",CLUSTER[t.cluster].color);
+    el.style.setProperty("--c-tint",CLUSTER[t.cluster].tint);
+    el.innerHTML=`<span class="rank">${band(t.mean)} · ${t.mean.toFixed(2)}</span>
+      <h3>${t.arch.key}<span class="cluster">${CLUSTER[t.cluster].name} cluster</span></h3>
+      <div class="core">${t.arch.core}</div>
+      <p>${t.arch.desc}</p>
+      <div class="sh"><b>Gift:</b> ${t.arch.gift}</div>
+      <div class="sh"><b>Watch for:</b> ${t.arch.shadow}.</div>`;
+    wrap.appendChild(el);
+  });
+}
+
+function buildProfile(ranked,topKeys){
+  const wrap=$("#profile");wrap.innerHTML="";
+  ranked.forEach(r=>{
+    const col=CLUSTER[r.cluster].color,pct=(r.mean-1)/5*100;
+    const row=document.createElement("div");
+    row.className="prow"+(topKeys.includes(r.key)?" isTop":"");
+    row.innerHTML=`<div class="pname"><i style="background:${col}"></i>${r.key}</div>
+      <div class="ptrack"><div class="pfill" style="width:0;background:${col}"></div></div>
+      <div class="pval">${r.mean.toFixed(2)}</div>`;
+    wrap.appendChild(row);
+    requestAnimationFrame(()=>{row.querySelector(".pfill").style.width=pct+"%";});
+  });
+}
+
+function buildCare(top3,ranked){
+  const clustersInTop=[...new Set(top3.map(t=>t.cluster))];
+  let msg;
+  if(clustersInTop.length===1){
+    msg=`All three of your most active archetypes sit in the <b>${CLUSTER[clustersInTop[0]].name}</b> cluster — your energy is concentrated in one region of the journey. That's a real strength and a place to stay curious: the archetypes in the other clusters are quieter, and there may be growth waiting in the ones you lean on least.`;
+  }else{
+    msg=`Your top archetypes span more than one developmental cluster — a sign of range across the stages of the journey. Notice which patterns sit lowest, too: in Pearson's model those aren't failings but capacities that are simply dormant, and often the next edge of growth.`;
+  }
+  const low=ranked[ranked.length-1];
+  $("#careNote").innerHTML=`${msg} Your quietest pattern right now is <b>${low.key}</b> (${low.mean.toFixed(2)}) — worth asking what it might offer if you invited a little more of it in. Remember: this is a snapshot of who you are <em>today</em>, not a fixed type.`;
+}
+
+function buildAppendix(){
+  const tb=$("#atable tbody");tb.innerHTML="";
+  ARCH.forEach(a=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${a.key}</td><td class="cl-${a.cluster}">${CLUSTER[a.cluster].name}</td><td class="good">${ALPHA[a.key].toFixed(3)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function restart(){pos=0;answers.fill(null);resEl.style.display="none";startEl.style.display="block";window.scrollTo(0,0);}
+$("#restartBtn").addEventListener("click",restart);
+$("#restartBtn").addEventListener("keydown",e=>{if(e.key==="Enter")restart();});
+</script>
+</body>
+</html>

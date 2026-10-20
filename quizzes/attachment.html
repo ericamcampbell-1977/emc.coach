@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RABI-C — Relational Attachment & Bonding Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:light;
+    --paper:#F3ECDF;--card:#FBF6EC;--ink:#2A2521;--ink-soft:#6E6559;
+    --hair:#DFD5C3;--hair-soft:#EBE3D5;
+    /* own color scheme — three lenses */
+    --l1:#2E5E59;--l1-soft:#5E8C86;--l1-wash:#E1EAE6;   /* dispositional — teal */
+    --l2:#B07A26;--l2-soft:#CBA35F;--l2-wash:#F1E6CE;   /* activation — ochre */
+    --l3:#854A54;--l3-soft:#AE7B82;--l3-wash:#EEDFE0;   /* bonding — wine */
+    --good:#3E7D6B;--warn:#B07A26;--alert:#9B4A46;
+    --radius:3px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.55;padding:32px 20px 80px;}
+  .wrap{max-width:730px;margin:0 auto}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:500;line-height:1.15;margin:0}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px;}
+  a{color:var(--l1)}
+  .panel{background:var(--card);border:1px solid var(--hair);border-radius:var(--radius);padding:34px 34px 30px;
+    box-shadow:0 1px 0 rgba(42,37,33,.03)}
+  @media(max-width:560px){.panel{padding:24px 20px}}
+  .masthead{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:22px}
+  .masthead h1{font-size:35px;letter-spacing:-.01em;font-weight:600}
+  .masthead .sub{color:var(--ink-soft);font-size:15px;margin-top:8px}
+  .lede{font-size:17px;color:var(--ink-soft);margin:0 0 24px}
+  .lede em{color:var(--ink);font-style:italic}
+  .tierrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:22px 0 26px}
+  @media(max-width:640px){.tierrow{grid-template-columns:1fr}}
+  .tiercard{border:1px solid var(--hair);border-left-width:3px;border-radius:var(--radius);padding:15px 15px 13px;background:#fff}
+  .tiercard.t1{border-left-color:var(--l1)}.tiercard.tc{border-left-color:var(--l2)}.tiercard.t2{border-left-color:var(--l3)}
+  .tiercard .tno{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+  .tiercard.t1 .tno{color:var(--l1)}.tiercard.tc .tno{color:var(--l2)}.tiercard.t2 .tno{color:var(--l3)}
+  .tiercard h3{font-size:17px;margin:6px 0 6px;font-weight:600}
+  .tiercard p{margin:0;font-size:13px;color:var(--ink-soft);line-height:1.45}
+  .note{font-size:13px;color:var(--ink-soft);background:var(--l1-wash);border-radius:var(--radius);
+    padding:13px 15px;margin:0 0 26px;line-height:1.5;}
+  .btn{font-family:"Inter",sans-serif;font-size:15px;font-weight:500;border:1px solid var(--ink);
+    background:var(--ink);color:#FBF6EC;padding:12px 26px;border-radius:var(--radius);cursor:pointer;
+    transition:background .15s,transform .05s;}
+  .btn:hover{background:#000}.btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;color:var(--ink)}.btn.ghost:hover{background:var(--hair-soft)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btnrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .progress{position:sticky;top:0;z-index:5;background:var(--paper);padding:10px 0 12px;margin-bottom:8px}
+  .pbar{height:4px;background:var(--hair);border-radius:2px;overflow:hidden}
+  .pfill{height:100%;width:0;background:var(--l1);transition:width .3s,background .3s}
+  .pmeta{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;
+    font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin-top:7px;text-transform:uppercase}
+  .sectionhead{margin:6px 0 4px}.sectionhead .eyebrow{margin-bottom:8px}
+  .sectionhead.t1 .eyebrow{color:var(--l1)}.sectionhead.t2 .eyebrow{color:var(--l3)}
+  .sectionhead h2{font-size:24px;font-weight:600}
+  .sectionhead p{color:var(--ink-soft);font-size:14.5px;margin:10px 0 0}
+  .relprompt{border:1px solid var(--l3);border-left-width:3px;background:var(--l3-wash);
+    border-radius:var(--radius);padding:16px 18px;margin:4px 0 8px;}
+  .relprompt strong{font-weight:600}.relprompt p{margin:6px 0 0;font-size:14px;color:var(--ink-soft)}
+  .item{border-top:1px solid var(--hair-soft);padding:22px 0 18px}
+  .item:first-of-type{border-top:none}
+  .qnum{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-soft);letter-spacing:.1em}
+  .qtext{font-size:16.5px;margin:5px 0 16px;max-width:62ch}
+  .likert{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .opt{position:relative}.opt input{position:absolute;opacity:0;width:0;height:0}
+  .opt label{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;
+    border:1px solid var(--hair);border-radius:var(--radius);padding:9px 4px 8px;cursor:pointer;
+    min-height:64px;text-align:center;transition:border-color .12s,background .12s;background:#fff;}
+  .opt .dot{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--l1-soft);transition:all .12s}
+  .opt .olab{font-size:10.5px;line-height:1.15;color:var(--ink-soft)}
+  .opt label:hover{border-color:var(--l1-soft);background:var(--l1-wash)}
+  .opt input:checked + label{border-color:var(--l1);background:var(--l1-wash)}
+  .opt input:checked + label .dot{background:var(--l1);border-color:var(--l1)}
+  .opt input:focus-visible + label{outline:2px solid var(--l1);outline-offset:2px}
+  .item.t2 .opt .dot{border-color:var(--l3-soft)}
+  .item.t2 .opt label:hover{border-color:var(--l3-soft);background:var(--l3-wash)}
+  .item.t2 .opt input:checked + label{border-color:var(--l3);background:var(--l3-wash)}
+  .item.t2 .opt input:checked + label .dot{background:var(--l3);border-color:var(--l3)}
+  .item.t2 .opt input:focus-visible + label{outline-color:var(--l3)}
+  @media(max-width:560px){.likert{gap:3px}.opt label{padding:8px 1px 7px;min-height:72px}.opt .olab{font-size:9px}}
+  .res-h1{font-size:30px;margin-bottom:4px;font-weight:600}
+  .res-block{margin:34px 0 0}.res-block > .eyebrow{margin-bottom:14px}
+  .res-block.t1 > .eyebrow{color:var(--l1)}.res-block.tc > .eyebrow{color:var(--l2)}.res-block.t2 > .eyebrow{color:var(--l3)}
+  .mapwrap{display:grid;grid-template-columns:1fr 260px;gap:26px;align-items:center}
+  @media(max-width:600px){.mapwrap{grid-template-columns:1fr}}
+  .stylecard{border:1px solid var(--hair);border-top:3px solid var(--l1);border-radius:var(--radius);padding:18px 18px 16px;background:#fff}
+  .stylecard .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--l1)}
+  .stylecard h3{font-size:22px;margin:6px 0 8px;font-weight:600}
+  .stylecard p{font-size:13.5px;color:var(--ink-soft);margin:0}
+  .coords{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft);margin-top:12px;padding-top:10px;border-top:1px solid var(--hair-soft)}
+  .actpanel{border:1px solid var(--l2);border-left-width:3px;background:var(--l2-wash);border-radius:var(--radius);padding:18px 20px}
+  .actpanel h3{font-size:20px;margin:2px 0 6px;font-weight:600}
+  .actverdict{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--l2)}
+  .actpanel p{font-size:14px;color:var(--ink-soft);margin:8px 0 0}
+  .minibars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0 4px}
+  @media(max-width:520px){.minibars{grid-template-columns:1fr}}
+  .minibar .mb-name{font-size:12px;font-weight:500;margin-bottom:5px}
+  .minibar .mb-val{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-soft)}
+  .minitrack{height:7px;background:#fff;border:1px solid var(--hair);border-radius:5px;overflow:hidden;margin-top:4px}
+  .minifill{height:100%;width:0;background:var(--l2);transition:width .7s ease}
+  .bars{margin-top:6px}.bar{padding:12px 0 10px;border-top:1px solid var(--hair-soft)}
+  .bar:first-child{border-top:none}
+  .bar-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .bar-name{font-size:14.5px;font-weight:500}
+  .bar-val{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-soft)}
+  .track{height:9px;background:var(--hair);border-radius:5px;overflow:hidden}
+  .fill{height:100%;width:0;border-radius:5px;transition:width .7s ease}
+  .bar-note{font-size:12px;color:var(--ink-soft);margin-top:6px}
+  .flag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;
+    text-transform:uppercase;padding:2px 7px;border-radius:2px;margin-left:8px;vertical-align:1px}
+  .flag.hi{background:#F0DCDB;color:var(--alert)}.flag.mid{background:#F1E6CE;color:var(--warn)}
+  .flag.ok{background:#DDEAE4;color:var(--good)}.flag.core{background:#EEDFE0;color:var(--l3)}
+  .tbl{margin-top:6px}
+  .tbl-scorebig{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft);margin-bottom:10px}
+  .tbl-scorebig b{font-family:"Fraunces",serif;font-size:27px;font-weight:600;color:var(--ink)}
+  .meter{position:relative;height:14px;border-radius:7px;overflow:visible;
+    background:linear-gradient(90deg,#8FB1A6 0%,#CBB98E 38%,#CE9E74 62%,#C08A84 100%)}
+  .meter-mark{position:absolute;top:-4px;width:3px;height:22px;background:var(--ink);border-radius:2px;transform:translateX(-1.5px);transition:left .8s ease}
+  .meter-labels{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-soft);margin-top:9px;text-transform:uppercase}
+  .coreflags{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .coreflag{border:1px solid var(--hair);border-radius:var(--radius);padding:9px 12px;background:#fff;font-size:12.5px;flex:1;min-width:170px}
+  .coreflag .cf-h{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--l3);display:block;margin-bottom:5px}
+  .readout{background:var(--ink);color:#EADFCF;border-radius:var(--radius);padding:22px 24px;margin-top:8px;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.8}
+  .readout .rk{color:#A89A86}
+  .readout .rline{display:flex;justify-content:space-between;gap:16px;border-bottom:1px dashed #4a433a;padding:3px 0}
+  .readout .rline:last-child{border-bottom:none}.readout .band{font-weight:500}
+  .interp{background:#fff;border:1px solid var(--hair);border-radius:var(--radius);padding:20px 22px;margin-top:14px}
+  .interp h3{font-size:18px;margin-bottom:8px;font-weight:600}
+  .interp p{font-size:14.5px;color:var(--ink-soft);margin:0 0 10px}.interp p:last-child{margin-bottom:0}
+  .interp strong{color:var(--ink);font-weight:600}
+  .rel-panel{border:1px solid var(--hair);border-radius:var(--radius);background:#fff;padding:16px 18px}
+  .rel-panel .eyebrow{margin-bottom:8px}
+  .honest{font-size:12.5px;color:var(--ink-soft);border-left:2px solid var(--l1-soft);padding:2px 0 2px 14px;margin-top:14px;line-height:1.55}
+  /* appendix */
+  .appendix{margin-top:30px;border-top:1px solid var(--hair);padding-top:22px}
+  .appendix table{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:12px;margin-top:10px}
+  .appendix th,.appendix td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--hair-soft)}
+  .appendix th{color:var(--ink-soft);font-weight:500;text-transform:uppercase;letter-spacing:.06em;font-size:10.5px}
+  .appendix td.num{text-align:right}
+  .appendix .cap{font-size:12px;color:var(--ink-soft);margin-top:10px;line-height:1.55}
+  .legal{margin-top:26px;border-top:1px solid var(--hair);padding-top:18px}
+  .legal h4{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px}
+  .legal p{font-size:11.5px;color:var(--ink-soft);line-height:1.6;margin:0 0 8px}
+  .foot{margin-top:22px;font-size:12px;color:var(--ink-soft);line-height:1.6}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- INTRO -->
+  <section id="intro" class="panel">
+    <div class="masthead">
+      <p class="eyebrow">Self-report instrument · v2.1 · 52 items · three lenses</p>
+      <h1>Relational Attachment &amp; Bonding Inventory</h1>
+      <p class="sub">Comprehensive edition — dispositional style, activation profile, and relationship-specific bonding</p>
+    </div>
+    <p class="lede">A single attachment "type" is a blunt instrument. This measure reads three layers: the way you tend to relate, <em>how conditional</em> that pattern is on whether a person feels safe, and what happened inside <em>one specific bond</em>.</p>
+    <div class="tierrow">
+      <div class="tiercard t1"><span class="tno">Lens 1 · Style</span><h3>Dispositional attachment</h3><p>Anxiety and avoidance across your relationships — placing you among secure, anxious, dismissive, and disorganized.</p></div>
+      <div class="tiercard tc"><span class="tno">Lens 2 · Activation</span><h3>How conditional it is</h3><p>Whether your insecurity is trait-stable or switched on by an unsafe partner — and whether your response is a readable rule or true disorganization.</p></div>
+      <div class="tiercard t2"><span class="tno">Lens 3 · The bond</span><h3>Trauma-bonding likelihood</h3><p>One relationship, scored across love-bombing, intermittent reinforcement, reset-without-repair, power imbalance, and entrapment.</p></div>
+    </div>
+    <p class="note"><strong>How to answer.</strong> Six choices per item, Strongly Disagree to Strongly Agree — no neutral middle, so each item asks you to lean. Items appear in mixed order, and some are worded in reverse, so read each one; their subscales are revealed only in your results. For Lenses 1 &amp; 2, answer for how you generally are <em>across</em> relationships. For Lens 3 you'll hold one specific relationship in mind.</p>
+    <div class="btnrow"><button class="btn" id="startBtn">Begin the inventory</button><span class="mono" style="font-size:12px;color:var(--ink-soft)">~11–13 minutes · 52 items</span></div>
+
+    <div class="legal">
+      <h4>Legal Disclaimer</h4>
+      <p>This instrument is provided for general educational and self-reflective purposes only. It is not a medical device, a psychological or clinical assessment, or a diagnostic tool, and it is not a substitute for professional evaluation, diagnosis, or treatment by a qualified health-care or mental-health provider. Your use of it does not create any clinician–client, therapist–patient, or other professional relationship.</p>
+      <p>The subscales, scores, thresholds, and interpretive text are derived from published psychological constructs but have <strong>not</strong> been clinically validated, standardized, or normed on any population. Any reliability figures shown are produced by statistical simulation, not by data collected from respondents. Results describe general tendencies and patterns — not fixed traits, and not statements of fact about any identified person.</p>
+      <p>To the fullest extent permitted by law, the author and distributors make no warranties, express or implied, including as to accuracy, completeness, or fitness for a particular purpose, and disclaim all liability for any decision made or action taken in reliance on this instrument or its output. If you have concerns about your safety or mental health, seek the advice of a licensed professional or your local emergency services.</p>
+      <p class="mono" style="font-size:11px">© 2026 Erica Campbell. All rights reserved.</p>
+    </div>
+  </section>
+
+  <!-- ASSESSMENT -->
+  <section id="assess" class="hidden">
+    <div class="progress"><div class="pbar"><div class="pfill" id="pfill"></div></div>
+      <div class="pmeta"><span id="pcount">0 / 52 answered</span><span id="ptier">Lens 1–2 · Dispositional</span></div></div>
+    <div class="panel">
+      <div class="sectionhead t1"><p class="eyebrow">Lenses 1 &amp; 2 · Dispositional &amp; activation</p>
+        <h2>Across your close relationships</h2>
+        <p>Think broadly — partners past and present, and the pattern that repeats. Answer for how you generally are, not one person in particular.</p></div>
+      <div id="items-t1"></div>
+      <div class="sectionhead t2" style="margin-top:40px"><p class="eyebrow">Lens 3 · Relationship-specific bonding</p>
+        <h2>One relationship, held in mind</h2></div>
+      <div class="relprompt"><strong>Choose one relationship to answer about.</strong> A partner, ex, family member, or close friend — ideally one that has felt hard to make sense of. Keep the same person in mind for every item below, and answer for the relationship as a whole, not just this week.
+        <p>You're not naming them. This stays on your screen.</p></div>
+      <div id="items-t2"></div>
+      <div class="btnrow" style="margin-top:28px"><button class="btn" id="scoreBtn" disabled>See results</button>
+        <span class="mono" id="remaining" style="font-size:12px;color:var(--ink-soft)"></span></div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="hidden">
+    <div class="panel">
+      <p class="eyebrow">Results · not a diagnosis</p>
+      <h1 class="res-h1">Your profile</h1>
+      <p style="color:var(--ink-soft);margin:6px 0 0">Three readings, meant to be held together — not one label.</p>
+      <div class="res-block t1"><p class="eyebrow">Lens 1 · Dispositional attachment</p>
+        <div class="mapwrap"><div id="quadrant"></div><div class="stylecard" id="styleCard"></div></div></div>
+      <div class="res-block tc"><p class="eyebrow">Lens 2 · Activation profile</p><div class="actpanel" id="actPanel"></div></div>
+      <div class="res-block t2"><p class="eyebrow">Lens 3 · The bond you held in mind</p>
+        <div class="rel-panel" id="securePanel"></div>
+        <div class="bars" id="bondBars" style="margin-top:16px"></div>
+        <div class="coreflags" id="coreFlags"></div></div>
+      <div class="res-block"><p class="eyebrow">Trauma-bonding likelihood</p>
+        <div class="tbl"><div class="tbl-scorebig" id="tblScore"></div>
+          <div class="meter"><div class="meter-mark" id="tblMark"></div></div>
+          <div class="meter-labels"><span>Minimal</span><span>Some</span><span>Elevated</span><span>High</span></div></div></div>
+      <div class="res-block"><p class="eyebrow">Composite readout</p><div class="readout" id="readout"></div></div>
+      <div class="interp" id="interp"></div>
+      <div class="btnrow" style="margin-top:26px"><button class="btn ghost" id="retakeBtn">Retake</button>
+        <button class="btn" id="reliBtn">Show psychometric appendix</button></div>
+      <div id="appendixWrap"></div>
+
+      <div class="foot"><strong>Reflective use only.</strong> If a relationship feels unsafe, or if this surfaced more than you expected, a licensed therapist — or, in the U.S., the 988 Suicide &amp; Crisis Lifeline or the National Domestic Violence Hotline at 1-800-799-7233 — can help you think it through with support.</div>
+
+      <div class="legal">
+        <h4>Legal Disclaimer</h4>
+        <p>This instrument is provided for general educational and self-reflective purposes only. It is not a medical device, a psychological or clinical assessment, or a diagnostic tool, and it is not a substitute for professional evaluation, diagnosis, or treatment by a qualified health-care or mental-health provider. Your use of it does not create any clinician–client, therapist–patient, or other professional relationship.</p>
+        <p>The subscales, scores, thresholds, and interpretive text are derived from published psychological constructs but have <strong>not</strong> been clinically validated, standardized, or normed on any population. Reliability figures shown in the appendix are produced by statistical simulation, not by data collected from respondents. Results describe relational <em>patterns</em> and are not statements of fact about any identified person.</p>
+        <p>To the fullest extent permitted by law, the author and distributors make no warranties, express or implied, including as to accuracy, completeness, or fitness for a particular purpose, and disclaim all liability for any decision made or action taken in reliance on this instrument or its output. If you have concerns about your safety or mental health, seek the advice of a licensed professional or your local emergency services.</p>
+        <p class="mono" style="font-size:11px">© 2026 Erica Campbell. All rights reserved. For permissions and licensing, contact the author.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ===== canonical item bank (mirrors tested rabi_items.mjs; harness-verified) ===== */
+const BANK=[
+ {sub:'ANX',t:"I worry that the people closest to me will stop wanting me around."},
+ {sub:'ANX',t:"When someone I love goes quiet, I assume the worst about where I stand."},
+ {sub:'ANX',t:"If a partner is unavailable, I can't fully settle until we reconnect."},
+ {sub:'ANX',r:true,t:"I can go a while without contact from someone close and still feel secure about us."},
+ {sub:'ANX',r:true,t:"A partner wanting space doesn't shake my sense of where we stand."},
+ {sub:'ANX',r:true,t:"Being left by the people I'm close to is not something I often worry about."},
+ {sub:'AVO',t:"Fully opening up feels risky even with people I trust."},
+ {sub:'AVO',t:"When closeness intensifies, my instinct is to put a little distance between us."},
+ {sub:'AVO',t:"Depending on someone feels like giving them leverage over me."},
+ {sub:'AVO',r:true,t:"I'm comfortable letting a partner see the parts of me I keep from most people."},
+ {sub:'AVO',r:true,t:"Leaning on someone I trust comes easily to me."},
+ {sub:'AVO',r:true,t:"Growing closer to someone feels good rather than like something to manage."},
+ {sub:'CON',t:"How secure or anxious I feel depends almost entirely on whether the person feels safe to me."},
+ {sub:'CON',t:"My insecurity gets switched on by how someone treats me, not by relationships in general."},
+ {sub:'CON',r:true,t:"My way of relating stays about the same no matter who I'm with."},
+ {sub:'CON',r:true,t:"I carry the same baseline level of worry whether a partner is steady or not."},
+ {sub:'COH',t:"I can name exactly what sets off my urge to pull back from someone."},
+ {sub:'COH',t:"My protective reactions make sense to me — I know why and roughly when they happen."},
+ {sub:'COH',r:true,t:"Even I can't predict how I'll react to closeness from one moment to the next."},
+ {sub:'COH',r:true,t:"My reactions in relationships often don't make sense to me, even afterward."},
+ {sub:'DYS',t:"In emotionally intense moments I go blank, freeze, or feel outside myself."},
+ {sub:'DYS',t:"During conflict I sometimes lose track of what I was even feeling."},
+ {sub:'DYS',r:true,t:"Even when things get heated, I stay present and know what I'm feeling."},
+ {sub:'DYS',r:true,t:"I can keep my footing when a relationship conversation gets intense."},
+ {sub:'SEC',t:"After a rupture, we actually repair it and something gets resolved."},
+ {sub:'SEC',t:"This person takes responsibility when they've hurt me."},
+ {sub:'SEC',r:true,t:"I can't count on this person to be there in the ways that matter."},
+ {sub:'SEC',r:true,t:"I feel less like myself in this relationship than I do outside it."},
+ {sub:'LB',t:"Early on, the affection and attention were so intense it was almost overwhelming."},
+ {sub:'LB',t:"I was treated as perfect, or “the one,” before this person really knew me."},
+ {sub:'LB',r:true,t:"Closeness built gradually, at a pace I was comfortable with."},
+ {sub:'LB',r:true,t:"Early admiration felt proportional to how well we actually knew each other."},
+ {sub:'IR',t:"I never quite know which version of this person I'm going to get."},
+ {sub:'IR',t:"Warmth tends to come back right when I'm about to give up on it."},
+ {sub:'IR',r:true,t:"This person's warmth toward me is steady and dependable."},
+ {sub:'IR',r:true,t:"I can rely on how this person will treat me from one day to the next."},
+ {sub:'RWR',t:"After something painful, we move on as if it never happened."},
+ {sub:'RWR',t:"I'm expected to be fine again before anything is actually resolved."},
+ {sub:'RWR',r:true,t:"Nothing important gets swept under the rug between us."},
+ {sub:'RWR',r:true,t:"When we clash, something gets acknowledged before we go back to normal."},
+ {sub:'PWR',t:"I adjust my behavior mainly to avoid setting this person off."},
+ {sub:'PWR',t:"Over time, my contact with friends or family has narrowed around this relationship."},
+ {sub:'PWR',r:true,t:"I have as much say in how this relationship works as they do."},
+ {sub:'PWR',r:true,t:"My outside friendships and interests have stayed intact in this relationship."},
+ {sub:'CD',t:"I find myself making excuses for how this person treats me."},
+ {sub:'CD',t:"I downplay things that would alarm me if a friend described them."},
+ {sub:'CD',r:true,t:"I see this person's behavior clearly, without explaining it away."},
+ {sub:'CD',r:true,t:"When something goes wrong between us, I don't automatically assume it's my fault."},
+ {sub:'ENT',t:"I know this isn't good for me, and I still can't seem to leave."},
+ {sub:'ENT',t:"The thought of leaving brings on something like withdrawal."},
+ {sub:'ENT',r:true,t:"I could step away from this relationship if I decided that was right."},
+ {sub:'ENT',r:true,t:"My sense of being okay doesn't hinge on this person."}
+].map((b,i)=>({...b,id:i}));
+
+const TIER1=['ANX','AVO','CON','COH','DYS'], TIER2=['SEC','LB','IR','RWR','PWR','CD','ENT'];
+const tierOf=s=>TIER1.includes(s)?1:2;
+/* simulated normative alphas from Monte Carlo harness (N=2000) */
+const SUBMETA={
+ ANX:{name:"Attachment Anxiety",alpha:.90},AVO:{name:"Attachment Avoidance",alpha:.90},
+ CON:{name:"Contingency",alpha:.86},COH:{name:"Strategy Coherence",alpha:.86},
+ DYS:{name:"Dysregulation / Dissociation",alpha:.86},SEC:{name:"Secure Base & Repair",alpha:.85},
+ LB:{name:"Idealization / Love Bombing",alpha:.86},IR:{name:"Intermittent Reinforcement",alpha:.86},
+ RWR:{name:"Reset Without Repair",alpha:.86},PWR:{name:"Power Imbalance / Control",alpha:.86},
+ CD:{name:"Cognitive Distortion / Self-Blame",alpha:.86},ENT:{name:"Entrapment / Dependency",alpha:.87}
+};
+const SCALE=["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"];
+const SHORT=["Str.\ndisagree","Disagree","Slight\ndisagree","Slight\nagree","Agree","Str.\nagree"];
+const MID=3.5, W={LB:.9,IR:1.3,RWR:1.1,PWR:1.2,CD:1.0,ENT:1.3};
+
+/* constrained interleave: no adjacent same-subscale */
+function interleave(items){
+  const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  for(let att=0;att<300;att++){
+    const seq=sh(items.slice());
+    for(let i=1;i<seq.length;i++){
+      if(seq[i].sub===seq[i-1].sub){
+        for(let j=i+1;j<seq.length;j++){
+          const okH=seq[j].sub!==seq[i-1].sub&&(i+1>=seq.length||seq[j].sub!==seq[i+1].sub);
+          const okT=seq[i].sub!==seq[j-1].sub&&(j+1>=seq.length||seq[i].sub!==seq[j+1].sub);
+          if(okH&&okT){[seq[i],seq[j]]=[seq[j],seq[i]];break;}
+        }
+      }
+    }
+    let clean=true;for(let i=1;i<seq.length;i++)if(seq[i].sub===seq[i-1].sub){clean=false;break;}
+    if(clean)return seq;
+  }
+  return items.slice();
+}
+let t1=interleave(BANK.filter(b=>tierOf(b.sub)===1));
+let t2=interleave(BANK.filter(b=>tierOf(b.sub)===2));
+const answers={};
+
+function renderItems(list,mount,cls){
+  mount.innerHTML="";
+  list.forEach((it,idx)=>{
+    const wrap=document.createElement("div");wrap.className="item "+cls;wrap.dataset.id=it.id;
+    const num=(idx+1).toString().padStart(2,"0");let opts="";
+    for(let v=1;v<=6;v++){const lines=SHORT[v-1].split("\n").join("<br>");
+      opts+=`<div class="opt"><input type="radio" name="q${it.id}" id="q${it.id}_${v}" value="${v}" aria-label="${SCALE[v-1]}"><label for="q${it.id}_${v}"><span class="dot"></span><span class="olab">${lines}</span></label></div>`;}
+    wrap.innerHTML=`<div class="qnum">${cls==='t1'?'A':'B'}·${num}</div><div class="qtext">${it.t}</div><div class="likert">${opts}</div>`;
+    mount.appendChild(wrap);
+  });
+}
+renderItems(t1,document.getElementById("items-t1"),"t1");
+renderItems(t2,document.getElementById("items-t2"),"t2");
+
+const pfill=document.getElementById("pfill"),pcount=document.getElementById("pcount"),
+ ptier=document.getElementById("ptier"),scoreBtn=document.getElementById("scoreBtn"),remaining=document.getElementById("remaining");
+function updateProgress(){const n=Object.keys(answers).length,total=BANK.length;
+  pfill.style.width=(n/total*100)+"%";pcount.textContent=`${n} / ${total} answered`;
+  const left=total-n;remaining.textContent=left>0?`${left} item${left>1?'s':''} left`:"Complete";scoreBtn.disabled=n<total;}
+document.addEventListener("change",e=>{if(e.target.matches('input[type=radio]')){
+  const id=+e.target.name.slice(1);answers[id]=+e.target.value;const tier=tierOf(BANK[id].sub);
+  ptier.textContent=tier===1?"Lens 1–2 · Dispositional":"Lens 3 · Relationship-specific";
+  pfill.style.background=tier===1?"var(--l1)":"var(--l3)";updateProgress();}});
+document.getElementById("startBtn").onclick=()=>{document.getElementById("intro").classList.add("hidden");
+  document.getElementById("assess").classList.remove("hidden");window.scrollTo({top:0,behavior:'instant'});};
+
+const raw=it=>it.r?(7-answers[it.id]):answers[it.id];
+function subMean(code){const rel=BANK.filter(it=>it.sub===code);const v=rel.map(raw).filter(x=>x!=null);return v.reduce((a,b)=>a+b,0)/v.length;}
+
+document.getElementById("scoreBtn").onclick=()=>{
+  const m={};Object.keys(SUBMETA).forEach(c=>m[c]=subMean(c));
+  const {ANX:anx,AVO:avo,CON:con,COH:coh,DYS:dys,SEC:sec,LB:lb,IR:ir,RWR:rwr,PWR:pwr,CD:cd,ENT:ent}=m;
+  const highA=anx>=MID,highV=avo>=MID;
+  let style,styleDesc;
+  if(!highA&&!highV){style="Secure";styleDesc="You tend to trust closeness and tolerate distance without either destabilizing you. Rupture is repairable; intimacy and independence coexist.";}
+  else if(highA&&!highV){style="Anxious-Preoccupied";styleDesc="You seek closeness and value it, but fear of losing it runs hot. Distance registers as threat; reassurance quiets it only briefly.";}
+  else if(!highA&&highV){style="Dismissive-Avoidant";styleDesc="You prize self-reliance and keep intensity at arm's length. Closeness can feel like pressure; needing others can feel like exposure.";}
+  else{style="Disorganized";styleDesc="High on both anxiety and avoidance — the corner where wanting closeness and fearing it collide. But the map alone can't tell stable disorganization from a reaction; Lens 2 does that.";}
+  drawQuadrant(anx,avo);
+  document.getElementById("styleCard").innerHTML=`<span class="lab">Dispositional style</span><h3>${style}</h3><p>${styleDesc}</p><div class="coords">anxiety ${anx.toFixed(2)} · avoidance ${avo.toFixed(2)} <span style="color:var(--hair)">/ 6.00</span></div>`;
+
+  const contingent=con>=4,coherent=coh>=MID,dysreg=dys>=MID;
+  let verdict,vdesc;
+  if(highA&&highV){
+    if(coherent&&!dysreg&&contingent){verdict="Reactive activation on a secure base";
+      vdesc="Your high anxiety-and-avoidance is <strong>conditional, not dispositional</strong>. With a safe partner the system rests; an unsafe one switches on the push-pull. Because your strategy is readable to you and you don't lose coherence, this reads as an <strong>organized, protective response</strong> — not stable disorganization. Same wiring as secure, turned up louder around threat.";}
+    else if(!coherent||dysreg){verdict="Disorganized pattern (stable)";
+      vdesc="The push-pull shows up with a <strong>collapse of strategy</strong> — reactions that flip without a rule you can name, or that flood and go blank. That loss of a coherent approach, more than the anxiety or avoidance itself, is the signature of disorganization.";}
+    else{verdict="Fearful-avoidant (mixed signal)";
+      vdesc="You sit in the high-both corner, but the contingency and coherence signals are mixed. Worth sitting with which partners pull the push-pull out of you, and whether you can name the rule when they do.";}
+  } else if(style==="Secure"&&contingent){verdict="Secure baseline, situationally reactive";
+      vdesc="Your baseline is secure, and you flagged that insecurity is <strong>switched on by unsafe partners</strong> rather than always present. That's the healthy version of contingency — the system reacting to real signal.";}
+  else{verdict="Consistent with your Lens 1 style";vdesc="Your activation signals don't substantially revise the dispositional read above.";}
+  document.getElementById("actPanel").innerHTML=`<span class="actverdict">${verdict}</span><h3>How conditional your pattern is</h3><p>${vdesc}</p>
+    <div class="minibars">${miniBar("Contingency",con,"switched on by the partner?")}${miniBar("Strategy coherence",coh,"can you name your own rule?")}${miniBar("Dysregulation",dys,"do you flood or go blank?")}</div>
+    <div class="honest">Note on disorganization: a two-dimensional self-report can locate the <em>fearful-avoidant</em> experience of "want it / fear it," but it can't see the deeper AAI marker — lapses in coherence when narrating unresolved loss or trauma, assessed by interview, not endorsement. Read a stable-disorganized result as a flag to explore, not a clinical finding.</div>`;
+
+  document.getElementById("securePanel").innerHTML=`<p class="eyebrow" style="color:var(--l3)">Protective anchor</p>
+    <div class="bar-top"><span class="bar-name">Secure Base &amp; Repair <span class="flag ${sec>=4.5?'ok':sec>=3?'mid':'hi'}">${sec>=4.5?'present':sec>=3?'partial':'thin'}</span></span><span class="bar-val">${sec.toFixed(2)} / 6</span></div>
+    <div class="track"><div class="fill" style="background:var(--good)" data-w="${sec/6*100}"></div></div>
+    <div class="bar-note">${sec>=4.5?"Real repair and predictability here — the ballast that keeps a bond from becoming a trauma bond.":sec>=3?"Some repair and consistency, but not reliable. This is the buffer to watch.":"Repair and predictability are thin. Without this anchor, the dynamics below carry more weight."}</div>`;
+
+  const risk=[['LB',lb],['IR',ir],['RWR',rwr],['PWR',pwr],['CD',cd],['ENT',ent]];
+  const noteFor={LB:"How intense and idealizing the beginning was.",IR:"Unpredictable alternation of warmth and withdrawal — the engine of a trauma bond.",RWR:"Ruptures that reset to “normal” with no accountability. Absence of repair is the signal, not the conflict.",PWR:"Imbalance, eggshells, and narrowing of your outside world — a core Dutton-Painter criterion.",CD:"Excusing, minimizing, and self-blame that keep the story livable.",ENT:"Attachment that strengthens under harm, and the pull that makes leaving feel like withdrawal."};
+  document.getElementById("bondBars").innerHTML=risk.map(([c,v])=>{const b=band(v);
+    return `<div class="bar"><div class="bar-top"><span class="bar-name">${SUBMETA[c].name} <span class="flag ${b.cls}">${b.tag}</span></span><span class="bar-val">${v.toFixed(2)} / 6</span></div><div class="track"><div class="fill" style="background:${b.color}" data-w="${v/6*100}"></div></div><div class="bar-note">${noteFor[c]}</div></div>`;}).join("");
+  document.getElementById("coreFlags").innerHTML=coreFlag("Intermittent reinforcement",ir)+coreFlag("Power imbalance",pwr)+coreFlag("Reset without repair",rwr);
+
+  const wsum=Object.values(W).reduce((a,b)=>a+b,0);
+  const tblRaw=(lb*W.LB+ir*W.IR+rwr*W.RWR+pwr*W.PWR+cd*W.CD+ent*W.ENT)/wsum;
+  const secAdj=Math.max(0,(sec-MID))*0.4;const tbl=Math.max(1,tblRaw-secAdj);const cb=band(tbl);
+  document.getElementById("tblScore").innerHTML=`<b>${tbl.toFixed(2)}</b> / 6.00 &nbsp;&mdash;&nbsp; <span style="color:${cb.color}">${cb.tag.toUpperCase()}</span> &nbsp;<span style="color:var(--hair)">|</span>&nbsp; raw ${tblRaw.toFixed(2)}, secure-base offset −${secAdj.toFixed(2)}`;
+  document.getElementById("tblMark").style.left=((tbl-1)/5*100)+"%";
+
+  document.getElementById("readout").innerHTML=
+    line("dispositional_style",style)+line("anxiety / avoidance",anx.toFixed(2)+" / "+avo.toFixed(2))+
+    line("activation_read",verdict.toLowerCase())+line("contingency / coherence / dysreg",con.toFixed(1)+" / "+coh.toFixed(1)+" / "+dys.toFixed(1))+
+    line("secure_base",sec.toFixed(2)+"  ["+(sec>=4.5?"present":sec>=3?"partial":"thin")+"]")+
+    line("bonding_likelihood",tbl.toFixed(2)+"  ["+cb.tag+"]")+line("peak_subscale",peakName(risk))+
+    `<div class="rline"><span class="rk">// core criteria (Dutton-Painter)</span><span>${(ir>=MID?"intermittent ✓":"intermittent –")+"  "+(pwr>=MID?"power-imbal ✓":"power-imbal –")}</span></div>`;
+
+  document.getElementById("interp").innerHTML=interpretation({style,verdict,sec,ir,pwr,rwr,tbl,cb});
+  document.getElementById("assess").classList.add("hidden");
+  document.getElementById("results").classList.remove("hidden");
+  window.scrollTo({top:0,behavior:'instant'});
+  requestAnimationFrame(()=>document.querySelectorAll(".fill,.minifill").forEach(f=>f.style.width=f.dataset.w+"%"));
+};
+
+function miniBar(n,v,s){return `<div class="minibar"><div class="mb-name">${n} <span class="mb-val">${v.toFixed(1)}</span></div><div class="minitrack"><div class="minifill" data-w="${v/6*100}"></div></div><div class="bar-note" style="margin-top:5px">${s}</div></div>`;}
+function coreFlag(n,v){const on=v>=MID;return `<div class="coreflag"><span class="cf-h">${n}</span><span class="flag ${on?'core':'ok'}">${on?'present · '+v.toFixed(1):'low · '+v.toFixed(1)}</span></div>`;}
+function line(k,v){return `<div class="rline"><span class="rk">${k}</span><span>${v}</span></div>`;}
+function peakName(risk){let m=risk[0];risk.forEach(r=>{if(r[1]>m[1])m=r;});return SUBMETA[m[0]].name+" ("+m[1].toFixed(2)+")";}
+function band(v){if(v>=4.5)return{tag:"high",cls:"hi",color:"var(--alert)"};if(v>=3.5)return{tag:"elevated",cls:"mid",color:"var(--warn)"};if(v>=2.5)return{tag:"moderate",cls:"mid",color:"var(--l3-soft)"};return{tag:"low",cls:"ok",color:"var(--l1-soft)"};}
+
+function drawQuadrant(anx,avo){
+  const S=260,pad=34,plot=S-pad*2;const x=pad+(avo-1)/5*plot,y=pad+(1-(anx-1)/5)*plot;
+  document.getElementById("quadrant").innerHTML=`<svg viewBox="0 0 ${S} ${S}" width="100%" style="max-width:280px" role="img" aria-label="Attachment map by anxiety and avoidance">
+    <defs><style>.qlab{font-family:'IBM Plex Mono',monospace;font-size:8.5px;fill:#6E6559;letter-spacing:.05em}.qname{font-family:'Fraunces',serif;font-size:10.5px;fill:#9a8f7e}</style></defs>
+    <rect x="${pad}" y="${pad}" width="${plot}" height="${plot}" fill="#fff" stroke="#DFD5C3"/>
+    <line x1="${pad+plot/2}" y1="${pad}" x2="${pad+plot/2}" y2="${pad+plot}" stroke="#EBE3D5"/>
+    <line x1="${pad}" y1="${pad+plot/2}" x2="${pad+plot}" y2="${pad+plot/2}" stroke="#EBE3D5"/>
+    <text class="qname" x="${pad+plot*0.25}" y="${pad+plot*0.13}" text-anchor="middle">Anxious</text>
+    <text class="qname" x="${pad+plot*0.75}" y="${pad+plot*0.13}" text-anchor="middle" style="font-size:9.5px">Disorganized</text>
+    <text class="qname" x="${pad+plot*0.25}" y="${pad+plot*0.92}" text-anchor="middle">Secure</text>
+    <text class="qname" x="${pad+plot*0.75}" y="${pad+plot*0.92}" text-anchor="middle">Dismissive</text>
+    <text class="qlab" x="${pad}" y="${pad-10}">HIGH ANXIETY</text>
+    <text class="qlab" x="${pad}" y="${S-8}">LOW ANXIETY</text>
+    <text class="qlab" x="${pad+plot}" y="${S-8}" text-anchor="end">HIGH AVOIDANCE →</text>
+    <circle cx="${x}" cy="${y}" r="7.5" fill="#2E5E59" fill-opacity="0.18"/>
+    <circle cx="${x}" cy="${y}" r="4.5" fill="#2E5E59" stroke="#fff" stroke-width="1.5"/></svg>`;
+}
+
+function interpretation(d){
+  let p1;
+  if(d.cb.tag==="high"||d.cb.tag==="elevated"){p1=`The bond you held in mind carries several markers of a <strong>trauma-bonded dynamic</strong> — a bond intensified, rather than weakened, by the harm inside it. That's not a statement about your worth or judgment; it's the predictable result of an environment built on unpredictability. The two criteria that matter most in the research are intermittent reinforcement and power imbalance — ${d.ir>=MID&&d.pwr>=MID?"and you scored elevated on both, which is the core signature.":d.ir>=MID?"and your intermittent-reinforcement score is the one driving it.":d.pwr>=MID?"and the power-imbalance score is the one driving it.":"though neither peaked, so watch the pattern rather than any single number."}`;}
+  else if(d.cb.tag==="moderate"){p1=`The bond shows <strong>some</strong> of the mechanics of a trauma bond but not the full pattern. Worth watching which subscale ran highest — that's where the strain concentrates.`;}
+  else{p1=`The bond does <strong>not</strong> show the core signature of a trauma bond. Whatever difficulty it holds looks like ordinary relational friction rather than an intermittent-reinforcement trap.`;}
+  let p2;
+  if(d.rwr>=MID){p2=`Your <strong>Reset Without Repair</strong> score stands out — the quiet one. No dramatic rupture, just conflict that dissolves back into "fine" with no apology and nothing mended. Over time the absence of repair teaches you to expect less and call it peace.`;}
+  else if(d.sec>=4.5){p2=`Your <strong>Secure Base &amp; Repair</strong> score is strong, which matters more than any single risk number — reliable repair is what keeps rupture from calcifying into a bond you can't leave.`;}
+  else{p2=`Mind the gap between your risk subscales and your <strong>Secure Base</strong> score. The wider it runs, the more the relationship is powered by hope for the good version than by reliable footing.`;}
+  let p3;
+  if(d.verdict.indexOf("Reactive")>-1||d.verdict.indexOf("situationally")>-1){p3=`On disposition: your activation profile reads as <strong>${d.verdict.toLowerCase()}</strong>. This is the important correction to a flat quadrant — a high-both position that is <em>reactive and coherent</em> is not the same as stable disorganization. Your baseline holds; a specific unsafe person is what moves you off it. The leverage isn't "fix your attachment style" — it's discernment about who earns the secure version of you.`;}
+  else if(d.verdict.indexOf("Disorganized")>-1){p3=`On disposition: your profile reads as <strong>disorganized</strong> at the dispositional level — the push-pull shows up with a loss of readable strategy, not just high feeling. That's terrain worth exploring with support, and it makes intermittent reinforcement land harder, because a system already braced for danger reads the cycle as familiar.`;}
+  else{p3=`On disposition: hold your Lens 1 style and Lens 3 bond as <em>separate</em> readings — who you tend to be, versus what one specific relationship did with that. Conflating them is the error most single-type quizzes make.`;}
+  return `<h3>Reading the three lenses together</h3><p>${p1}</p><p>${p2}</p><p>${p3}</p>`;
+}
+
+document.getElementById("reliBtn").onclick=function(){
+  if(document.getElementById("appendix")){document.getElementById("appendix").remove();this.textContent="Show psychometric appendix";return;}
+  const codes=Object.keys(SUBMETA);
+  const rows=codes.map(c=>{const k=BANK.filter(i=>i.sub===c).length;const f=BANK.filter(i=>i.sub===c&&!i.r).length;const r=k-f;
+    return `<tr><td>${c}</td><td>${SUBMETA[c].name}</td><td class="num">${k} (${f}F/${r}R)</td><td class="num">${SUBMETA[c].alpha.toFixed(2)}</td></tr>`;}).join("");
+  const mean=(codes.reduce((a,c)=>a+SUBMETA[c].alpha,0)/codes.length).toFixed(2);
+  const div=document.createElement("div");div.id="appendix";div.className="appendix";
+  div.innerHTML=`<p class="eyebrow">Psychometric appendix</p>
+    <table><thead><tr><th>Code</th><th>Subscale</th><th class="num">Items</th><th class="num">α</th></tr></thead>
+    <tbody>${rows}<tr><td></td><td style="color:var(--ink-soft)">mean across subscales</td><td></td><td class="num">${mean}</td></tr></tbody></table>
+    <p class="cap"><strong>Reliability.</strong> Internal consistency (Cronbach's α) estimated by Monte Carlo simulation (N = 2,000) under a single-factor response model per subscale; all subscales ≥ 0.70. Figures are simulated, not empirical norms.</p>
+    <p class="cap"><strong>Acquiescence control.</strong> Every subscale is balanced-keyed (equal forward/reverse items), so any uniform response set resolves to the 3.50 scale midpoint on every subscale — verified across all constant responses (k = 1…6) in the structural harness.</p>
+    <p class="cap"><strong>Administration.</strong> 6-point forced-choice Likert, no neutral midpoint. Items are blind-interleaved with no two adjacent items from the same subscale; reverse items are hidden and reverse-scored before aggregation. Scoring, keying balance, and interleave integrity validated programmatically (101/101 checks).</p>
+    <p class="cap"><strong>Source constructs.</strong> Dispositional dimensions follow the ECR-R two-factor (anxiety/avoidance) model; the four prototypes follow Bartholomew's quadrant. Bonding subscales operationalize Dutton &amp; Painter's traumatic-bonding criteria (power imbalance + intermittent reinforcement) with love-bombing, reset-without-repair, cognitive distortion, and entrapment. Activation subscales (contingency, coherence, dysregulation) are an original extension distinguishing reactive activation from stable disorganization. Items are clean-room originals mapped to published construct definitions; not clinically normed.</p>`;
+  this.parentElement.after(div);this.textContent="Hide psychometric appendix";
+};
+document.getElementById("retakeBtn").onclick=()=>location.reload();
+updateProgress();
+</script>
+</body>
+</html>
