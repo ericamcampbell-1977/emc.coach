@@ -3,8 +3,13 @@
      <script src="/disclaimer.js"></script>
    It appears in the spot marked <div data-disclaimer></div>, or at the very top of the page if there is no spot. */
 (function () {
+  // Books are by other authors (pen names), so the Books page doesn't speak as the author
+  var isBooks = /\/books\//.test(location.pathname);
+  var intro = isBooks
+    ? '<p><b>Please read before you begin.</b> The books shared here reflect their authors&rsquo; own experiences and opinions. They are for reflection and personal growth. They are not therapy, diagnosis, or treatment, and they are not a substitute for professional mental health care.</p>'
+    : '<p><b>Please read before you begin.</b> I am a certified coach, not a therapist. The thoughts and opinions in these assessments and hypnosis recordings are for reflection and personal growth. They are not therapy, diagnosis, or treatment, and they are not a substitute for professional mental health care. The assessments are not clinical or diagnostic tools.</p>';
   var html =
-    '<p><b>Please read before you begin.</b> I am a certified coach, not a therapist. The thoughts and opinions in these books, assessments, and hypnosis recordings are for reflection and personal growth. They are not therapy, diagnosis, or treatment, and they are not a substitute for professional mental health care. The assessments are not clinical or diagnostic tools.</p>' +
+    intro +
     (document.querySelector('audio') ? '<p>Do not listen to hypnosis recordings while driving, operating machinery, or doing anything that needs your full attention. If you have a history of seizures or a serious mental health condition, talk with your doctor before using hypnosis.</p>' : '') +
     '<p>Please take what resonates and leave the rest.</p>' +
     '<p>If you are in crisis, in the U.S. call or text 988, or call 911.</p>';
