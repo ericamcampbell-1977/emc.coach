@@ -392,3 +392,14 @@ h3 { font-size: clamp(1.6rem, 2.4vw, 2rem); line-height: 1.15; }
 .session img { display: block; max-width: 100%; max-height: 80vh; max-height: 80svh; width: auto; height: auto; border-radius: 10px; }
 .session audio { width: 100%; }
 @media (max-width: 66rem) { .nav-links { gap: .65rem; font-size: .74rem; letter-spacing: .04em; } .nav-links .pill-light { padding-inline: .75rem; } .brand { font-size: 1.02rem; } .brand .mark { width: 36px; height: 36px; } }
+
+/* Top menu: small like the footer menu, in pink so it stands apart from the business name */
+.nav-links, .nav-links { gap: 1.25rem; font-size: .88rem; letter-spacing: 0; text-transform: none; }
+.nav-links a:not(.pill-light) { color: var(--pink); }
+.nav-links a:not(.pill-light):hover, .nav-links a:not(.pill-light):focus-visible { color: var(--cream); }
+.nav-links .pill-light { text-transform: uppercase; letter-spacing: .1em; font-size: .8rem; padding-inline: 1.4rem; }
+@media (max-width: 68rem) { .nav-links { gap: 1rem; font-size: .84rem; } .nav-links .pill-light { padding-inline: 1rem; letter-spacing: .06em; } }
+@media (max-width: 62rem) {
+  .mobile-nav a:not(:last-child) { font-family: var(--sans); font-size: .95rem; color: var(--pink); padding: .45rem 0; }
+  .mobile-nav a:not(:last-child):hover { color: var(--cream); }
+}

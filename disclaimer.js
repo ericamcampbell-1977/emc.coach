@@ -14,11 +14,11 @@
   box.setAttribute('role', 'note');
   box.setAttribute('aria-label', 'Disclaimer');
   box.innerHTML = html;
-  if (slot) { slot.replaceWith(box); return; }
-  // Page without the site styles (e.g. a standalone book file): style it inline and put it at the top
+  // Page without the site styles (e.g. a standalone book or test file): style it inline
   if (!document.querySelector('link[href*="styles.css"]')) {
     box.style.cssText = 'font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;color:#2b1a2e;background:#F4E7E1;border-left:4px solid #A34054;padding:14px 18px;margin:0;';
     var ps = box.querySelectorAll('p'); for (var i = 0; i < ps.length; i++) ps[i].style.margin = '0 0 6px';
   }
+  if (slot) { slot.replaceWith(box); return; }
   document.body.insertBefore(box, document.body.firstChild);
 })();
