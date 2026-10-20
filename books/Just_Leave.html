@@ -45,10 +45,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .leave{background:#a63f33;color:#fff !important;text-decoration:none;font-weight:600;padding:.35rem .8rem;border-radius:4px;white-space:nowrap}
 
 /* Hero */
-.hero{max-width:1180px;margin:0 auto;padding:4.5rem 1.25rem 3rem}
-.hero h1{font-weight:500;font-size:clamp(2.75rem,8vw,5.5rem);line-height:1;letter-spacing:-.03em;margin:0}
+.hero{max-width:1180px;margin:0 auto;padding:48px 20px 32px}
+.hero h1{font-weight:500;font-size:clamp(36px,6vw,64px);line-height:1;letter-spacing:-.03em;margin:0}
 .hero .sub{font-family:var(--sans);color:var(--muted);font-size:1rem;margin:1.25rem 0 0}
-.hero .subtitle{display:block;font-family:var(--serif);font-style:italic;color:var(--ink);font-size:clamp(1.5rem,4vw,2.4rem);line-height:1.2;margin-bottom:.75rem}
+.hero .subtitle{display:block;font-family:var(--serif);font-style:italic;color:var(--ink);font-size:clamp(22px,3vw,32px);line-height:1.2;margin-bottom:.75rem}
 .leave-word{color:var(--title-blue)}
 .hero .thesis{font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.2;max-width:22ch;margin:2.5rem 0 0;font-style:italic}
 
@@ -192,7 +192,6 @@ try{if(localStorage.getItem("wm-notitle")==="1")d.classList.add("no-title")}catc
     <a class="leave" href="https://www.google.com/search?q=weather" target="_top" rel="noopener">Leave this page</a>
   </div>
 </div>
-<div data-disclaimer></div>
 <header class="hero">
   <h1>Why Didn’t You Just <span class="leave-word">Leave?</span></h1>
   <p class="sub"><span class="subtitle">Why Me? Breaking Free from the Trauma Bond</span>By Jane Doe</p>
@@ -2685,5 +2684,4 @@ if(location.hash&&(sub.querySelector('a[href="'+location.hash+'"]')))set(true)})
 </body>
 </html>
 
-<script src="/disclaimer.js"></script>
 </body></html>
