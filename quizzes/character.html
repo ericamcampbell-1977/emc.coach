@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --paper:#F5F0E6; --sheet:#FBF8F2; --sheet2:#F4EEE2; --ink:#2A2421; --muted:#6E625B; --faint:#998D80; --rule:#DED4C6; --rule2:#E9E1D3;
@@ -168,6 +169,22 @@ td.n{font-family:var(--mono);color:var(--ink)}
 .legal p{font-size:11.5px;line-height:1.6;color:var(--faint);margin:0 0 8px;max-width:88ch}
 .footer{padding:18px 0 46px;color:var(--faint);font-size:11px;font-family:var(--mono);letter-spacing:.03em}
 
+.share{margin-top:28px;background:var(--sheet);border:1px solid var(--rule2);border-radius:13px;padding:22px;box-shadow:var(--shadow)}
+.share h3{font-family:var(--display);font-weight:500}
+.field{display:grid;gap:6px;margin:12px 0}
+.field label{font-size:13px;font-weight:600}
+.field input[type=email]{font:inherit;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;background:var(--paper);color:var(--ink);width:100%;max-width:420px}
+.field input[type=email]:focus-visible{outline:2.5px solid var(--ac);outline-offset:1px}
+.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:14px;max-width:66ch;cursor:pointer}
+.check input{margin-top:3px;width:18px;height:18px;accent-color:var(--ac);flex:none}
+.consent{font-size:12.5px;color:var(--muted);margin:-4px 0 10px 28px;max-width:60ch}
+.addr{font-family:var(--mono);font-size:12.5px;color:var(--ac);user-select:all;word-break:break-all}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.status{font-size:13px;margin-top:12px;min-height:1.3em;color:var(--muted)}
+.status.err{color:var(--dti)}
+details.preview{margin-top:14px}
+details.preview summary{cursor:pointer;font-size:13px;color:var(--muted)}
+details.preview pre{white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:12px;background:var(--paper);border:1px solid var(--rule2);border-radius:7px;padding:12px;max-height:340px;overflow:auto;user-select:all;margin-top:8px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:560px){.barrow{grid-template-columns:100px 1fr 80px}.brand .full{display:none}}
 </style>
@@ -387,7 +404,8 @@ function answered(inst){return ORDER[inst].filter(o=>STATE.ans[inst][o.id]!=null
 
 /* ---------- state ---------- */
 const STORE="seriesVII-character-v1";
-let STATE={tab:"home", phase:{VSP:"intro",DTI:"intro",LTI:"intro",HHP:"intro"}, pos:{VSP:0,DTI:0,LTI:0,HHP:0}, ans:{VSP:{},DTI:{},LTI:{},HHP:{}}};
+let STATE={tab:"home", phase:{VSP:"intro",DTI:"intro",LTI:"intro",HHP:"intro"}, pos:{VSP:0,DTI:0,LTI:0,HHP:0}, ans:{VSP:{},DTI:{},LTI:{},HHP:{}}, email:"", cc:false};
+const LAB="evolutionlabcollective@gmail.com";
 try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans)STATE=Object.assign(STATE,p);}}catch(e){}
 function save(){try{localStorage.setItem(STORE,JSON.stringify(STATE));}catch(e){}}
 
@@ -523,6 +541,7 @@ function result(inst){
     <p class="headline">${headline(inst,sc)}</p>${sig}
     <div class="readblock">${readCopy(inst)}</div>
     <div class="retake"><button class="ghostbtn" data-act="retake">Retake ${b.code}</button><button class="startbtn" style="margin-top:0" data-act="next">${nextLabel()} →</button></div>
+    ${shareHTML()}
   </section>`;
   bind(inst);
 }
@@ -564,17 +583,12 @@ function synth(){
         <span class="axl ax-x">Light →</span><span class="axl ax-y">Dark ↑</span><span class="pt" style="left:${lx}%;bottom:${dy}%"></span></div>
       <p style="font-size:13px;color:var(--muted);margin:0;line-height:1.55">Your point sits at light <b>${light.toFixed(2)}</b>, dark <b>${dark.toFixed(2)}</b>. Because the two are only loosely opposed in the research, the top-right "high both" region is real and common — being genuinely warm doesn't require having no edge, and having an edge doesn't cancel the warmth.</p></div>`;
   }
-  const rows=[];
-  if(haveLD){const gap=light-dark;rows.push(["L − D",`Your light runs <b>${gap>=0?'+':''}${gap.toFixed(2)}</b> against your dark. ${gap>1?'A clear prosocial lean.':gap<-0.5?'The antagonistic side is currently louder — worth sitting with rather than explaining away.':'A genuinely mixed profile: both are present at working strength.'}`]);}
-  if(hh!=null&&dark!=null){rows.push(["HH ↔ D",`Honesty–Humility (<b>${hh.toFixed(2)}</b>) is the personality strand most cleanly opposed to the dark core (<b>${dark.toFixed(2)}</b>). ${hh+dark<6.4?'Both low-to-mid — a pragmatic, low-scruple lean worth noting.':hh>dark?'They point the expected opposite ways, which is the coherent pattern.':'Dark sits above your integrity grain here — the one tension most worth examining.'}`]);}
-  if(S.VSP&&hh!=null){const hum=(S.VSP.Humanity+S.VSP.Justice)/2;rows.push(["VSP ↔ HH",`Your other-facing virtues (Humanity + Justice, <b>${hum.toFixed(2)}</b>) and Honesty–Humility (<b>${hh.toFixed(2)}</b>) are two independent roads to the same moral territory. ${Math.abs(hum-hh)<0.6?'They agree — a convergent, credible read.':'They diverge a little, which is where self-report is most worth a second opinion.'}`]);}
-  if(S.VSP){const rank=scoreStrength();rows.push(["Signature",`Across everything, the strengths you lead with are <b>${rank.slice(0,3).map(r=>r.s.toLowerCase()).join(", ")}</b>. Those are the levers most likely to move your own behaviour.`]);}
-  rows.push(["Caution",`Every score here is self-report on a topic where almost no one is a neutral witness to themselves. The reverse-keying discounts straight-line agreement, but the real check on character is <b>how others experience you</b> — an observer form is the natural next build, most of all for the dark and light lenses.`]);
+  const rows=synthRows();
   M.innerHTML=`<section class="view active"><div class="eyebrow">Synthesis · ${done.length}/4 lenses</div>
     <h2 style="font-size:clamp(24px,5vw,34px);margin-top:10px">Read together, not one at a time</h2>
     <p class="headline" style="font-family:var(--display);color:var(--muted);font-size:18px;margin:14px 0 0;max-width:60ch">No single lens is character. The picture is in how your strengths, your edge, and your grain line up — or don't.</p>
     ${quad}<div class="panel"><div class="cap">Cross-reads</div>${rows.map(([ic,bd])=>`<div class="crossrow"><span class="ic">${ic}</span><span class="bd">${bd}</span></div>`).join('')}</div>
-    ${done.length<4?`<div class="note">Finish the remaining ${4-done.length} lens${4-done.length>1?'es':''} for the complete cross-read: ${ORDER_K.filter(c=>!instComplete(c)).map(c=>BANK[c].code).join(', ')}.</div>`:''}</section>`;
+    ${done.length<4?`<div class="note">Finish the remaining ${4-done.length} lens${4-done.length>1?'es':''} for the complete cross-read: ${ORDER_K.filter(c=>!instComplete(c)).map(c=>BANK[c].code).join(', ')}.</div>`:''}${shareHTML()}</section>`;
   bind();
 }
 
@@ -609,8 +623,166 @@ function appendix(){
   </section>`;
 }
 
+
+/* ---------- synthesis cross-reads (shared by the Synthesis tab and the report) ---------- */
+function synthRows(){
+  const S={}; ORDER_K.forEach(c=>{if(instComplete(c))S[c]=scoreAll(c);});
+  const mean=o=>{const v=Object.values(o);return v.reduce((a,b)=>a+b,0)/v.length;};
+  const light=S.LTI?mean(S.LTI):null,dark=S.DTI?mean(S.DTI):null,hh=S.HHP?mean(S.HHP):null;
+  const rows=[];
+  if(light!=null&&dark!=null){const gap=light-dark;rows.push(["L − D",`Your light runs <b>${gap>=0?'+':''}${gap.toFixed(2)}</b> against your dark. ${gap>1?'A clear prosocial lean.':gap<-0.5?'The antagonistic side is currently louder — worth sitting with rather than explaining away.':'A genuinely mixed profile: both are present at working strength.'}`]);}
+  if(hh!=null&&dark!=null){rows.push(["HH ↔ D",`Honesty–Humility (<b>${hh.toFixed(2)}</b>) is the personality strand most cleanly opposed to the dark core (<b>${dark.toFixed(2)}</b>). ${hh+dark<6.4?'Both low-to-mid — a pragmatic, low-scruple lean worth noting.':hh>dark?'They point the expected opposite ways, which is the coherent pattern.':'Dark sits above your integrity grain here — the one tension most worth examining.'}`]);}
+  if(S.VSP&&hh!=null){const hum=(S.VSP.Humanity+S.VSP.Justice)/2;rows.push(["VSP ↔ HH",`Your other-facing virtues (Humanity + Justice, <b>${hum.toFixed(2)}</b>) and Honesty–Humility (<b>${hh.toFixed(2)}</b>) are two independent roads to the same moral territory. ${Math.abs(hum-hh)<0.6?'They agree — a convergent, credible read.':'They diverge a little, which is where self-report is most worth a second opinion.'}`]);}
+  if(S.VSP){const rank=scoreStrength();rows.push(["Signature",`Across everything, the strengths you lead with are <b>${rank.slice(0,3).map(r=>r.s.toLowerCase()).join(", ")}</b>. Those are the levers most likely to move your own behaviour.`]);}
+  rows.push(["Caution",`Every score here is self-report on a topic where almost no one is a neutral witness to themselves. The reverse-keying discounts straight-line agreement, but the real check on character is <b>how others experience you</b> — an observer form is the natural next build, most of all for the dark and light lenses.`]);
+  return rows;
+}
+/* ---------- keep / email your results ---------- */
+function stripTags(h){return String(h).replace(/<[^>]+>/g,"");}
+function reportData(){
+  const secs=[];
+  ORDER_K.filter(instComplete).forEach(inst=>{
+    const b=BANK[inst],keys=Object.keys(b.subs);
+    const rows=keys.map(k=>{const v=scoreSub(inst,k);return{label:k,v,band:bandOf(v)};});
+    const sec={code:b.code,title:b.name,tab:inst,rows,extra:[]};
+    const comp=composite(inst);
+    if(inst==="VSP")sec.extra.push("Signature strengths (exploratory, top 5): "+scoreStrength().slice(0,5).map(r=>r.s).join(", "));
+    else if(inst==="DTI")sec.extra.push("Dark core, the mean of the four: "+comp.toFixed(2)+" ("+bandOf(comp)+")");
+    else if(inst==="LTI")sec.extra.push("Light composite: "+comp.toFixed(2)+" ("+bandOf(comp)+")");
+    else if(inst==="HHP")sec.extra.push("Honesty–Humility overall: "+comp.toFixed(2)+" ("+bandOf(comp)+")");
+    secs.push(sec);
+  });
+  const done=ORDER_K.filter(instComplete);
+  const syn=done.length>=2?synthRows().map(r=>stripTags(r[1])):null;
+  return {secs,syn,left:ORDER_K.filter(c=>!instComplete(c)).map(c=>BANK[c].name),
+    date:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})};
+}
+function reportText(){
+  const r=reportData(),L=[];
+  L.push("SERIES VII · CHARACTER","Your results · "+r.date,"");
+  L.push("Scores run 1.00–6.00; the midpoint is 3.50. Bands: Very low / Low / Moderate / High / Very high.","");
+  r.secs.forEach(sec=>{
+    L.push(sec.title.toUpperCase());
+    sec.rows.forEach(x=>L.push("• "+x.label+": "+x.v.toFixed(2)+" ("+x.band+")"));
+    sec.extra.forEach(e=>L.push("  "+e));
+    L.push("");
+  });
+  if(r.left.length)L.push("Not yet taken: "+r.left.join(", "),"");
+  if(r.syn&&r.syn.length){L.push("SYNTHESIS");r.syn.forEach(x=>L.push("• "+x));L.push("");}
+  L.push("This is a self-reflection tool, not a diagnosis. Results have no norms and are not clinically validated.");
+  L.push("If any of this surfaced something heavy, consider talking it through with someone you trust or a qualified professional. In the US you can call or text 988.");
+  L.push("","© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n");
+}
+const validEmail=e=>/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]{2,}$/.test(e);
+function mailtoHref(){
+  const to=STATE.email.trim(),parts=[];
+  const toList=to?to:(STATE.cc?LAB:"");
+  if(to&&STATE.cc)parts.push("cc="+encodeURIComponent(LAB));
+  parts.push("subject="+encodeURIComponent("My Series VII results: Character"));
+  parts.push("body="+encodeURIComponent(reportText()));
+  return "mailto:"+encodeURIComponent(toList).replace(/%40/g,"@")+"?"+parts.join("&");
+}
+function shareHTML(){
+  const n=ORDER_K.filter(instComplete).length;
+  return `<div class="share" id="share"><div class="cap">Keep your results</div>
+  <h3>Email or save your results</h3>
+  <p style="font-size:14px;color:var(--muted);margin:0">Email them to yourself, copy them, or save a PDF. Includes every lens you've finished so far (${n} of 4)${n>=2?" and the Synthesis":""}. Nothing leaves this page unless you choose to.</p>
+  <div class="field"><label for="shareEmail">Your email address</label><input type="email" id="shareEmail" autocomplete="email" inputmode="email" placeholder="you@example.com" value="${esc(STATE.email)}"></div>
+  <label class="check" for="shareCc"><input type="checkbox" id="shareCc" ${STATE.cc?"checked":""}><span>Also send a copy to Evolution Lab Collective <span class="addr">${LAB}</span></span></label>
+  <p class="consent" id="ccConsent" ${STATE.cc?"":"hidden"}>Ticking this sends your character results and your email address to Evolution Lab Collective as well. Leave it unticked to keep them to yourself.</p>
+  <div class="actions">
+    <button class="startbtn" style="margin-top:0" id="emailBtn" type="button">Open in my email app</button>
+    <button class="ghostbtn" id="copyBtn" type="button">Copy results</button>
+    <button class="ghostbtn" id="pdfBtn" type="button">Save as PDF</button>
+    <button class="ghostbtn" id="txtBtn" type="button">Save as text</button>
+  </div>
+  <p class="status" id="shareStatus" role="status" aria-live="polite"></p>
+  <details class="preview"><summary>Preview the text</summary><pre id="sharePre">${esc(reportText())}</pre></details>
+  </div>`;
+}
+function setStatus(msg,err){const el=document.getElementById("shareStatus");if(el){el.textContent=msg;el.className="status"+(err?" err":"");}}
+function emailClick(){
+  const e=STATE.email.trim();
+  if(e&&!validEmail(e)){setStatus("That email address doesn't look complete. Check it and try again.",true);return;}
+  if(!e&&!STATE.cc){setStatus("Enter your email address, or tick the Evolution Lab box, so the message has somewhere to go.",true);return;}
+  const a=document.createElement("a");a.href=mailtoHref();a.target="_top";a.rel="noopener";document.body.appendChild(a);
+  try{a.click();}catch(err){}a.remove();
+  setStatus("Your email app should open with the message filled in. Press Send there to deliver it. If nothing opens, use Copy results and paste them into an email to "+(e||LAB)+(e&&STATE.cc?" (cc "+LAB+")":"")+".");
+}
+async function copyClick(){
+  const t=reportText();
+  try{await navigator.clipboard.writeText(t);setStatus("Copied. Paste it into an email or a note.");}
+  catch(err){const pre=document.getElementById("sharePre");if(pre){pre.parentElement.open=true;const rg=document.createRange();rg.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(rg);}setStatus("Your browser blocked copying, so the text is selected below. Press Ctrl+C or ⌘C.");}
+}
+async function saveFile(filename,data){
+  const inViewer=!!(window.claude&&typeof window.claude.use==="function");
+  if(inViewer){
+    let dl=null;try{dl=await window.claude.use("downloads");}catch(e){dl=null;}
+    if(!dl){setStatus("Saving isn't available in this view. Use Copy results instead.",true);return;}
+    try{await dl.save({filename,data});setStatus("Saved "+filename+".");}
+    catch(err){setStatus(err&&err.code==="declined"?"Save cancelled.":"Saving didn't work here. Use Copy results instead.",!(err&&err.code==="declined"));}
+    return;
+  }
+  const blob=data instanceof Blob?data:new Blob([data],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  setStatus("Saved "+filename+".");
+}
+function buildPDF(){
+  const J=window.jspdf&&window.jspdf.jsPDF;if(!J)return null;
+  const r=reportData(),doc=new J({unit:"pt",format:"letter"});
+  const W=612,M=54;let y=M;
+  const ink=[42,36,31],muted=[110,98,85],rule=[216,205,185],soft=[235,228,213];
+  const accent={VSP:[154,106,31],DTI:[140,59,69],LTI:[71,102,83],HHP:[63,86,107]};
+  const page=need=>{if(y+need>792-M){doc.addPage();y=M;}};
+  doc.setFont("times","bold");doc.setFontSize(23);doc.setTextColor(...ink);doc.text("Series VII · Character",M,y+10);y+=30;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(...muted);
+  doc.text("Your results · "+r.date,M,y);y+=15;
+  doc.text("Scores run 1.00 to 6.00; the midpoint is 3.50. Bands: Very low / Low / Moderate / High / Very high.",M,y);y+=22;
+  r.secs.forEach(sec=>{
+    page(60);const ac=accent[sec.tab];
+    doc.setFillColor(...ac);doc.rect(M,y-11,4,16,"F");
+    doc.setFont("times","bold");doc.setFontSize(15);doc.setTextColor(...ink);doc.text(sec.title,M+12,y+2);y+=20;
+    sec.rows.forEach(x=>{
+      page(26);
+      doc.setFont("helvetica","bold");doc.setFontSize(10.5);doc.setTextColor(...ink);doc.text(x.label,M+12,y);
+      doc.setFont("courier","normal");doc.setFontSize(10);doc.text(x.v.toFixed(2),W-M-96,y,{align:"right"});
+      doc.setFont("helvetica","normal");doc.setTextColor(...muted);doc.text(x.band,W-M,y,{align:"right"});
+      const bx=M+12,bw=W-2*M-12;doc.setFillColor(...soft);doc.rect(bx,y+5,bw,5,"F");doc.setFillColor(...ac);doc.rect(bx,y+5,bw*(x.v-1)/5,5,"F");
+      doc.setDrawColor(...rule);doc.line(bx+bw/2,y+4,bx+bw/2,y+11);
+      y+=24;
+    });
+    doc.setFont("helvetica","italic");doc.setFontSize(9.5);doc.setTextColor(...muted);
+    sec.extra.forEach(e=>{const ls=doc.splitTextToSize(e,W-2*M-12);page(ls.length*12+4);doc.text(ls,M+12,y);y+=ls.length*12+4;});
+    y+=10;
+  });
+  if(r.syn&&r.syn.length){page(40);doc.setFont("times","bold");doc.setFontSize(15);doc.setTextColor(...ink);doc.text("Synthesis",M,y);y+=18;
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(...muted);
+    r.syn.forEach(t=>{const ls=doc.splitTextToSize("• "+t,W-2*M);page(ls.length*13+4);doc.text(ls,M,y);y+=ls.length*13+4;});y+=8;}
+  if(r.left.length){page(20);doc.setFont("helvetica","italic");doc.setFontSize(9.5);doc.setTextColor(...muted);doc.text("Not yet taken: "+r.left.join(", "),M,y);y+=16;}
+  page(70);doc.setDrawColor(...rule);doc.line(M,y,W-M,y);y+=14;doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(...muted);
+  const foot=doc.splitTextToSize("This is a self-reflection tool, not a diagnosis. Results have no norms and are not clinically validated. If any of this surfaced something heavy, consider talking it through with someone you trust or a qualified professional; in the US you can call or text 988. © 2026 Erica Campbell. All rights reserved.",W-2*M);
+  doc.text(foot,M,y);
+  return doc;
+}
+async function pdfClick(){
+  const doc=buildPDF();
+  if(!doc){setStatus("The PDF tool didn't load — check your connection, or use Save as text or Copy results instead.",true);return;}
+  await saveFile("series-vii-character-results.pdf",doc.output("blob"));
+}
+function bindShare(root){
+  const em=root.querySelector("#shareEmail");if(!em)return;
+  em.oninput=()=>{STATE.email=em.value;};
+  const cc=root.querySelector("#shareCc");cc.onchange=()=>{STATE.cc=cc.checked;const c=root.querySelector("#ccConsent");if(c)c.hidden=!STATE.cc;save();};
+  root.querySelector("#emailBtn").onclick=emailClick;
+  root.querySelector("#copyBtn").onclick=copyClick;
+  root.querySelector("#pdfBtn").onclick=pdfClick;
+  root.querySelector("#txtBtn").onclick=()=>saveFile("series-vii-character-results.txt",reportText());
+}
+
 /* ---------- binding ---------- */
 function bind(inst){
+  bindShare(M);
   M.querySelectorAll('[data-tab]').forEach(el=>el.onclick=()=>{STATE.tab=el.dataset.tab;save();scrollTo(0,0);render();});
   M.querySelectorAll('[data-v]').forEach(el=>el.onclick=()=>answer(inst,+el.dataset.v));
   M.querySelectorAll('[data-act]').forEach(el=>el.onclick=()=>{
@@ -627,9 +799,10 @@ function bind(inst){
 document.getElementById('legal').innerHTML=`<div class="lh">Disclaimer</div>
   <p>This assessment is provided for educational, self-reflection, and research purposes only. It is <b>not</b> a psychological, medical, or diagnostic instrument; it has not been clinically validated or normed on a population sample, and it must not be used to diagnose, screen, select, evaluate, or make decisions about any person in any clinical, employment, educational, forensic, custody, or similar context.</p>
   <p>The items are original adaptations written to published personality-psychology constructs (VIA character strengths, the Dark Tetrad, the Light Triad, and HEXACO Honesty–Humility); they are not the validated instruments themselves, and the reliability figures shown are simulated rather than established on human respondents. Results are not professional advice and create no clinician–client or other professional relationship. If you are in distress or have concerns about your mental health or safety, please contact a qualified professional or your local emergency services.</p>
-  <p>Use is entirely at your own discretion and risk. To the fullest extent permitted by law, the author and contributors disclaim all warranties and any liability for decisions or actions taken on the basis of these results. © 2026. All rights reserved.</p>`;
+  <p><b>Your data.</b> Your responses stay in your browser and are not saved after you close the page. Nothing is transmitted unless you choose to email your results from the “Keep your results” panel, which opens your own email app with the text filled in — nothing sends until you press Send. If you tick the option to include Evolution Lab Collective (evolutionlabcollective@gmail.com), a copy of your results and your email address goes to that address as well; leave it unticked to keep your results to yourself.</p>
+  <p>Use is entirely at your own discretion and risk. To the fullest extent permitted by law, the author and contributors disclaim all warranties and any liability for decisions or actions taken on the basis of these results. © 2026 Erica Campbell. All rights reserved.</p>`;
 
-window.__SVII={BANK,ORDER,ORDER_K,SCALE,ALPHA,scoreSub,scoreAll,composite,scoreStrength,band:bandOf,buildQueue,instComplete,answered,render,answer,back,get S(){return STATE;}};
+window.__SVII={BANK,ORDER,ORDER_K,SCALE,ALPHA,scoreSub,scoreAll,composite,scoreStrength,band:bandOf,buildQueue,instComplete,answered,render,answer,back,reportText,reportData,mailtoHref,validEmail,buildPDF,synthRows,LAB,get S(){return STATE;}};
 render();
 </script>
 </body>

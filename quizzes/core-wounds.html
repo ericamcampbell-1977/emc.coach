@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Series VI — "bruise and balm". Warm-bone paper, oxblood primary,
    sage-teal for the healed pole; eight distinct subscale hues (c1–c8).
@@ -112,6 +113,32 @@ nav button:hover{color:var(--ink)}
 .syncard p{margin:0;font-size:14px;color:var(--ink2)}
 .syn-empty{color:var(--muted);font-size:14px;font-style:italic}
 .wound-def{font-size:13px;color:var(--muted);margin:3px 0 0;padding-left:16px;border-left:2px solid var(--rule)}
+/* keep-your-results card */
+.share{border:1px solid var(--rule);border-top:3px solid var(--balm);border-radius:3px;background:var(--sheet);padding:20px 22px;margin:26px 0 0}
+.share h4{font-family:var(--display);font-size:18px;margin:0 0 4px;color:var(--ink)}
+.share .sdesc{color:var(--muted);font-size:13.5px;margin:0 0 16px;max-width:60ch}
+.share label.fld{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.share input[type=email]{width:100%;max-width:360px;font-family:var(--body);font-size:14.5px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:10px 12px}
+.share input[type=email]:focus{border-color:var(--accent);outline:none}
+.share input[type=email][aria-invalid=true]{border-color:var(--accent)}
+.err{color:var(--accent);font-size:12.5px;margin:6px 0 0}
+.check{display:flex;gap:10px;align-items:flex-start;margin:16px 0 0;cursor:pointer;font-size:13.5px;color:var(--ink2);max-width:60ch}
+.check input{margin-top:3px;flex:none;accent-color:var(--balm)}
+.check span{display:block}
+.check small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.consent{background:var(--accent-soft);border-radius:2px;padding:10px 13px;margin:10px 0 0;font-size:12.5px;color:var(--ink2);max-width:60ch}
+.row-btns{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.sbtn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:11px 16px;border-radius:2px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff;text-decoration:none;display:inline-block}
+.sbtn:hover{filter:brightness(1.08)}
+.sbtn.ghost{background:none;color:var(--muted);border-color:var(--rule)}
+.sbtn.ghost:hover{border-color:var(--accent);color:var(--accent);filter:none}
+.sbtn[aria-disabled=true]{opacity:.45;pointer-events:none}
+.sstatus{font-size:12.5px;color:var(--balm);margin:12px 0 0;min-height:1em}
+.snote{font-size:12px;color:var(--muted);margin:12px 0 0;max-width:64ch;line-height:1.55}
+.snote b{color:var(--ink2)}
+.prev{margin:12px 0 0}
+.prev summary{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.prev textarea{width:100%;height:180px;margin:8px 0 0;font-family:var(--mono);font-size:11.5px;color:var(--ink2);background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:10px;resize:vertical}
 /* legal disclaimer */
 .legal{border-top:1px solid var(--rule);margin:40px 0 0;padding:22px 0 10px}
 .legal h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
@@ -136,7 +163,8 @@ nav button:hover{color:var(--ink)}
   <p><b>Not a medical or psychological device.</b> This instrument is an educational and self-reflective tool built on published psychological frameworks. It has not been clinically validated or normed on a human sample, and the reliability figures shown in its appendices are simulated estimates of its scoring architecture, not evidence of clinical accuracy.</p>
   <p><b>Not a diagnosis.</b> Nothing here identifies, screens for, or rules out any mental-health condition, personality disorder, or disorder of any kind. Scores describe self-reported patterns in the moment and can be inflated by mood, stress, or how you happen to read a question on a given day.</p>
   <p><b>Not professional advice, and not a substitute for it.</b> Using this tool does not create a therapist–client, clinician–patient, or any other professional relationship. If you are struggling, or if anything surfaced here is distressing, please consult a licensed mental-health professional. In a crisis, contact your local emergency services or a crisis line (in the U.S., call or text 988).</p>
-  <p><b>Use at your own discretion.</b> You use this instrument voluntarily and at your own risk. The authors and distributors make no warranties of any kind and accept no liability for any decision, action, or outcome arising from its use. Your responses are scored in your browser for this session only and are not transmitted or stored.</p>
+  <p><b>Use at your own discretion.</b> You use this instrument voluntarily and at your own risk. The authors and distributors make no warranties of any kind and accept no liability for any decision, action, or outcome arising from its use. Your responses are scored in your browser for this session only; the page itself transmits and stores nothing.</p>
+  <p><b>About the email option.</b> The "Keep your results" panel builds the message on your device and opens it in your own email app for you to review and send — the page never sends mail itself. If you tick "Also send a copy to Evolution Lab Collective," that address is added as a cc, so it will receive your results and your email address when you choose to send. Leave it unticked to keep your results to yourself.</p>
   <p>© 2026 · Series VI · Core Wounds. All frameworks referenced belong to their respective authors; items are original and provided for educational use.</p>
 </footer>
 </div>
@@ -754,10 +782,192 @@ function renderSynthesis(){
     html+=`<div class="syncard"><h4>The cost of your default</h4><p>${costs[topA]}</p></div>`;
   }
   html+=`<div class="note">This synthesis is generated from your responses in this session only. Nothing is stored. Reload and the slate is blank.</div>`;
+  if(done>=1) html+=shareCard();
   el.innerHTML=html;
+  if(done>=1) bindSend();
 }
 function rankTop(subsObj){
   return Object.keys(subsObj).sort((a,b)=>subsObj[b].mean-subsObj[a].mean);
+}
+
+/* =========================================================================
+   KEEP YOUR RESULTS — email (mailto) / PDF / text export
+   A page can't send mail or attach a file itself; "email" opens the reader's
+   own mail app with results pre-written, PDF/text are separate downloads.
+   ========================================================================= */
+const ELC="evolutionlabcollective@gmail.com";
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SEND={to:"",elc:false};
+const PDFHEX={1:"#9A3F45",2:"#B0632F",3:"#9A6511",4:"#6E7B3D",5:"#3E7168",6:"#2E6A88",7:"#5B4E8C",8:"#8A4A63"};
+const INST_ORDER=['CWI','WAI','SDI','WAP'];
+
+function completedInstruments(){ return INST_ORDER.filter(i=>RESULTS[i]); }
+
+/* ---- report model: [{inst, name, mode, rows:[{label,mean,band,bandLab,cnum}]}] ---- */
+function reportModel(){
+  return completedInstruments().map(inst=>{
+    const B=BANK[inst], R=RESULTS[inst];
+    const rows=Object.keys(R.subs)
+      .sort((a,b)=>R.subs[b].mean-R.subs[a].mean)
+      .map(k=>({label:B.subs[k].label, mean:R.subs[k].mean, band:R.subs[k].band,
+                bandLab:B.bands[R.subs[k].band], cnum:(COLORMAP[inst]&&COLORMAP[inst][k])||1}));
+    return {inst, name:B.name, mode:R.mode==='self'?'Self-report':'Observer report', rows};
+  });
+}
+function synthLines(){
+  const L=[];
+  if(RESULTS.CWI&&RESULTS.WAI){
+    const w=rankTop(RESULTS.CWI.subs)[0], a=rankTop(RESULTS.WAI.subs)[0];
+    L.push(`Presentation: ${BANK.CWI.subs[w].label} x ${BANK.WAI.subs[a].label}`);
+  }
+  if(RESULTS.CWI&&RESULTS.SDI){
+    const w=rankTop(RESULTS.CWI.subs)[0], expected=WOUND_TO_DOMAIN[w], dr=rankTop(RESULTS.SDI.subs);
+    const conv=(dr[0]===expected)||(RESULTS.SDI.subs[expected]&&RESULTS.SDI.subs[expected].band>=1&&dr.indexOf(expected)<=1);
+    L.push(`Wound-schema coherence: ${conv?'aligned':'divergent'} (leading wound ${BANK.CWI.subs[w].label} -> expected ${BANK.SDI.subs[expected].label} domain)`);
+  }
+  if(RESULTS.WAP){
+    const hot=rankTop(RESULTS.WAP.subs).filter(k=>RESULTS.WAP.subs[k].band===2).map(k=>BANK.WAP.subs[k].label);
+    if(hot.length) L.push(`Hottest doorways: ${hot.join(', ')}`);
+  }
+  return L;
+}
+
+/* plain-text report — ASCII only (jsPDF built-in fonts and mailto bodies
+   both choke on fancy glyphs; keep it portable) */
+function textReport(){
+  const d=new Date();
+  const out=[];
+  out.push("CORE WOUNDS — SERIES VI");
+  out.push("Core Wounds, the Armor Over Them & What Sets Them Off");
+  out.push("Results generated "+d.toLocaleDateString()+" "+d.toLocaleTimeString());
+  out.push("Scale: 1.00-6.00 per subscale. Bands: Faint/Present/Central and equivalents.");
+  out.push("");
+  reportModel().forEach(sec=>{
+    out.push("== "+sec.name+"  ("+sec.mode+") ==");
+    sec.rows.forEach(r=>{
+      const pad=r.label.length<28?r.label+" ".repeat(28-r.label.length):r.label;
+      out.push("  "+pad+"  "+r.mean.toFixed(2)+"  ("+r.bandLab+")");
+    });
+    out.push("");
+  });
+  const sl=synthLines();
+  if(sl.length){ out.push("== SYNTHESIS =="); sl.forEach(l=>out.push("  "+l)); out.push(""); }
+  out.push("---");
+  out.push("Educational self-reflection tool built on published frameworks.");
+  out.push("Not clinically validated, not a diagnosis, not professional advice.");
+  out.push("Reliability figures are simulated estimates of scoring architecture.");
+  return out.join("\n");
+}
+
+function mailtoHref(){
+  const to=SEND.to.trim();
+  const subject="My Core Wounds results (Series VI)";
+  let href="mailto:"+encodeURIComponent(EMAIL_RE.test(to)?to:"")+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(textReport());
+  if(SEND.elc) href+="&cc="+encodeURIComponent(ELC);
+  return href;
+}
+
+function shareCard(){
+  const bad=!!SEND.to.trim()&&!EMAIL_RE.test(SEND.to.trim());
+  const disabled = bad || (!SEND.to.trim() && !SEND.elc);
+  return `<div class="share">
+    <h4>Keep your results</h4>
+    <p class="sdesc">Email yourself a copy, or save a formatted PDF or text file. Everything happens on your device — the page sends nothing on its own.</p>
+    <label class="fld" for="em-to">Your email address</label>
+    <input id="em-to" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="${esc(SEND.to)}" aria-invalid="${bad}">
+    <p class="err" id="em-err" ${bad?"":"hidden"}>That doesn't look like an email address — check it's in the form name@example.com.</p>
+    <label class="check" for="em-elc"><input id="em-elc" type="checkbox" ${SEND.elc?"checked":""}><span>Also send a copy to Evolution Lab Collective<small>${ELC}</small></span></label>
+    <div class="consent" id="em-consent" ${SEND.elc?"":"hidden"}>Ticking this adds <b>${ELC}</b> as a cc, so that address will receive <b>your results and your email address</b> when you send.</div>
+    <div class="row-btns">
+      <a class="sbtn" id="em-open" href="${esc(mailtoHref())}" aria-disabled="${disabled}">Open in my email app</a>
+      <button class="sbtn ghost" type="button" id="em-copy">Copy results</button>
+      <button class="sbtn ghost" type="button" id="em-pdf">Download PDF</button>
+      <button class="sbtn ghost" type="button" id="em-txt">Download text</button>
+    </div>
+    <p class="sstatus" id="em-status" role="status"></p>
+    <p class="snote">Your email app opens with the message already written in, so you can review it before sending. <b>Nothing is sent from this page.</b> If no email app opens, use <b>Copy results</b> or <b>Download text</b>. A web page can't attach a file to an email, so to include the formatted report, download the PDF and attach it yourself.</p>
+    <details class="prev"><summary>Preview the full text</summary><textarea id="em-text" readonly aria-label="Full results text">${esc(textReport())}</textarea></details>
+  </div>`;
+}
+
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function download(text,name,type){
+  const b=new Blob([text],{type}); const u=URL.createObjectURL(b);
+  const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(u); a.remove();},0);
+}
+
+function makePdf(){
+  const jsPDFns = window.jspdf || window.jsPDF;
+  const Ctor = jsPDFns && (jsPDFns.jsPDF || jsPDFns);
+  if(!Ctor){ return false; }
+  const doc=new Ctor({unit:"pt",format:"letter"});
+  const M=54, W=612, right=W-M; let y=M;
+  const line=(txt,size,color,font)=>{doc.setFont("helvetica",font||"normal");doc.setFontSize(size);doc.setTextColor(color||"#241E1C");doc.text(txt,M,y);};
+  // header
+  line("Core Wounds — Series VI",20,"#8C3A3A","bold"); y+=20;
+  line("The wound, the armor over it, and what sets it off",11,"#6E635C","italic"); y+=26;
+  doc.setDrawColor("#DBD1C4"); doc.line(M,y,right,y); y+=24;
+  const d=new Date();
+  line("Results generated "+d.toLocaleDateString()+"  ·  scale 1.00–6.00 per subscale",9,"#6E635C","normal"); y+=24;
+
+  reportModel().forEach(sec=>{
+    if(y>720){doc.addPage();y=M;}
+    line(sec.name+"   ("+sec.mode+")",12.5,"#241E1C","bold"); y+=18;
+    sec.rows.forEach(r=>{
+      if(y>740){doc.addPage();y=M;}
+      doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor("#473D39");
+      doc.text(r.label,M,y);
+      doc.setFont("helvetica","bold"); doc.setTextColor("#241E1C");
+      doc.text(r.mean.toFixed(2)+"  "+r.bandLab, right, y, {align:"right"});
+      // bar
+      const by=y+4, bw=right-M, fill=Math.max(0,Math.min(1,(r.mean-1)/5));
+      doc.setFillColor("#E6DCCE"); doc.rect(M,by,bw,5,"F");
+      doc.setFillColor(PDFHEX[r.cnum]||"#9A3F45"); doc.rect(M,by,bw*fill,5,"F");
+      y+=22;
+    });
+    y+=10;
+  });
+  const sl=synthLines();
+  if(sl.length){
+    if(y>700){doc.addPage();y=M;}
+    line("Synthesis",12.5,"#241E1C","bold"); y+=18;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor("#473D39");
+    sl.forEach(t=>{ const wrapped=doc.splitTextToSize(t,right-M); wrapped.forEach(w=>{if(y>750){doc.addPage();y=M;} doc.text(w,M,y); y+=15;}); y+=4; });
+    y+=6;
+  }
+  if(y>690){doc.addPage();y=M;}
+  doc.setDrawColor("#DBD1C4"); doc.line(M,y,right,y); y+=16;
+  doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor("#6E635C");
+  const disc=doc.splitTextToSize("Educational self-reflection tool built on published psychological frameworks. Not clinically validated or normed; not a diagnosis; not professional advice and no substitute for it. Reliability figures are simulated estimates of the scoring architecture, not clinical accuracy. If anything here is distressing, consult a licensed professional; in the U.S. call or text 988.",right-M);
+  disc.forEach(w=>{if(y>760){doc.addPage();y=M;} doc.text(w,M,y); y+=11;});
+  doc.save("core-wounds-results.pdf");
+  return true;
+}
+
+function bindSend(){
+  const to=document.getElementById("em-to"); if(!to) return;
+  const elc=document.getElementById("em-elc"), open=document.getElementById("em-open");
+  const consent=document.getElementById("em-consent"), err=document.getElementById("em-err"), status=document.getElementById("em-status");
+  const refresh=()=>{
+    SEND.to=to.value; SEND.elc=elc.checked;
+    const v=SEND.to.trim(), bad=!!v&&!EMAIL_RE.test(v);
+    to.setAttribute("aria-invalid",bad); err.hidden=!bad;
+    consent.hidden=!elc.checked;
+    open.setAttribute("href",mailtoHref());
+    open.setAttribute("aria-disabled", String(bad || (!v && !elc.checked)));
+    const t=document.getElementById("em-text"); if(t) t.value=textReport();
+  };
+  to.addEventListener("input",refresh);
+  elc.addEventListener("change",refresh);
+  open.addEventListener("click",e=>{ if(open.getAttribute("aria-disabled")==="true"){ e.preventDefault(); status.textContent="Enter your email address, or tick the Evolution Lab option, first."; }});
+  document.getElementById("em-copy").addEventListener("click",async()=>{
+    try{ await navigator.clipboard.writeText(textReport()); status.textContent="Results copied — paste them into a new email or a note."; }
+    catch(e){ const t=document.getElementById("em-text"); t.closest("details").open=true; t.focus(); t.select(); status.textContent="Select the text below and copy it."; }
+  });
+  document.getElementById("em-txt").addEventListener("click",()=>{ download(textReport(),"core-wounds-results.txt","text/plain"); status.textContent="Text file downloaded."; });
+  document.getElementById("em-pdf").addEventListener("click",()=>{ const okp=makePdf(); status.textContent = okp ? "PDF downloaded — attach it to your email." : "PDF couldn't load; use Download text instead."; });
 }
 
 /* ---------- init ---------- */

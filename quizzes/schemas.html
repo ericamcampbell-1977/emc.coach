@@ -4,6 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Layout: single reading column, tab rail on top, one question per screen; results as ruled rows with a signature chart. Series X structure, cool slate-and-teal palette. */
 :root{
@@ -136,6 +137,25 @@ table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule)}
 th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
 td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+/* keep-your-results card */
+.share{border:1px solid var(--rule);border-radius:10px;padding:20px 18px 18px;background:var(--sheet);display:flex;flex-direction:column;gap:12px}
+.share h3{font-family:var(--display);font-weight:500;font-size:20px;margin:0}
+.share p{margin:0;font-size:14px;color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:6px;max-width:420px}
+.field label{font-size:14px;font-weight:500}
+.field input{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:9px 11px;min-width:0}
+.field input:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.field input[aria-invalid="true"]{border-color:var(--b3)}
+.ferr{font-size:13px;color:var(--b3);margin:0;min-height:1em}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;max-width:62ch;cursor:pointer}
+.check input{margin-top:3px;width:16px;height:16px;accent-color:var(--acc);flex:none}
+.check .addr{font-family:var(--mono);font-size:13px;word-break:break-all}
+.consent{font-size:13px;color:var(--muted);margin:0 0 0 26px;max-width:60ch}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.btn.sm{padding:9px 14px;font-size:14px}
+.status{font-size:13.5px;color:var(--ink);min-height:1.2em;margin:0}
+details.prev summary{cursor:pointer;font-size:13.5px;color:var(--muted)}
+details.prev pre{white-space:pre-wrap;word-break:break-word;font-family:var(--mono);font-size:12px;line-height:1.55;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:12px;max-height:320px;overflow:auto;margin-top:8px}
 /* legal */
 .legal{border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:10px;max-width:68ch;font-size:13px;line-height:1.55;color:var(--muted)}
 .legal h2{font-family:var(--display);font-weight:500;font-size:17px;color:var(--ink);margin:0}
@@ -158,7 +178,7 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
     <p><b>For education and self-reflection only.</b> This suite is an original, self-authored set of questionnaires written for a book project. It is not a psychological test, a medical device, or a clinical assessment. It has not been validated or normed on a human sample, and the reliability figures in the appendix come from computer simulation, not from real respondents.</p>
     <p><b>Not a diagnosis or professional advice.</b> Nothing on this page diagnoses, treats, or rules out any mental health condition, and nothing here is medical, psychological, or legal advice. Using it does not create a therapist–client or any other professional relationship. Talk with a licensed mental health professional before making decisions about your health, treatment, or relationships based on these results.</p>
     <p><b>If you are in crisis</b> or thinking about harming yourself, call or text 988 (Suicide &amp; Crisis Lifeline, US) or your local emergency number now.</p>
-    <p><b>Your answers.</b> Responses are saved only in this browser on this device so you can resume later. They are not sent to the author or anyone else. Use Retake on each tab, or clear your browser's site data, to erase them.</p>
+    <p><b>Your answers.</b> Responses are saved only in this browser on this device so you can resume later. Nothing is sent anywhere unless you choose to email your results from the Synthesis tab. Emailing opens your own email app with the message already written; nothing goes out until you press Send there, and it goes only to the addresses you choose. Ticking the box to include Evolution Lab Collective adds evolutionlabcollective@gmail.com as a recipient; leave it unticked to keep your results to yourself. Use Retake on each tab, or clear your browser's site data, to erase your answers.</p>
     <p><b>Independent work.</b> This suite draws on published schema therapy research (Young, Klosko &amp; Weishaar, 2003; the Schema Mode Inventory) but uses entirely original items and is not affiliated with or endorsed by Jeffrey Young, the Schema Therapy Institute, or the International Society of Schema Therapy. It does not reproduce the Young Schema Questionnaire or the Schema Mode Inventory, and its scores are not comparable to theirs.</p>
     <p><b>No warranty.</b> The suite is provided as is, without warranties of any kind. To the fullest extent permitted by law, the author is not liable for any decision made or action taken based on it.</p>
     <p>© 2026 Erica Campbell. All rights reserved.</p>
@@ -507,7 +527,8 @@ function ranked(sc,excl){return Object.keys(sc).filter(k=>!(excl||[]).includes(k
 
 /* state */
 const STORE="seriesIX-schemas-v2";
-let S={tab:"SPI",ans:{},pos:{SPI:0,SMP:0,CNI:0},phase:{SPI:"intro",SMP:"intro",CNI:"intro"}};
+let S={tab:"SPI",ans:{},pos:{SPI:0,SMP:0,CNI:0},phase:{SPI:"intro",SMP:"intro",CNI:"intro"},email:"",cc:false};
+const LAB="evolutionlabcollective@gmail.com";
 try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans) S=Object.assign(S,p)}}catch(e){}
 function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
 function isDone(k){return ORDER[k].every(o=>S.ans[o.id])}
@@ -529,7 +550,7 @@ function render(){
     const k=S.tab, ph=S.phase[k];
     v.innerHTML = ph==="q" ? qHTML(k) : ph==="done" ? resultsHTML(k) : introHTML(k);
     bindPanel(k);
-  } else if(S.tab==="SYN"){ v.innerHTML=synHTML(); }
+  } else if(S.tab==="SYN"){ v.innerHTML=synHTML(); bindShare(); }
   else { v.innerHTML=apxHTML(); }
 }
 function introHTML(k){
@@ -712,7 +733,127 @@ function synHTML(){
   if(s){const top=ranked(s).slice(0,3).filter(k=>s[k]>=4);
     out.push(`<div class="card" data-card="needed">${K("var(--sch)","What your top schemas needed · SPI")}<h3>The antidote, not the label</h3>${top.length?`<p>Schema therapy works by meeting the need a schema grew in place of. These are the needs behind your highest schemas at 4.00 or above.</p><ul class="asks">${top.map(k=>`<li><b>${BANK.SPI.subs[k].label}.</b> ${NEEDED[k]}</li>`).join("")}</ul>`:`<p>None of your schemas reaches 4.00, so there's no specific need to point to. If one still feels true for you, its row on the Schemas tab is worth a second read.</p>`}</div>`);
   }
-  return `<section class="res"><div class="eyebrow">Synthesis</div><h2>Reading the three together</h2><p class="note">Cards unlock as you finish each inventory. Together they trace a chain: a need that went short, the schema that grew in its place, and the modes it pushes you into now. These are prompts for reflection, not a diagnosis.</p><div class="cards">${out.join("")}</div></section>`;
+  const anyDone=KEYS.some(isDone);
+  return `<section class="res"><div class="eyebrow">Synthesis</div><h2>Reading the three together</h2><p class="note">Cards unlock as you finish each inventory. Together they trace a chain: a need that went short, the schema that grew in its place, and the modes it pushes you into now. These are prompts for reflection, not a diagnosis.</p><div class="cards">${out.join("")}</div>${anyDone?shareHTML():""}</section>`;
+}
+function shareHTML(){
+  const done=KEYS.filter(isDone).map(k=>BANK[k].code), rest=KEYS.filter(k=>!isDone(k)).map(k=>BANK[k].code);
+  return `<div class="share" id="share">
+    <h3>Keep your results</h3>
+    <p>Save a copy before you close this page. Your answers aren't stored anywhere once the page is gone. Includes ${done.join(", ")}${rest.length?` (${rest.join(", ")} not yet taken)`:""}.</p>
+    <div class="field"><label for="em">Email the results to yourself</label>
+      <input id="em" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="${esc(S.email)}" aria-invalid="false"><p class="ferr" id="ferr"></p></div>
+    <label class="check"><input type="checkbox" id="cc" ${S.cc?"checked":""}><span>Also send a copy to Evolution Lab Collective<br><span class="addr">${LAB}</span></span></label>
+    <p class="consent" id="consent" ${S.cc?"":'hidden'}>Ticking this sends your schema, mode and core-need scores to Evolution Lab Collective as well. Leave it unticked to keep them to yourself.</p>
+    <div class="actions">
+      <button class="btn sm" data-act="mail">Open in my email app</button>
+      <button class="btn ghost sm" data-act="copy">Copy results</button>
+      <button class="btn ghost sm" data-act="pdf">Download PDF</button>
+      <button class="btn ghost sm" data-act="txt">Download text</button>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+    <details class="prev"><summary>Preview the text</summary><pre id="prevtext">${esc(reportText())}</pre></details>
+  </div>`;
+}
+
+/* ---- results report: shared by email text, text file and PDF ---- */
+function reportData(){
+  const date=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  const secs=KEYS.filter(isDone).map(k=>{
+    const sc=score(k,S.ans), B=BANK[k];
+    const rows=Object.keys(B.subs).sort((a,b)=>sc[b]-sc[a]).map(s=>({label:B.subs[s].label,v:sc[s],band:BANDS[k][bandIdx(sc[s])],risk:riskIdx(k,s,sc[s])}));
+    return {code:B.code,name:B.name,rows};
+  });
+  const notDone=KEYS.filter(k=>!isDone(k)).map(k=>BANK[k].name);
+  // synthesis lines, reusing the same logic as the cards
+  const syn=[];
+  const s=isDone("SPI")?score("SPI",S.ans):null, m=isDone("SMP")?score("SMP",S.ans):null, n=isDone("CNI")?score("CNI",S.ans):null;
+  if(s){const act=Object.keys(s).filter(k=>s[k]>=4.5);
+    syn.push(spread(s)<0.5?"Schema profile: all 18 scores sit within half a point, so no schema stands out.":act.length?`Active schemas: ${act.map(k=>BANK.SPI.subs[k].label).join(", ")}.`:"No schema reaches the active band.");}
+  if(s&&m){const rk=ranked(s),lead=s[rk[0]];
+    if(lead>=4&&spread(s)>=0.5){const styles={surrender:m.Surrenderer,avoidance:Math.max(m.Detached,m.Soother),overcompensation:Math.max(m.Aggrandizer,m.Attack)};
+      const st=Object.keys(styles).sort((a,b)=>styles[b]-styles[a])[0];
+      syn.push(`Loudest schema ${BANK.SPI.subs[rk[0]].label} handled mainly through ${st}.`);}}
+  if(s&&n){const dm=domainMeans(s),topNeed=ranked(n)[0],d=BANK.CNI.subs[topNeed].dom,drank=DOM_ORDER.slice().sort((a,b)=>dm[b]-dm[a]);
+    if(spread(n)>=0.5&&spread(dm)>=0.5) syn.push(`Most unmet need (${BANK.CNI.subs[topNeed].label}) and schema domains ${drank.indexOf(d)<=1?"line up":"diverge"}.`);}
+  if(m){const ha=m.HealthyAdult,crit=m.Punitive>=m.Demanding?"Punitive":"Demanding";
+    syn.push(`${ha-m[crit]>=.5?"Healthy Adult has room to work":m[crit]-ha>=.5?"Inner critic currently outweighs the Healthy Adult":"Inner critic and Healthy Adult are close to even"} (${BANK.SMP.subs[crit].label} ${f2(m[crit])} vs Healthy Adult ${f2(ha)}).`);}
+  return {date,secs,notDone,syn};
+}
+function reportText(){
+  const r=reportData(),L=[];
+  L.push("SERIES IX · SCHEMAS, MODES & NEEDS","Your results · "+r.date,"",
+    "Scores run 1.00 to 6.00; the midpoint is 3.50. Bands break at 2.50, 4.00 and 4.50. Higher means more strongly endorsed (for Contented Child and Healthy Adult, higher is healthier).","");
+  r.secs.forEach(sec=>{L.push(sec.name.toUpperCase());sec.rows.forEach(x=>L.push("  "+x.label+": "+f2(x.v)+" ("+x.band+")"));L.push("");});
+  if(r.notDone.length) L.push("Not yet taken: "+r.notDone.join(", "),"");
+  if(r.syn.length){L.push("SYNTHESIS");r.syn.forEach(x=>L.push("  • "+x));L.push("");}
+  L.push("This is a self-reflection tool, not a diagnosis. Results are not normed or clinically validated.",
+    "If you are in crisis in the US, call or text 988, or call 911.",
+    "© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n");
+}
+function recipients(){const to=[S.email.trim()];if(S.cc)to.push(LAB);return to.filter(Boolean)}
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim())}
+function mailtoURL(){
+  const to=encodeURIComponent(S.email.trim());
+  const cc=S.cc?"&cc="+encodeURIComponent(LAB):"";
+  const subj=encodeURIComponent("My Series IX results — "+reportData().date);
+  // keep the body well under mailto length limits
+  const body=encodeURIComponent(reportText());
+  return `mailto:${to}?subject=${subj}${cc}&body=${body}`;
+}
+function buildPDF(){
+  const J=window.jspdf&&window.jspdf.jsPDF; if(!J) return null;
+  const r=reportData(), doc=new J({unit:"pt",format:"letter"}), M=54, W=612-M*2; let y=64;
+  const line=(t,sz,col,gap)=>{doc.setFontSize(sz);doc.setTextColor(col||"#1D2729");doc.splitTextToSize(t,W).forEach(ln=>{if(y>730){doc.addPage();y=64}doc.text(ln,M,y);y+=sz*1.32});y+=gap||0};
+  const BAR={0:"#3D7A4C",1:"#5E7279",2:"#A86A0E",3:"#A63A41"};
+  doc.setFont("helvetica","bold");line("Series IX · Schemas, Modes & Needs",20,"#1E6B68");
+  doc.setFont("helvetica","normal");line("Your results · "+r.date,11,"#5B686B",6);
+  line("Scores run 1.00–6.00; midpoint 3.50; bands break at 2.50, 4.00, 4.50. Colour shows level of concern. For Contented Child and Healthy Adult, higher is healthier.",9.5,"#5B686B",10);
+  r.secs.forEach(sec=>{
+    doc.setFont("helvetica","bold");line(sec.name,13,"#1D2729",4);doc.setFont("helvetica","normal");
+    sec.rows.forEach(x=>{if(y>718){doc.addPage();y=64}
+      const bx=M+250, bw=W-250-54, fill=(x.v-1)/5*bw;
+      doc.setTextColor("#1D2729");doc.setFontSize(10);doc.text(doc.splitTextToSize(x.label,236),M,y);
+      doc.setDrawColor("#CDD5D3");doc.setFillColor("#E7ECEA");doc.roundedRect(bx,y-8,bw,7,2,2,"F");
+      doc.setFillColor(BAR[x.risk]);doc.roundedRect(bx,y-8,Math.max(2,fill),7,2,2,"F");
+      doc.setTextColor("#5B686B");doc.setFontSize(9);doc.text(f2(x.v)+" ("+x.band+")",612-M,y-2,{align:"right"});
+      y+=18});
+    y+=8;
+  });
+  if(r.notDone.length){doc.setFont("helvetica","italic");line("Not yet taken: "+r.notDone.join(", "),9.5,"#5B686B",6);doc.setFont("helvetica","normal")}
+  if(r.syn.length){doc.setFont("helvetica","bold");line("Synthesis",13,"#1D2729",4);doc.setFont("helvetica","normal");r.syn.forEach(t=>line("• "+t,10,"#1D2729",2));y+=6}
+  doc.setDrawColor("#CDD5D3");if(y>700){doc.addPage();y=64}doc.line(M,y,612-M,y);y+=14;
+  line("This is a self-reflection tool, not a diagnosis. Results are not normed or clinically validated. If you are in crisis in the US, call or text 988, or call 911.",8.5,"#5B686B",4);
+  line("© 2026 Erica Campbell. All rights reserved.",8.5,"#5B686B",0);
+  return doc;
+}
+function bindShare(){
+  const box=$("#share"); if(!box) return;
+  const em=$("#em"), cc=$("#cc"), st=$("#status"), fe=$("#ferr");
+  const setStatus=(t,err)=>{st.textContent=t;st.classList.toggle("err",!!err)};
+  const needEmail=()=>{const ok=validEmail(S.email);em.setAttribute("aria-invalid",S.email&&!ok?"true":"false");fe.textContent=S.email&&!ok?"That doesn't look like an email address.":"";return ok};
+  em.addEventListener("input",()=>{S.email=em.value;save();$("#prevtext");needEmail()});
+  cc.addEventListener("change",()=>{S.cc=cc.checked;save();const c=$("#consent");if(c)c.hidden=!cc.checked});
+  box.querySelectorAll("[data-act]").forEach(b=>b.onclick=async()=>{
+    const a=b.dataset.act;
+    if(a==="mail"){ if(!needEmail()){setStatus("Enter your email first, or use Copy or Download below.",true);em.focus();return}
+      window.location.href=mailtoURL();
+      setStatus("Opening your email app to "+recipients().join(" and ")+". Nothing sends until you press Send there. If nothing opens, use Copy or Download."); return; }
+    if(a==="copy"){ try{await navigator.clipboard.writeText(reportText());setStatus("Results copied. Paste them into an email or a note.");}
+      catch(e){const pre=$("#prevtext");if(pre){const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}setStatus("Couldn't copy automatically — the preview text is selected below; copy it with Ctrl/Cmd+C.",true);} return; }
+    if(a==="txt"){ dl("series-ix-results.txt",new Blob([reportText()],{type:"text/plain"}),"text"); return; }
+    if(a==="pdf"){ const doc=buildPDF(); if(!doc){setStatus("The PDF library is still loading — try again in a moment, or use Download text.",true);return}
+      dl("series-ix-results.pdf",doc.output("blob"),"PDF"); return; }
+    async function dl(name,blob,kind){
+      const cap=await (window.claude&&claude.use?claude.use("downloads"):Promise.resolve(null)).catch(()=>null);
+      if(cap){ try{await cap.save({filename:name,data:blob});setStatus(kind+" saved.");return}
+        catch(e){ if(e&&e.code==="declined"){setStatus("Save cancelled.");return} } }
+      try{const u=URL.createObjectURL(blob),an=document.createElement("a");an.href=u;an.download=name;document.body.appendChild(an);an.click();an.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);setStatus(kind+" download started. If nothing happened, use Copy or the text preview.");}
+      catch(e){setStatus("Couldn't start the download here. Use Copy, or open this page on your own device.",true);}
+    }
+  });
+  needEmail();
 }
 
 /* appendix */
@@ -763,6 +904,7 @@ function apxHTML(){
 }
 
 window.__SIX={BANK,ORDER,KEYS,score,bandIdx,domainMeans,orderFor,get S(){return S},render,answer,back,isDone,ALPHA,
+  reportData,reportText,recipients,validEmail,mailtoURL,LAB,
   fill(k,fn){ORDER[k].forEach(o=>delete S.ans[o.id]);S.tab=k;S.pos[k]=0;S.phase[k]="q";for(let i=0;i<ORDER[k].length;i++){const o=ORDER[k][S.pos[k]];answer(k,fn({sub:o.sub,rev:BANK[k].subs[o.sub].items[o.i].rev}))}}};
 render();
 </script>

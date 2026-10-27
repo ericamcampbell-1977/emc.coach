@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   /* ============ TOKEN SYSTEM ============ */
   /* Block 1: base (light) */
@@ -250,6 +251,32 @@
   .disclaimer h4 { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 10px; }
   .disclaimer p { font-size: 0.76rem; line-height: 1.6; color: var(--ink-faint); margin: 0 0 8px; max-width: 72ch; }
 
+  /* keep-your-results (email / save) */
+  .send { margin-top: 8px; }
+  .send-k { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .send-h { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.3rem; margin: 0 0 6px; }
+  .send-p { font-size: 0.92rem; color: var(--ink-soft); margin: 0 0 18px; max-width: 60ch; }
+  .field { display: flex; flex-direction: column; gap: 6px; max-width: 420px; margin-bottom: 16px; }
+  .field label { font-size: 0.85rem; font-weight: 500; }
+  .field input { font-family: 'Inter', sans-serif; font-size: 0.95rem; color: var(--ink); background: var(--sheet); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; }
+  .field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .field input[aria-invalid="true"] { border-color: var(--band-dev); }
+  .err { font-size: 0.8rem; color: var(--band-dev); margin: 0; }
+  .check { display: flex; gap: 11px; align-items: flex-start; font-size: 0.9rem; max-width: 62ch; cursor: pointer; margin-bottom: 20px; }
+  .check input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+  .check small { display: block; color: var(--ink-faint); font-size: 0.8rem; margin-top: 2px; }
+  .send-btns { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  a.btn { text-decoration: none; display: inline-block; }
+  .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+  .status { font-size: 0.82rem; color: var(--ink-soft); min-height: 1.2em; margin: 14px 0 0; }
+  .send-note { font-size: 0.8rem; color: var(--ink-faint); max-width: 66ch; margin: 10px 0 0; }
+  details.prev { margin-top: 14px; }
+  details.prev summary { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--ink-faint); cursor: pointer; list-style: none; }
+  details.prev summary::-webkit-details-marker { display: none; }
+  details.prev summary:before { content: '+ '; color: var(--accent); }
+  details.prev[open] summary:before { content: '– '; }
+  details.prev textarea { display: block; width: 100%; min-height: 220px; margin-top: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; line-height: 1.5; color: var(--ink); background: var(--sheet); border: 1px solid var(--line); border-radius: 4px; padding: 11px; resize: vertical; }
+
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
 </style>
 </head>
@@ -400,6 +427,18 @@
   }
   function bandOf(m) { return m < 3.0 ? "dev" : (m < 4.5 ? "emg" : "str"); }
   const BAND = { dev: "Developing", emg: "Emerging", str: "Strong" };
+  const OVERALL_LINE = {
+    dev: "Several capacities are still developing. That's information, not a verdict — maturity is built, not issued, and the lowest bars are simply where the leverage is.",
+    emg: "A solid, workable profile: most capacities are online, with clear edges to grow. This is where most reflective adults land.",
+    str: "A well-developed profile across the board. The capacities that let you respond rather than react are largely in place."
+  };
+
+  // ---------- email / save results ----------
+  const ELC = "evolutionlabcollective@gmail.com";
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const SEND = { to: "", elc: false };
+  const $ = (s) => document.querySelector(s);
+  function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 
   // ---------- disclaimer (shared footer) ----------
   function disclaimerHTML() {
@@ -409,8 +448,199 @@
         <p>This inventory is an educational self-reflection tool. It is <strong>not</strong> a clinical, diagnostic, or psychological assessment instrument, and it does not diagnose, treat, screen for, or rule out any mental health condition. It is not a substitute for evaluation, diagnosis, or advice from a qualified health or mental-health professional, and using it creates no therapeutic, clinical, or professional relationship of any kind.</p>
         <p>The subscales draw on published psychological frameworks, but the items are original and the instrument itself has not been clinically validated or normed on any population. The reliability figures shown in the psychometric appendix are <strong>simulated estimates generated from synthetic data</strong> for design purposes — they are not results from human respondents and should not be read as evidence of clinical accuracy.</p>
         <p>This tool is provided “as is,” without warranties of any kind, express or implied, including fitness for a particular purpose. Any reliance on it is solely at your own discretion and risk. If you are struggling or in distress, please reach out to a licensed professional or a crisis line in your area.</p>
+        <p><strong>Privacy.</strong> Your responses stay in your browser; nothing is saved or transmitted on its own. If you use the email option, your own email app sends the message after you review it, only to the addresses you choose. Checking the Evolution Lab Collective box adds evolutionlabcollective@gmail.com as a recipient, who will then receive your results and your email address.</p>
         <p>© 2026. All rights reserved. For personal reflection and research use only.</p>
       </div>`;
+  }
+
+  // ---------- results report (text, mailto, PDF) ----------
+  function textBar(m) { const n = Math.round(((m - 1) / 5) * 10); return "■".repeat(n) + "□".repeat(10 - n); }
+  function fmtDate() { try { return new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }); } catch (e) { return new Date().toDateString(); } }
+
+  function textReport(compact) {
+    const { means, overall } = score();
+    const oBand = bandOf(overall);
+    const L = [];
+    L.push("THE EMOTIONAL MATURITY INVENTORY");
+    L.push("Your results — " + fmtDate());
+    L.push("");
+    L.push("OVERALL: " + overall.toFixed(1) + " / 6.0 — " + BAND[oBand]);
+    if (!compact) L.push(OVERALL_LINE[oBand]);
+    L.push("");
+    L.push(compact ? "YOUR SEVEN CAPACITIES (1.0–6.0, higher = more mature):" : "YOUR SEVEN CAPACITIES");
+    if (!compact) L.push("Each scored 1.0–6.0; a higher score is the more emotionally mature response.", "");
+    SUBS.forEach(k => {
+      const m = means[k], b = bandOf(m);
+      if (compact) {
+        L.push("• " + SUBSCALES[k].name + " — " + m.toFixed(1) + " / 6.0  " + BAND[b]);
+      } else {
+        L.push(SUBSCALES[k].name + " — " + m.toFixed(1) + " / 6.0  ·  " + BAND[b]);
+        L.push(textBar(m));
+        L.push(SUBSCALES[k].desc[b]);
+        L.push("");
+      }
+    });
+    if (compact) {
+      L.push("");
+      L.push("For the full report — the colored chart and the explanation of each score — download the PDF from the questionnaire and attach it.");
+    } else {
+      L.push("ABOUT THIS SCORE");
+      L.push("Seven capacities, 42 statements, balanced so that agreeing with everything lands at the 3.50 midpoint. Bands: Developing (under 3.0), Emerging (3.0–4.5), Strong (4.5 and up). Constructs draw on the Goleman/Boyatzis EQ competency model, Singh & Bhargava's Emotional Maturity dimensions, and the APA framing of maturity as appropriately regulated emotional expression.");
+      L.push("");
+      L.push("IMPORTANT");
+      L.push("This is an educational self-reflection tool, not a clinical or diagnostic instrument, and no substitute for a qualified professional. Reliability figures are simulated estimates from synthetic data, not norms from human respondents. If you are struggling, please reach out to a licensed professional or a crisis line in your area.");
+    }
+    L.push("");
+    L.push("© 2026. For personal reflection and research use only.");
+    return L.join("\n");
+  }
+
+  function mailtoHref() {
+    const me = SEND.to.trim(), cc = SEND.elc ? [ELC] : [];
+    const to = me ? [me] : cc;
+    const ccs = me ? cc : [];
+    const q = [];
+    if (ccs.length) q.push("cc=" + ccs.join(","));
+    q.push("subject=" + encodeURIComponent("My Emotional Maturity Inventory results"));
+    q.push("body=" + encodeURIComponent(textReport(true)));
+    return "mailto:" + to.join(",") + "?" + q.join("&");
+  }
+
+  function buildPdf() {
+    if (!(window.jspdf && window.jspdf.jsPDF)) return null;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    const { means, overall } = score();
+    const oBand = bandOf(overall);
+    const M = 54, W = 612, CW = W - M * 2;
+    let y = 66;
+    const HEX = { SA:[79,103,196], ER:[47,143,134], AC:[192,138,62], DT:[79,123,160], EM:[192,107,134], RM:[95,145,88], IA:[138,103,192] };
+    const BHEX = { dev:[192,97,74], emg:[192,145,62], str:[79,143,106] };
+
+    doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.setTextColor(29, 33, 48);
+    doc.text("The Emotional Maturity Inventory", M, y); y += 19;
+    doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(120, 126, 140);
+    doc.text("Your results  ·  " + fmtDate(), M, y); y += 30;
+
+    const ob = BHEX[oBand];
+    doc.setFont("helvetica", "bold"); doc.setFontSize(30); doc.setTextColor(ob[0], ob[1], ob[2]);
+    doc.text(overall.toFixed(1), M, y);
+    const ow = doc.getTextWidth(overall.toFixed(1));
+    doc.setFont("helvetica", "normal"); doc.setFontSize(12); doc.setTextColor(120, 126, 140);
+    doc.text("/ 6.0", M + ow + 8, y);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.setTextColor(ob[0], ob[1], ob[2]);
+    doc.text("OVERALL · " + BAND[oBand].toUpperCase(), M, y + 16); y += 32;
+    doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(76, 83, 99);
+    const oline = doc.splitTextToSize(OVERALL_LINE[oBand], CW); doc.text(oline, M, y); y += oline.length * 13 + 16;
+
+    SUBS.forEach(k => {
+      if (y > 700) { doc.addPage(); y = 66; }
+      const m = means[k], b = bandOf(m), c = HEX[k], pct = (m - 1) / 5;
+      doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(29, 33, 48);
+      doc.text(SUBSCALES[k].name, M, y);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(76, 83, 99);
+      const rt = m.toFixed(1) + " / 6.0  ·  " + BAND[b];
+      doc.text(rt, W - M - doc.getTextWidth(rt), y);
+      y += 9;
+      doc.setFillColor(228, 231, 239); doc.roundedRect(M, y, CW, 8, 3, 3, "F");
+      doc.setFillColor(c[0], c[1], c[2]); doc.roundedRect(M, y, Math.max(6, CW * pct), 8, 3, 3, "F");
+      doc.setDrawColor(150, 156, 170); doc.setLineWidth(0.5);
+      [(3 - 1) / 5, (4.5 - 1) / 5].forEach(z => { const x = M + CW * z; doc.line(x, y - 1, x, y + 9); });
+      y += 19;
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(76, 83, 99);
+      const dd = doc.splitTextToSize(SUBSCALES[k].desc[b], CW); doc.text(dd, M, y); y += dd.length * 12 + 16;
+    });
+
+    if (y > 650) { doc.addPage(); y = 66; }
+    y += 4; doc.setDrawColor(215, 219, 230); doc.setLineWidth(1); doc.line(M, y, W - M, y); y += 16;
+    doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(135, 142, 160);
+    doc.text("IMPORTANT — PLEASE READ", M, y); y += 12;
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(135, 142, 160);
+    const disc = "This inventory is an educational self-reflection tool — not a clinical, diagnostic, or psychological assessment instrument, and no substitute for a qualified professional. The items are original and the instrument has not been clinically validated or normed. The reliability figures are simulated estimates from synthetic data, not results from human respondents. Provided “as is,” without warranties of any kind. If you are struggling, please reach out to a licensed professional or a crisis line in your area.";
+    const dl = doc.splitTextToSize(disc, CW); doc.text(dl, M, y); y += dl.length * 11 + 10;
+    doc.text("© 2026. For personal reflection and research use only.", M, y);
+    return doc;
+  }
+
+  function downloadPdf() {
+    try { const doc = buildPdf(); if (!doc) return false; doc.save("Emotional Maturity Inventory — results.pdf"); return true; }
+    catch (e) { return false; }
+  }
+
+  function sendCardHTML() {
+    return `
+      <hr class="divider" />
+      <div class="send" id="send">
+        <div class="send-k">Keep your results</div>
+        <h3 class="send-h">Email or save your results</h3>
+        <p class="send-p">Your results aren't stored anywhere. Email a copy to yourself, or download a PDF to keep.</p>
+        <div class="field">
+          <label for="em-to">Your email address</label>
+          <input id="em-to" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" aria-describedby="em-err" />
+          <p class="err" id="em-err" hidden>Check the address — it should look like name@example.com.</p>
+        </div>
+        <label class="check" for="em-elc">
+          <input id="em-elc" type="checkbox" />
+          <span>Also send a copy to Evolution Lab Collective<small>${ELC} will receive your results and your email address.</small></span>
+        </label>
+        <div class="send-btns">
+          <a class="btn" id="em-open" href="#" aria-disabled="true">Open in my email app</a>
+          <button class="btn ghost" type="button" id="em-copy">Copy results</button>
+          <button class="btn ghost" type="button" id="em-pdf" hidden>Download PDF</button>
+        </div>
+        <p class="status" id="em-status" role="status"></p>
+        <p class="send-note">Your email app opens with the message filled in, so you can review it before sending. Nothing is sent from this page. If no email app opens, use Copy results and paste into a new email.<span id="em-pdfnote" hidden> For the full formatted report, download the PDF and attach it.</span></p>
+        <details class="prev"><summary>Preview the full text</summary><textarea id="em-text" readonly aria-label="Full results text"></textarea></details>
+      </div>`;
+  }
+
+  function showPdf() {
+    const on = !!(window.jspdf && window.jspdf.jsPDF);
+    const b = $("#em-pdf"), n = $("#em-pdfnote");
+    if (b) b.hidden = !on;
+    if (n) n.hidden = !on;
+  }
+
+  function bindSend() {
+    const to = $("#em-to"); if (!to) return;
+    const elc = $("#em-elc"), open = $("#em-open"), copy = $("#em-copy"), pdf = $("#em-pdf"),
+          err = $("#em-err"), status = $("#em-status"), text = $("#em-text");
+    text.value = textReport(false);
+    // seed fields from state so entries persist across re-render
+    to.value = SEND.to; elc.checked = SEND.elc;
+    function refresh() {
+      SEND.to = to.value; SEND.elc = elc.checked;
+      const v = SEND.to.trim(), hasAddr = v.length > 0, bad = hasAddr && !EMAIL_RE.test(v);
+      const canSend = bad ? false : (hasAddr || SEND.elc);
+      to.setAttribute("aria-invalid", bad ? "true" : "false");
+      err.hidden = !bad;
+      open.setAttribute("href", mailtoHref());
+      open.setAttribute("aria-disabled", canSend ? "false" : "true");
+    }
+    to.addEventListener("input", refresh);
+    elc.addEventListener("change", refresh);
+    open.addEventListener("click", (e) => {
+      if (open.getAttribute("aria-disabled") === "true") {
+        e.preventDefault(); to.focus();
+        status.textContent = "Add a valid email address, or tick the Evolution Lab Collective box, first.";
+      } else { status.textContent = "Opening your email app…"; }
+    });
+    copy.addEventListener("click", async () => {
+      const t = textReport(false);
+      try { await navigator.clipboard.writeText(t); status.textContent = "Results copied — paste them into a new email."; }
+      catch (e) {
+        const d = text.closest("details"); if (d) d.open = true;
+        text.focus(); text.select();
+        try { document.execCommand("copy"); status.textContent = "Results copied from the preview below."; }
+        catch (_) { status.textContent = "Couldn't copy automatically — select the text in the preview and copy it."; }
+      }
+    });
+    pdf.addEventListener("click", () => {
+      const ok = downloadPdf();
+      status.textContent = ok ? "PDF downloaded." : "Couldn't generate the PDF here — use Copy results instead.";
+    });
+    showPdf();
+    refresh();
   }
 
   // ---------- screens ----------
@@ -421,7 +651,7 @@
         <p class="eyebrow">A self-assessment</p>
         <h1>The Emotional<br>Maturity <em>Inventory</em></h1>
         <p class="lede">Emotional maturity isn't staying calm or having it together. It's what happens next — after you feel something. This looks at seven capacities that separate reacting from responding.</p>
-        <p class="meta">${ITEMS.length} statements, about six minutes. There are no neutral answers on purpose: each one asks you to lean one way. Answer for how you actually tend to be, not how you'd like to be. Nothing is saved or sent.</p>
+        <p class="meta">${ITEMS.length} statements, about six minutes. There are no neutral answers on purpose: each one asks you to lean one way. Answer for how you actually tend to be, not how you'd like to be. Nothing is saved or sent automatically — at the end you can choose to email your results to yourself or download them.</p>
         <button class="btn" id="begin">Begin</button>
         <p class="hint">Tip: press <kbd>1</kbd>–<kbd>6</kbd> to answer, <kbd>Backspace</kbd> to go back.</p>
         ${disclaimerHTML()}
@@ -474,11 +704,7 @@
     const devCount = SUBS.filter(k => bandOf(means[k]) === "dev").length;
     const z1 = ((3.0 - 1) / 5) * 100, z2 = ((4.5 - 1) / 5) * 100;
 
-    const overallLine = {
-      dev: "Several capacities are still developing. That's information, not a verdict — maturity is built, not issued, and the lowest bars are simply where the leverage is.",
-      emg: "A solid, workable profile: most capacities are online, with clear edges to grow. This is where most reflective adults land.",
-      str: "A well-developed profile across the board. The capacities that let you respond rather than react are largely in place."
-    }[oBand];
+    const overallLine = OVERALL_LINE[oBand];
 
     let gauges = "";
     SUBS.forEach(k => {
@@ -514,6 +740,8 @@
         ${gauges}
         <hr class="divider" />
         ${care}
+        ${sendCardHTML()}
+        <hr class="divider" />
         <details class="appendix">
           <summary>Psychometric appendix</summary>
           <div class="appendix-body" id="appendix"></div>
@@ -527,7 +755,8 @@
     }, 60));
 
     renderAppendix();
-    document.getElementById("again").addEventListener("click", () => { answers.fill(null); renderStart(); });
+    bindSend();
+    document.getElementById("again").addEventListener("click", () => { answers.fill(null); SEND.to = ""; SEND.elc = false; renderStart(); });
   }
 
   function renderAppendix() {
@@ -576,7 +805,11 @@
     computeScore: score,
     goto(p) { pos = p; renderQuestion(); },
     start: renderStart, results: renderResults,
-    get pos() { return pos; }
+    get pos() { return pos; },
+    // email/save hooks
+    send: SEND, ELC, emailRe: EMAIL_RE,
+    textReport, mailtoHref, buildPdf, bindSend,
+    setSend(to, elc) { SEND.to = to; SEND.elc = !!elc; bindSend(); }
   };
 
   renderStart();

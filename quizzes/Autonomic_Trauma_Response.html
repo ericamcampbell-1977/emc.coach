@@ -1,0 +1,834 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Autonomic Trauma Response</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* Layout: single reading column; sticky tab rail; one item per screen; ledger-style results. Brass/slate/clay per tab, ladder hues for the autonomic tab. */
+:root{
+  --paper:#f3eee3; --card:#fbf8f2; --ink:#29251f; --muted:#6a6255; --rule:#d8cdb9; --soft:#ebe4d5;
+  --a:#86601a; --b:#3e5d78; --c:#9a4a52; --d:#2e6f63;
+  --ven:#2e7a62; --sym:#b0592a; --dor:#5a5689;
+  --lo:#4f7a4c; --mid:#a07a1e; --hi:#a6473d;
+  --focus:#3e5d78;
+  --f-disp:"Fraunces","Iowan Old Style",Georgia,serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1a1815; --card:#23201c; --ink:#ece5d7; --muted:#a69c8b; --rule:#3b362f; --soft:#2c2823;
+  --a:#d4a64e; --b:#86a9c8; --c:#d58a91; --d:#6fbfae;
+  --ven:#6cc4a6; --sym:#e39462; --dor:#a29fd6;
+  --lo:#8ebd88; --mid:#d9b25a; --hi:#e2867b; --focus:#86a9c8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#1a1815; --card:#23201c; --ink:#ece5d7; --muted:#a69c8b; --rule:#3b362f; --soft:#2c2823;
+  --a:#d4a64e; --b:#86a9c8; --c:#d58a91; --d:#6fbfae;
+  --ven:#6cc4a6; --sym:#e39462; --dor:#a29fd6;
+  --lo:#8ebd88; --mid:#d9b25a; --hi:#e2867b; --focus:#86a9c8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-disp);font-weight:600;font-size:clamp(28px,6vw,42px);line-height:1.1;margin:6px 0 8px;text-wrap:balance}
+h2{font-family:var(--f-disp);font-weight:600;font-size:26px;line-height:1.2;margin:0 0 6px;text-wrap:balance}
+h3{font-family:var(--f-disp);font-weight:600;font-size:19px;margin:24px 0 8px}
+p{margin:0 0 12px;max-width:65ch}
+.lede{color:var(--muted);font-size:17px}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.btn{border:1px solid var(--rule);background:var(--card);color:var(--ink);padding:9px 16px;border-radius:6px}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.theme{font-family:var(--f-mono);font-size:12px;padding:6px 10px}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--rule);margin:18px 0 22px;padding-top:4px}
+nav.tabs button{border:0;background:none;color:var(--muted);padding:10px 12px;border-bottom:3px solid transparent;white-space:nowrap;font-size:14px}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--tc,var(--ink));font-weight:600}
+nav.tabs button .done{font-family:var(--f-mono);font-size:11px;color:var(--lo);margin-left:4px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:22px}
+.tabhead{border-left:4px solid var(--tc);padding-left:14px;margin-bottom:18px}
+.meta{font-family:var(--f-mono);font-size:12px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 16px}
+.q{min-height:300px;display:flex;flex-direction:column;gap:18px}
+.progress{height:4px;background:var(--soft);border-radius:2px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--tc)}
+.qcount{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.stem{font-family:var(--f-disp);font-size:clamp(21px,4.4vw,27px);line-height:1.3;text-wrap:balance;margin:0}
+.scale{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.scale button{border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:6px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.scale button b{font-family:var(--f-mono);font-size:16px}
+.scale button span{font-size:11px;color:var(--muted);text-align:center;line-height:1.2}
+.scale button.sel{background:var(--tc);border-color:var(--tc);color:var(--paper)}
+.scale button.sel span{color:var(--paper)}
+.qnav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.hint{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+@media (max-width:520px){.scale{grid-template-columns:repeat(3,1fr)}}
+.rows{display:grid;gap:14px;margin-top:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:baseline}
+.row .name{font-weight:600}
+.row .val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px}
+.row .bar{grid-column:1/-1;height:8px;background:var(--soft);border-radius:4px;position:relative;overflow:hidden}
+.row .bar i{position:absolute;inset:0 auto 0 0;background:var(--tc);border-radius:4px}
+.row .bar::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--rule)}
+.row .def{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.chip{font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid currentColor;margin-left:8px;white-space:nowrap}
+.b0{color:var(--lo)}.b1{color:var(--mid)}.b2{color:var(--hi)}
+.note{border:1px solid var(--rule);border-left:4px solid var(--hi);background:var(--card);padding:14px 16px;border-radius:6px;margin:18px 0;font-size:14px}
+.note.info{border-left-color:var(--b)}
+.ladder{width:100%;max-width:480px;height:auto;display:block;margin:6px 0 4px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{border:1px solid var(--rule);border-radius:8px;padding:12px;background:var(--paper)}
+.tile .k{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.tile .v{font-family:var(--f-disp);font-size:26px;font-variant-numeric:tabular-nums}
+.tile.lead{border-color:var(--ink)}
+.tbl{overflow-x:auto;margin:8px 0 16px}
+table{border-collapse:collapse;font-size:13px;width:100%;min-width:560px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--f-mono);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+ul{padding-left:20px;max-width:65ch}
+li{margin-bottom:6px}
+.legal{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+.legal p{max-width:none}
+.locked{color:var(--muted)}
+.tabcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0}
+.tabcard{border:1px solid var(--rule);border-top:4px solid var(--tc);border-radius:8px;padding:14px;background:var(--card);text-align:left;color:var(--ink)}
+.tabcard .k{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.tabcard strong{display:block;font-family:var(--f-disp);font-size:18px;margin:2px 0 4px}
+.tabcard span{font-size:13px;color:var(--muted)}
+.share{margin-top:28px;border:1px solid var(--rule);border-radius:10px;padding:20px;background:var(--card)}
+.share h3{margin-top:0}
+.field{display:grid;gap:6px;margin:12px 0}
+.field label{font-size:13px;font-weight:600}
+.field input[type=email]{font:inherit;padding:10px 12px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;max-width:420px}
+.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:14px;max-width:65ch}
+.check input{margin-top:4px;width:18px;height:18px;accent-color:var(--ink);flex:none}
+.consent{font-size:12.5px;color:var(--muted);margin:-4px 0 10px 28px;max-width:60ch}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.status{font-size:13px;margin-top:10px;min-height:1.3em}
+.status.err{color:var(--hi)}
+.addr{font-family:var(--f-mono);font-size:12.5px;user-select:all;word-break:break-all}
+details.preview{margin-top:14px}
+details.preview summary{cursor:pointer;font-size:13px;color:var(--muted)}
+details.preview pre{white-space:pre-wrap;word-break:break-word;font-family:var(--f-mono);font-size:12px;background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:12px;max-height:340px;overflow:auto;user-select:all}
+@media (prefers-reduced-motion:no-preference){.row .bar i{transition:width .5s ease}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Series XIII · Self-report · 150 items</div>
+      <h1>Autonomic Trauma Response</h1>
+    </div>
+    <button class="btn theme" id="themeBtn" type="button">Dark mode</button>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <main id="view"></main>
+  <footer class="legal" id="legal">
+    <p><strong>Not a diagnosis.</strong> This instrument is for self-reflection and education. It does not diagnose, screen for, or rule out any medical or mental health condition, including body dysmorphic disorder, dissociative disorders, or substance use disorders. Results are not a substitute for evaluation by a licensed professional.</p>
+    <p><strong>No professional relationship.</strong> Using this instrument does not create a clinician–client, therapist–client, or any other professional relationship. Nothing here is medical, psychological, or legal advice.</p>
+    <p><strong>Not clinically validated.</strong> Items are original and written to published construct definitions. The instrument has no norms, and its reliability figures come from simulation, not from real respondents. It is not affiliated with or endorsed by the authors of the frameworks it cites, including Stephen Porges or Deb Dana.</p>
+    <p><strong>Privacy.</strong> Your answers stay in this browser tab and are not saved after you close the page. Nothing is sent unless you choose to email your results. Emailing opens your own email app with the message filled in; nothing goes out until you press Send there. If you tick the box to include Evolution Lab Collective, a copy of your results goes to that address too. Leave it unticked to keep your results to yourself.</p>
+    <p><strong>If you are in crisis.</strong> In the US, call or text 988 (Suicide &amp; Crisis Lifeline) or call 911. Outside the US, contact your local emergency number.</p>
+    <p><strong>No warranty.</strong> This instrument is provided as is, without warranty of any kind. The author is not liable for any decision made on the basis of its results.</p>
+    <p>© 2026 Erica Campbell. All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const F=t=>({t,r:false}), R=t=>({t,r:true});
+const SCALE=["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"];
+
+const INST={
+ A:{code:"RA",name:"The Rewarded Armor",color:"--a",lead:"The patterns people compliment.",
+  desc:"Seven patterns that look like competence from the outside: high standards, hard work, self-sufficiency, being the one who handles things. Here they're measured as coping, by how driven and how costly they feel.",
+  prompt:"Over the past few months, how true has each statement been of you?",
+  bands:["Quiet","Present","Prominent"],
+  subs:{
+   Perf:{label:"Perfectionistic Concerns",anchor:"Frost FMPS; Hewitt & Flett socially prescribed perfectionism",def:"Fear of mistakes, doubt about your own work, and the sense that others demand perfection.",items:[
+    F("A small mistake can stay with me for days."),
+    F("I feel that the people around me expect me to get everything right."),
+    F("I doubt my work is good enough even after I've checked it."),
+    R("I can make a mistake and move on the same day."),
+    R("I trust my work once I've given it a reasonable check."),
+    R("I believe the people in my life would accept me making mistakes.")]},
+   Conceal:{label:"Imperfection Concealment",anchor:"Hewitt et al. perfectionistic self-presentation",def:"Hiding struggle, unfinished work, and mistakes so others only see you managing.",items:[
+    F("I hide my struggles so people only see me handling things well."),
+    F("I avoid letting others see work that isn't finished."),
+    F("I keep my mistakes to myself so no one finds out about them."),
+    R("I'm comfortable letting people see me when I'm not at my best."),
+    R("I can share work in progress without much worry."),
+    R("I admit my mistakes openly.")]},
+   Work:{label:"Work Compulsion",anchor:"Bergen Work Addiction Scale; DUWAS working compulsively",def:"Feeling driven to keep working, with guilt or unease when you stop.",items:[
+    F("I feel guilty when I take time off."),
+    F("I keep thinking about work when I'm supposed to be resting."),
+    F("I feel uneasy when I have nothing productive to do."),
+    R("I can spend a day off doing nothing productive and feel fine."),
+    R("I switch off from work easily at the end of the day."),
+    R("When the workday ends, I can leave the rest for tomorrow.")]},
+   HyperInd:{label:"Hyper-Independence",anchor:"Compulsive self-reliance; hyper-independence scale literature",def:"Refusing or avoiding help because relying on others feels unsafe.",items:[
+    F("I would rather do something myself than ask for help."),
+    F("Accepting help makes me uncomfortable."),
+    F("I feel like I can only count on myself."),
+    R("I ask for help when I need it."),
+    R("I'm comfortable letting others take care of things for me."),
+    R("I trust that people will come through for me.")]},
+   Overfunc:{label:"Overfunctioning",anchor:"Bowen family systems: overfunctioning / underfunctioning",def:"Taking on other people's share and feeling responsible for outcomes you don't control.",items:[
+    F("I end up doing tasks that belong to other people."),
+    F("I feel responsible for how things turn out for the people around me."),
+    F("I step in to fix problems before others have a chance to handle them."),
+    R("I let other people handle their own responsibilities."),
+    R("I let people solve their own problems, even when I could do it faster."),
+    R("I know where my responsibility ends and someone else's begins.")]},
+   Control:{label:"Control & Rigidity",anchor:"Intolerance of uncertainty (Carleton IUS-12); cognitive rigidity",def:"Needing predictability and detailed plans, with distress when things change.",items:[
+    F("I get upset when plans change at the last minute."),
+    F("I need to know what's coming before I can relax."),
+    F("I plan things in more detail than most people would."),
+    R("I adapt easily when things don't go as planned."),
+    R("I'm comfortable not knowing exactly how a day will go."),
+    R("I can go along with plans that someone else has made.")]},
+   Imposter:{label:"Imposter Feelings",anchor:"Clance Impostor Phenomenon Scale",def:"Feeling like a fraud, crediting success to luck, and fearing you'll be found out.",items:[
+    F("I worry that people will discover I'm not as capable as they think."),
+    F("When I succeed, I put it down to luck or timing."),
+    F("Praise makes me feel like a fraud."),
+    R("I believe I've earned my accomplishments."),
+    R("I can accept a compliment about my work as true."),
+    R("I feel as capable as people think I am.")]}
+  }},
+ B:{code:"EN",name:"Escape & Numbing",color:"--b",lead:"The ways out of a feeling.",
+  desc:"Nine ways of getting distance from what hurts: leaving your body, leaving the room in your head, staying busy with a screen, shrinking the problem, explaining it, joking it away, or hurrying everyone to the bright side.",
+  prompt:"Over the past few months, how true has each statement been of you?",
+  bands:["Quiet","Present","Prominent"],
+  subs:{
+   Dissoc:{label:"Dissociation",anchor:"Dissociative Experiences Scale (DES-II): absorption, depersonalization, derealization",def:"Feeling detached from your body or surroundings, or losing track of time.",items:[
+    F("I feel detached from my body, as if I'm watching myself from outside."),
+    F("I lose track of time and can't account for where it went."),
+    F("The world around me feels unreal or dreamlike."),
+    R("I feel present in my body."),
+    R("I can account for how I spent my day."),
+    R("The world around me feels solid and real.")]},
+   Daydream:{label:"Maladaptive Daydreaming",anchor:"Somer et al. Maladaptive Daydreaming Scale (MDS-16)",def:"Spending long stretches in vivid daydreams that crowd out real life.",items:[
+    F("I spend hours lost in detailed daydreams."),
+    F("I'd rather be in my daydreams than in my real life."),
+    F("My daydreams get in the way of things I need to do."),
+    R("My attention stays mostly on what's happening in front of me."),
+    R("Real life holds my interest more than my imagination does."),
+    R("I rarely lose time to daydreaming.")]},
+   Distract:{label:"Compulsive Distraction",anchor:"Brief COPE self-distraction; boredom proneness",def:"Reaching for a screen or background noise to avoid sitting with your thoughts.",items:[
+    F("I reach for my phone the moment I feel bored or uncomfortable."),
+    F("I keep something playing in the background so I don't have to sit with my thoughts."),
+    F("I scroll long past the point of enjoying it."),
+    R("I can sit quietly with my thoughts without reaching for a distraction."),
+    R("I can put my phone down when I've had enough."),
+    R("Silence feels comfortable to me.")]},
+   Handicap:{label:"Self-Handicapping",anchor:"Jones & Rhodewalt Self-Handicapping Scale",def:"Holding back effort or delaying when something important is at stake.",items:[
+    F("I put off important tasks until there's too little time to do them well."),
+    F("I hold back on effort when something important is at stake."),
+    F("I line up excuses in advance in case things go badly."),
+    R("I start important tasks early enough to do them well."),
+    R("I give my full effort to things that matter to me."),
+    R("I go into challenges without lining up excuses first.")]},
+   Minimize:{label:"Minimizing",anchor:"Brief COPE denial; DSQ denial",def:"Shrinking your own pain: it wasn't that bad, others have it worse.",items:[
+    F("I tell myself that what happened to me wasn't that bad."),
+    F("I remind myself that others have it worse when I'm hurting."),
+    F("I brush off my own problems as no big deal."),
+    R("I take my own hurts seriously."),
+    R("I can admit when something was hard for me."),
+    R("I let myself feel upset about things that upset me.")]},
+   Intellect:{label:"Intellectualizing",anchor:"Defense Style Questionnaire (DSQ-40): intellectualization",def:"Explaining and analyzing a feeling instead of feeling it.",items:[
+    F("I explain my feelings instead of feeling them."),
+    F("When something hurts, I analyze it rather than let it land."),
+    F("I talk about painful things as if I were describing someone else."),
+    R("I can feel an emotion without needing to explain it."),
+    R("I let painful feelings in before I start analyzing them."),
+    R("When I talk about something painful, my feelings show.")]},
+   Humor:{label:"Self-Defeating Humor",anchor:"Martin et al. Humor Styles Questionnaire: self-defeating",def:"Making yourself the joke to keep things light or hide hurt.",items:[
+    F("I make jokes at my own expense to keep the mood light."),
+    F("I turn painful moments into a joke so no one sees I'm hurt."),
+    F("I let people laugh at me more than I'd like."),
+    R("I can be serious about something that hurts."),
+    R("My humor doesn't usually come at my own expense."),
+    R("I tell people when I'm hurt instead of joking it away.")]},
+   PosIn:{label:"Forced Positivity",anchor:"Experiential avoidance (AAQ-II); expressive suppression (ERQ)",def:"Turned inward: hurrying past your own pain toward the bright side.",items:[
+    F("When I feel bad, I push myself to look on the bright side right away."),
+    F("I feel guilty for having negative feelings."),
+    F("I tell myself everything happens for a reason before I've let myself be upset."),
+    R("I let myself feel sad or angry before looking for a silver lining."),
+    R("I accept negative feelings as part of life."),
+    R("I can have a bad day without trying to fix my mood.")]},
+   PosOut:{label:"Invalidating Positivity",anchor:"Spiritual bypassing (Welwood); invalidation research (Linehan)",def:"Turned outward: steering other people away from their pain toward the bright side.",items:[
+    F("When someone is upset, I quickly point out what's good about their situation."),
+    F("I encourage people to stay positive when they tell me about a problem."),
+    F("Other people's sadness makes me want to cheer them up right away."),
+    R("I can listen to someone's pain without trying to fix it."),
+    R("I let people be upset without pointing them to the bright side."),
+    R("When someone is struggling, I acknowledge how hard it is.")]}
+  }},
+ C:{code:"SA",name:"Soothing & Acquiring",color:"--c",lead:"What the body and the cart are asked to fix.",
+  desc:"Five patterns that soothe through appearance, buying, substances, or holding on to things. None of these scores is a diagnosis; high scores are a reason to talk with someone, not a label.",
+  prompt:"Over the past few months, how true has each statement been of you?",
+  bands:["Quiet","Present","Prominent"],
+  subs:{
+   AppPre:{label:"Appearance Preoccupation",anchor:"Dysmorphic Concern Questionnaire (Oosthuizen et al.)",def:"Worry that something about how you look is wrong or noticed.",items:[
+    F("I worry that something about my appearance looks wrong."),
+    F("Thoughts about how I look take up a lot of my day."),
+    F("I believe others notice a flaw in my appearance."),
+    R("I rarely think about how I look."),
+    R("I feel comfortable with my appearance."),
+    R("I assume people aren't focused on how I look.")]},
+   AppSafe:{label:"Appearance Safety Behaviors",anchor:"Veale et al. Appearance Anxiety Inventory",def:"Checking, covering, and avoiding because of how you look.",items:[
+    F("I check my appearance in mirrors or my phone camera many times a day."),
+    F("I arrange my clothes or hair to cover a part of myself I don't want seen."),
+    F("I avoid having my photo taken because of how I look."),
+    R("I can leave the house without checking how I look."),
+    R("I'm comfortable being in photos."),
+    R("I don't try to hide any part of my appearance.")]},
+   Spend:{label:"Compulsive Spending",anchor:"Bergen Shopping Addiction Scale",def:"Buying to change your mood, buying what you don't need, hiding purchases.",items:[
+    F("Buying something lifts my mood when I'm feeling low."),
+    F("I buy things I don't need."),
+    F("I hide purchases from people close to me."),
+    R("I shop only when I need something."),
+    R("My mood doesn't drive what I buy."),
+    R("I'm open with people close to me about what I buy.")]},
+   Subst:{label:"Substance Numbing",anchor:"Brief COPE substance use; AUDIT coping-motive concepts",def:"Using alcohol or other substances to change how you feel.",items:[
+    F("I use alcohol or other substances to change how I feel."),
+    F("A drink or substance is my first thought after a hard day."),
+    F("I use a substance to get through social situations."),
+    R("I handle hard feelings without alcohol or other substances."),
+    R("I can get through a stressful week without wanting a drink or substance."),
+    R("I feel at ease in social situations without a substance.")]},
+   Keep:{label:"Acquiring & Keeping",anchor:"Frost Saving Inventory–Revised (non-clinical framing)",def:"Holding on to things for safety and finding it hard to let them go.",items:[
+    F("Throwing things away makes me anxious."),
+    F("I keep things in case I might need them someday."),
+    F("Having my belongings around me makes me feel safe."),
+    R("I let go of things I no longer use."),
+    R("I could clear out a room without much distress."),
+    R("Getting rid of things feels freeing to me.")]}
+  }},
+ D:{code:"AS",name:"Autonomic State Profile",color:"--d",lead:"Where your body tends to live.",
+  desc:"Four scales built on the polyvagal map: Ventral (safe and social), Sympathetic (mobilized), Dorsal (shut down), and how readily you return to settled. This measures felt states, not what your vagus nerve is doing.",
+  prompt:"Over the past month, how true has each statement been of you?",
+  bands:["Low","Moderate","High"],
+  healthy:["Ventral","Return"],
+  subColors:{Ventral:"--ven",Symp:"--sym",Dorsal:"--dor",Return:"--d"},
+  subs:{
+   Ventral:{label:"Ventral · Safe & Social",anchor:"Porges polyvagal theory; NPSS social engagement (Cogan et al., 2024, 2025)",def:"Settled, open, curious, able to connect. Higher is healthier.",items:[
+    F("I feel settled and at ease."),
+    F("I feel open to connecting with others."),
+    F("I feel curious about what's going on around me."),
+    R("I struggle to feel calm, even in safe places."),
+    R("Being with people feels like effort rather than ease."),
+    R("My body rarely feels relaxed.")]},
+   Symp:{label:"Sympathetic · Mobilized",anchor:"Porges Body Perception Questionnaire, autonomic reactivity",def:"Revved, braced, restless, on alert.",items:[
+    F("My body feels revved up even when nothing is happening."),
+    F("I feel braced for something to go wrong."),
+    F("I find it hard to sit still."),
+    R("My muscles stay loose rather than tense."),
+    R("I can sit still without effort."),
+    R("I rarely feel on edge.")]},
+   Dorsal:{label:"Dorsal · Shutdown",anchor:"Porges dorsal vagal immobilization; Dana autonomic ladder",def:"Heavy, flat, foggy, withdrawn.",items:[
+    F("I feel heavy, as if moving takes more energy than I have."),
+    F("I feel flat inside, as if nothing reaches me."),
+    F("I want to shut down and withdraw from everything."),
+    R("I have energy for the things I need to do."),
+    R("Things reach me emotionally."),
+    R("My mind feels clear rather than foggy.")]},
+   Return:{label:"Return to Ventral",anchor:"Dana (2018) autonomic flexibility; recovery from stress",def:"How readily you come back to settled after being activated or shut down. Higher is healthier.",items:[
+    F("After a stressful moment, I calm down fairly quickly."),
+    F("When I've shut down, I can find my way back to feeling like myself."),
+    F("I know things that help my body settle when I'm stressed."),
+    R("Once I'm upset, it takes me hours to come back down."),
+    R("When I go numb, it stays with me for a long time."),
+    R("Nothing I try helps me feel settled again.")]}
+  }}
+};
+const TABS=["A","B","C","D"];
+
+/* ---- fixed interleaved order per tab ---- */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function buildOrder(tab,seed){
+  const pool=[];const subs=INST[tab].subs;
+  Object.keys(subs).forEach(k=>subs[k].items.forEach((it,i)=>pool.push({sub:k,i,t:it.t,r:it.r})));
+  const rand=rng(seed);
+  for(let attempt=0;attempt<500;attempt++){
+    const left=pool.slice(),out=[];let ok=true;
+    while(left.length){
+      const last=out.length?out[out.length-1].sub:null;
+      const cand=left.map((x,j)=>j).filter(j=>left[j].sub!==last);
+      if(!cand.length){ok=false;break}
+      // prefer subscales with most remaining to avoid dead ends
+      const counts={};left.forEach(x=>counts[x.sub]=(counts[x.sub]||0)+1);
+      const maxc=Math.max(...cand.map(j=>counts[left[j].sub]));
+      const pref=cand.filter(j=>counts[left[j].sub]>=maxc-1);
+      const j=pref[Math.floor(rand()*pref.length)];
+      out.push(left.splice(j,1)[0]);
+    }
+    if(ok)return out;
+  }
+  throw new Error("order failed "+tab);
+}
+const ORDER={A:buildOrder("A",1301),B:buildOrder("B",1302),C:buildOrder("C",1303),D:buildOrder("D",1304)};
+
+/* ---- state ---- */
+const S={tab:"home",ans:{},pos:{},started:{},email:"",cc:false};
+const LAB="evolutionlabcollective@gmail.com";
+TABS.forEach(t=>{S.ans[t]=new Array(ORDER[t].length).fill(null);S.pos[t]=0;S.started[t]=false});
+const complete=t=>S.ans[t].every(v=>v!==null);
+
+/* ---- scoring ---- */
+function score(tab,ans){
+  ans=ans||S.ans[tab];const sums={},n={};
+  ORDER[tab].forEach((it,j)=>{const v=ans[j];if(v==null)return;const s=it.r?7-v:v;sums[it.sub]=(sums[it.sub]||0)+s;n[it.sub]=(n[it.sub]||0)+1});
+  const out={};Object.keys(INST[tab].subs).forEach(k=>{out[k]=n[k]?sums[k]/n[k]:null});return out;
+}
+const band=v=>v<=2.6?0:v>=4.4?2:1;
+const isHealthy=(tab,k)=>(INST[tab].healthy||[]).includes(k);
+const concern=(tab,k,v)=>isHealthy(tab,k)?2-band(v):band(v); // 0 good .. 2 concern
+
+/* ---- autonomic read ---- */
+function autonomic(sc){
+  const v=sc.Ventral,s=sc.Symp,d=sc.Dorsal,r=sc.Return;
+  const states=[["Ventral",v],["Sympathetic",s],["Dorsal",d]].sort((a,b)=>b[1]-a[1]);
+  const spread=states[0][1]-states[2][1];
+  let home=spread<0.5?"Mixed":states[0][0];
+  if(home!=="Mixed"&&states[0][1]-states[1][1]<0.25)home=states[0][0]+"–"+states[1][0];
+  const blends=[];
+  if(s>=4.0&&d>=4.0)blends.push({k:"freeze",title:"Functional freeze",text:"Sympathetic and Dorsal both read high. In the clinical model this is braced and stuck at once: revved underneath, unable to move on the surface. It often looks calm from outside."});
+  if(v>=4.0&&s>=3.5&&s<4.4&&d<3.5)blends.push({k:"play",title:"Engaged mobilization",text:"Ventral is high alongside moderate Sympathetic energy. The model reads this as healthy activation: energy used for play, effort, or challenge while still feeling safe."});
+  if(v>=4.0&&d>=3.5&&s<3.5)blends.push({k:"stillness",title:"Restful stillness",text:"Ventral is high alongside some Dorsal quiet. The model reads this as safe stillness, the kind of low energy that comes with rest rather than collapse."});
+  if(v<=2.6&&s<=2.6&&d<=2.6)blends.push({k:"low",title:"Low on every state",text:"All three states read low. This sometimes reflects disconnection from body signals rather than calm. Worth comparing with the Dissociation and Intellectualizing scores."});
+  return {home,states,spread,blends,ret:r,retBand:band(r)};
+}
+
+/* ---- Walker 4F lean (interpretive) ---- */
+const FOUR={Fight:["Control","Overfunc","PosOut"],Flight:["Perf","Conceal","Work","Imposter","Distract","Spend"],Freeze:["Dissoc","Daydream","Handicap","Minimize","Intellect","Subst","HyperInd"],Fawn:["Humor","PosIn"]};
+const subTab={};TABS.forEach(t=>Object.keys(INST[t].subs).forEach(k=>subTab[k]=t));
+
+function synth(){
+  const done=TABS.filter(complete);
+  const res={done,open:done.length>=2,families:{},top:[],four:{},cross:[],flat:false,auto:null};
+  if(!res.open)return res;
+  const all=[];
+  done.filter(t=>t!=="D").forEach(t=>{const sc=score(t);const vals=Object.values(sc);res.families[t]=vals.reduce((a,b)=>a+b,0)/vals.length;Object.keys(sc).forEach(k=>all.push({k,tab:t,v:sc[k]}))});
+  all.sort((a,b)=>b.v-a.v);
+  if(all.length){res.flat=all[0].v-all[all.length-1].v<0.5;res.top=res.flat?[]:all.slice(0,3)}
+  const sm={};all.forEach(x=>sm[x.k]=x.v);
+  Object.keys(FOUR).forEach(f=>{const have=FOUR[f].filter(k=>sm[k]!=null);res.four[f]=have.length>=2?have.reduce((a,k)=>a+sm[k],0)/have.length:null});
+  if(complete("D")){
+    const a=score("D");res.auto=autonomic(a);
+    const x=(cond,text)=>{if(cond)res.cross.push(text)};
+    if(sm.Dissoc!=null)x(a.Dorsal>=4.0&&sm.Dissoc>=4.0,"High Dorsal with high Dissociation: shutdown in the body alongside leaving it. These often travel together and are worth raising with a trauma-informed clinician.");
+    if(sm.Work!=null)x(a.Symp>=4.0&&sm.Work>=4.0,"High Sympathetic with high Work Compulsion: the revved state may be finding its outlet in work, which keeps the engine running and makes rest feel unsafe.");
+    if(sm.Control!=null)x(a.Symp>=4.0&&sm.Control>=4.0,"High Sympathetic with high Control & Rigidity: planning and predictability may be how a braced body tries to stand down.");
+    if(sm.Distract!=null)x(a.Dorsal>=4.0&&sm.Distract>=4.0,"High Dorsal with high Compulsive Distraction: scrolling can be a low-energy way to stay away from a flat or heavy state.");
+    if(sm.Subst!=null)x(a.Return<=2.6&&sm.Subst>=4.0,"Low Return to Ventral with high Substance Numbing: when your own ways back to settled feel out of reach, substances can stand in for them.");
+    if(sm.PosIn!=null)x(a.Ventral<=2.6&&sm.PosIn>=4.0,"Low Ventral with high Forced Positivity: the bright side may be arriving faster than any actual sense of safety.");
+    if(sm.HyperInd!=null)x(a.Ventral<=2.6&&sm.HyperInd>=4.0,"Low Ventral with high Hyper-Independence: connection that doesn't feel safe in the body is easier to do without.");
+  }
+  return res;
+}
+
+/* ---- care notes ---- */
+function careNote(tab,sc){
+  const flags=[];
+  if(tab==="B"&&sc.Dissoc>=4.4)flags.push("Dissociation");
+  if(tab==="C"&&sc.Subst>=4.4)flags.push("Substance Numbing");
+  if(tab==="C"&&sc.AppPre>=4.4&&sc.AppSafe>=4.4)flags.push("Appearance Preoccupation and Safety Behaviors together");
+  if(tab==="D"&&sc.Dorsal>=4.4&&sc.Return<=2.6)flags.push("high Dorsal with low Return to Ventral");
+  if(!flags.length)return "";
+  return `<div class="note" id="careNote"><strong>A note on your results.</strong> Your scores on ${flags.join(", ")} came out high. That isn't a diagnosis, but it is a good reason to talk with a licensed clinician or your doctor, especially one who works with trauma. If you're in crisis, call or text 988 in the US, or call 911.</div>`;
+}
+
+
+/* ---- results report (shared by email text, text file and PDF) ---- */
+function report(){
+  const secs=[];
+  TABS.filter(complete).forEach(t=>{
+    const I=INST[t],sc=score(t);let keys=Object.keys(I.subs);
+    if(t!=="D")keys=keys.slice().sort((a,b)=>sc[b]-sc[a]);
+    const sec={tab:t,title:I.name,rows:keys.map(k=>({label:I.subs[k].label,v:sc[k],band:I.bands[band(sc[k])],concern:concern(t,k,sc[k])})),notes:[]};
+    if(t==="D"){const a=autonomic(sc);sec.notes.push(a.home==="Mixed"?"Home state: mixed (no single state stands out)":a.home.includes("–")?"Home state: "+a.home.replace("–"," and ")+" together":"Home state: "+a.home+"-dominant");a.blends.forEach(b=>sec.notes.push("Blended state: "+b.title))}
+    secs.push(sec);
+  });
+  const sy=synth();let syn=null;
+  if(sy.open){syn=[];
+    if(sy.flat)syn.push("Your coping scores sit within half a point of each other, so no single pattern stands out.");
+    else if(sy.top.length)syn.push("Most prominent patterns: "+sy.top.map(x=>INST[x.tab].subs[x.k].label+" ("+x.v.toFixed(2)+")").join(", "));
+    const f=["Fight","Flight","Freeze","Fawn"].filter(k=>sy.four[k]!=null);
+    if(f.length)syn.push("Four-F lean: "+f.map(k=>k+" "+sy.four[k].toFixed(2)).join(" · "));
+    sy.cross.forEach(c=>syn.push(c));
+  }
+  return {secs,syn,date:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})};
+}
+function reportText(){
+  const r=report(),L=[];
+  L.push("AUTONOMIC TRAUMA RESPONSE","Series XIII · Your results · "+r.date,"");
+  L.push("Scores run from 1.00 to 6.00. The midpoint is 3.50. Bands: 2.60 or below, between, 4.40 or above.","");
+  r.secs.forEach(sec=>{
+    L.push(sec.title.toUpperCase());
+    sec.notes.forEach(n=>L.push(n));
+    sec.rows.forEach(x=>L.push("• "+x.label+": "+x.v.toFixed(2)+" ("+x.band+")"));
+    L.push("");
+  });
+  const left=TABS.filter(t=>!complete(t)).map(t=>INST[t].name);
+  if(left.length)L.push("Not yet taken: "+left.join(", "),"");
+  if(r.syn&&r.syn.length){L.push("SYNTHESIS");r.syn.forEach(x=>L.push("• "+x));L.push("")}
+  L.push("This is a self-reflection tool, not a diagnosis. Results have no norms and are not clinically validated.");
+  L.push("If you are in crisis in the US, call or text 988, or call 911.");
+  L.push("","© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n");
+}
+const validEmail=e=>/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]{2,}$/.test(e);
+function mailtoHref(){
+  const to=S.email.trim(),parts=[];
+  const toList=to?to:(S.cc?LAB:"");
+  if(to&&S.cc)parts.push("cc="+encodeURIComponent(LAB));
+  parts.push("subject="+encodeURIComponent("My results: Autonomic Trauma Response (Series XIII)"));
+  parts.push("body="+encodeURIComponent(reportText()));
+  return "mailto:"+encodeURIComponent(toList).replace(/%40/g,"@")+"?"+parts.join("&");
+}
+function shareHTML(){
+  const n=TABS.filter(complete).length;
+  return `<div class="share" id="share"><h3>Keep your results</h3>
+  <p>Email them to yourself, copy them, or save a PDF. Your results include every inventory you've finished (${n} of 4)${n>=2?" and the Synthesis":""}.</p>
+  <div class="field"><label for="shareEmail">Your email address</label><input type="email" id="shareEmail" autocomplete="email" placeholder="you@example.com" value="${esc(S.email)}"></div>
+  <label class="check"><input type="checkbox" id="shareCc" ${S.cc?"checked":""}><span>Also send a copy to Evolution Lab Collective <span class="addr">${LAB}</span></span></label>
+  <p class="consent" id="ccConsent" ${S.cc?"":"hidden"}>Your results, including any scores on appearance, substances, or dissociation, will go to this address as well as yours.</p>
+  <div class="actions">
+    <button class="btn primary" id="emailBtn" type="button">Open in my email app</button>
+    <button class="btn" id="copyBtn" type="button">Copy results</button>
+    <button class="btn" id="pdfBtn" type="button">Save as PDF</button>
+    <button class="btn" id="txtBtn" type="button">Save as text</button>
+  </div>
+  <div class="status" id="shareStatus" role="status"></div>
+  <details class="preview"><summary>Preview the email text</summary><pre id="sharePre">${esc(reportText())}</pre></details>
+  </div>`;
+}
+function setStatus(msg,err){const el=document.getElementById("shareStatus");if(el){el.textContent=msg;el.className="status"+(err?" err":"")}}
+let lastMailto="";
+function emailClick(){
+  const e=S.email.trim();
+  if(e&&!validEmail(e)){setStatus("That email address doesn't look complete. Check it and try again.",true);return}
+  if(!e&&!S.cc){setStatus("Enter your email address, or tick the Evolution Lab box, so the message has somewhere to go.",true);return}
+  lastMailto=mailtoHref();
+  const a=document.createElement("a");a.href=lastMailto;a.target="_top";a.rel="noopener";document.body.appendChild(a);
+  try{a.click()}catch(err){}a.remove();
+  setStatus("Your email app should open with the message filled in. Press Send there to deliver it. If nothing opened, use Copy results and paste them into an email to "+(e||LAB)+(e&&S.cc?" (cc "+LAB+")":"")+".");
+}
+async function copyClick(){
+  const t=reportText();
+  try{await navigator.clipboard.writeText(t);setStatus("Copied. Paste into an email or a note.")}
+  catch(err){const pre=document.getElementById("sharePre");if(pre){pre.parentElement.open=true;const rg=document.createRange();rg.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(rg)}setStatus("Your browser blocked copying, so the text is selected below. Press Ctrl+C or ⌘C.")}
+}
+async function saveFile(filename,data){
+  const inViewer=!!(window.claude&&typeof window.claude.use==="function");
+  if(inViewer){
+    const dl=await window.claude.use("downloads");
+    if(!dl){setStatus("Saving isn't available in this view. Use Copy results instead.",true);return}
+    try{await dl.save({filename,data});setStatus("Saved "+filename+".")}
+    catch(err){setStatus(err&&err.code==="declined"?"Save cancelled.":"Saving didn't work here. Use Copy results instead.",!(err&&err.code==="declined"))}
+    return;
+  }
+  const blob=data instanceof Blob?data:new Blob([data],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  setStatus("Saved "+filename+".");
+}
+function buildPDF(){
+  const J=window.jspdf&&window.jspdf.jsPDF;if(!J)return null;
+  const r=report(),doc=new J({unit:"pt",format:"letter"});
+  const W=612,M=54;let y=M;
+  const ink=[41,37,31],muted=[106,98,85],rule=[216,205,185];
+  const accent={A:[134,96,26],B:[62,93,120],C:[154,74,82],D:[46,111,99]};
+  const bandC=[[79,122,76],[160,122,30],[166,71,61]];
+  const page=need=>{if(y+need>792-M){doc.addPage();y=M}};
+  doc.setFont("times","bold");doc.setFontSize(24);doc.setTextColor(...ink);doc.text("Autonomic Trauma Response",M,y+10);y+=30;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(...muted);doc.text("Series XIII · Your results · "+r.date,M,y);y+=16;
+  doc.text("Scores run from 1.00 to 6.00; the midpoint is 3.50. Bands: 2.60 or below, between, 4.40 or above.",M,y);y+=22;
+  r.secs.forEach(sec=>{
+    page(60);const ac=accent[sec.tab];
+    doc.setFillColor(...ac);doc.rect(M,y-11,4,16,"F");
+    doc.setFont("times","bold");doc.setFontSize(15);doc.setTextColor(...ink);doc.text(sec.title,M+12,y+2);y+=20;
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(...muted);
+    sec.notes.forEach(n=>{page(14);doc.text(n,M+12,y);y+=14});
+    sec.rows.forEach(x=>{
+      page(26);
+      doc.setFont("helvetica","bold");doc.setFontSize(10.5);doc.setTextColor(...ink);doc.text(x.label,M+12,y);
+      doc.setFont("courier","normal");doc.setFontSize(10);doc.text(x.v.toFixed(2),W-M-90,y,{align:"right"});
+      doc.setFont("helvetica","normal");doc.setTextColor(...bandC[x.concern]);doc.text(x.band,W-M,y,{align:"right"});
+      const bx=M+12,bw=W-2*M-12;doc.setFillColor(235,228,213);doc.rect(bx,y+5,bw,5,"F");doc.setFillColor(...ac);doc.rect(bx,y+5,bw*(x.v-1)/5,5,"F");
+      doc.setDrawColor(...rule);doc.line(bx+bw/2,y+4,bx+bw/2,y+11);
+      y+=24;
+    });
+    y+=8;
+  });
+  if(r.syn&&r.syn.length){page(40);doc.setFont("times","bold");doc.setFontSize(15);doc.setTextColor(...ink);doc.text("Synthesis",M,y);y+=18;
+    doc.setFont("helvetica","normal");doc.setFontSize(10);
+    r.syn.forEach(t=>{const lines=doc.splitTextToSize("• "+t,W-2*M);page(lines.length*13+4);doc.text(lines,M,y);y+=lines.length*13+4});y+=8}
+  page(60);doc.setDrawColor(...rule);doc.line(M,y,W-M,y);y+=14;doc.setFontSize(8.5);doc.setTextColor(...muted);
+  const foot=doc.splitTextToSize("This is a self-reflection tool, not a diagnosis. Results have no norms and are not clinically validated. If you are in crisis in the US, call or text 988, or call 911. © 2026 Erica Campbell. All rights reserved.",W-2*M);
+  doc.text(foot,M,y);
+  return doc;
+}
+async function pdfClick(){
+  const doc=buildPDF();if(!doc){setStatus("The PDF tool didn't load. Use Save as text or Copy results instead.",true);return}
+  await saveFile("autonomic-trauma-response-results.pdf",doc.output("blob"));
+}
+function bindShare(root){
+  const em=root.querySelector("#shareEmail");if(!em)return;
+  em.oninput=()=>{S.email=em.value};
+  const cc=root.querySelector("#shareCc");cc.onchange=()=>{S.cc=cc.checked;root.querySelector("#ccConsent").hidden=!S.cc};
+  root.querySelector("#emailBtn").onclick=emailClick;
+  root.querySelector("#copyBtn").onclick=copyClick;
+  root.querySelector("#pdfBtn").onclick=pdfClick;
+  root.querySelector("#txtBtn").onclick=()=>saveFile("autonomic-trauma-response-results.txt",reportText());
+}
+
+/* ---- rendering ---- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=v=>v==null?"—":v.toFixed(2);
+
+function renderTabs(){
+  const items=[["home","Overview"],...TABS.map(t=>[t,INST[t].name]),["synth","Synthesis"],["method","Method"]];
+  $("#tabs").innerHTML=items.map(([k,l])=>{
+    const c=TABS.includes(k)?`var(${INST[k].color})`:"var(--ink)";
+    const d=TABS.includes(k)&&complete(k)?'<span class="done">✓</span>':"";
+    return `<button role="tab" type="button" id="tab-${k}" data-tab="${k}" aria-selected="${S.tab===k}" style="--tc:${c}">${esc(l)}${d}</button>`}).join("");
+  $("#tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+}
+function showTab(k){S.tab=k;renderTabs();render();try{if(location.hash.slice(1)!==k)history.replaceState(null,"","#"+k)}catch(e){}window.scrollTo(0,0)}
+
+function render(){
+  const v=$("#view");
+  if(S.tab==="home")v.innerHTML=homeHTML();
+  else if(S.tab==="synth")v.innerHTML=synthHTML();
+  else if(S.tab==="method")v.innerHTML=methodHTML();
+  else v.innerHTML=tabHTML(S.tab);
+  v.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
+  v.querySelectorAll("[data-ans]").forEach(b=>b.onclick=()=>answer(+b.dataset.ans));
+  const st=v.querySelector("#startBtn");if(st)st.onclick=()=>{S.started[S.tab]=true;render()};
+  const bk=v.querySelector("#backBtn");if(bk)bk.onclick=back;
+  const rs=v.querySelector("#retakeBtn");if(rs)rs.onclick=()=>{S.ans[S.tab].fill(null);S.pos[S.tab]=0;S.started[S.tab]=true;renderTabs();render()};
+  bindShare(v);
+  const rv=v.querySelector("#reviewBtn");if(rv)rv.onclick=()=>{S.pos[S.tab]=ORDER[S.tab].length-1;S.reviewing=true;render()};
+}
+
+function homeHTML(){
+  return `<section>
+  <p class="lede">These are the coping patterns that tend to get rewarded, so they're the hardest to see in yourself. Four inventories, each scored separately, plus a Synthesis that reads them together.</p>
+  <div class="tabcards">${TABS.map(t=>{const I=INST[t];const n=ORDER[t].length;const st=complete(t)?"Complete":S.ans[t].some(x=>x!==null)?"In progress":`${n} items`;
+    return `<button type="button" class="tabcard" data-go="${t}" style="--tc:var(${I.color})"><span class="k">${I.code} · ${st}</span><strong>${esc(I.name)}</strong><span>${esc(I.lead)}</span></button>`}).join("")}</div>
+  <h3>How it works</h3>
+  <ul>
+    <li>One statement per screen, answered on a six-point scale with no neutral middle.</li>
+    <li>Keys 1–6 answer, Backspace goes back. You can take the inventories in any order.</li>
+    <li>Subscale names appear only in your results.</li>
+    <li>The Synthesis opens once any two inventories are complete.</li>
+  </ul>
+  <h3>What isn't here, and where it is</h3>
+  <p>People-pleasing, codependency, hypervigilance, emotional shutdown, worry, and the inner critic are already measured elsewhere in the series: Series IV (fight, flight, freeze, fawn), Series VII (relational trauma), Series IX (schemas and modes), the codependency inventory, and the anxiety and rumination inventory. This instrument covers the patterns those leave out.</p>
+  <p>Calling a pattern a "trauma response" is a guess about where it came from. These inventories measure the pattern itself, not its cause.</p>
+  </section>`;
+}
+
+function tabHTML(t){
+  const I=INST[t],O=ORDER[t],n=O.length;
+  const head=`<div class="tabhead" style="--tc:var(${I.color})"><div class="eyebrow">${I.code} · ${Object.keys(I.subs).length} scales · ${n} items</div><h2>${esc(I.name)}</h2><p class="lede">${esc(I.lead)}</p></div>`;
+  if(complete(t)&&!S.reviewing)return `<section style="--tc:var(${I.color})">${head}${resultsHTML(t)}</section>`;
+  if(!S.started[t]&&S.ans[t].every(x=>x===null)){
+    return `<section style="--tc:var(${I.color})">${head}<div class="card"><p>${esc(I.desc)}</p><p><strong>${esc(I.prompt)}</strong></p><div class="meta"><span>${n} statements</span><span>About ${Math.round(n*7/60)} minutes</span><span>Keys 1–6 · Backspace</span></div><button class="btn primary" id="startBtn" type="button">Begin</button></div></section>`;
+  }
+  S.reviewing=false;
+  const p=S.pos[t],it=O[p],cur=S.ans[t][p];
+  const answered=S.ans[t].filter(x=>x!==null).length;
+  return `<section style="--tc:var(${I.color})">${head}<div class="card q" id="qcard">
+    <div class="progress" aria-hidden="true"><i style="width:${(answered/n*100).toFixed(1)}%"></i></div>
+    <div class="qcount" id="qcount">Statement ${p+1} of ${n}</div>
+    <p class="stem" id="stem">${esc(it.t)}</p>
+    <div class="scale" role="group" aria-label="Response">${SCALE.map((l,i)=>`<button type="button" data-ans="${i+1}" class="${cur===i+1?"sel":""}" aria-pressed="${cur===i+1}"><b>${i+1}</b><span>${l}</span></button>`).join("")}</div>
+    <div class="qnav"><button class="btn" id="backBtn" type="button" ${p===0?"disabled":""}>Back</button><span class="hint">1–6 to answer · Backspace to go back</span></div>
+  </div></section>`;
+}
+
+function answer(v){
+  const t=S.tab;if(!TABS.includes(t))return;
+  const n=ORDER[t].length;
+  S.ans[t][S.pos[t]]=v;
+  const next=S.ans[t].findIndex((x,j)=>x===null&&j>S.pos[t]);
+  const anyNull=S.ans[t].findIndex(x=>x===null);
+  if(next>=0)S.pos[t]=next;else if(anyNull>=0)S.pos[t]=anyNull;else S.pos[t]=n-1;
+  S.reviewing=false;
+  renderTabs();render();
+}
+function back(){const t=S.tab;if(!TABS.includes(t))return;if(complete(t)){S.reviewing=true;S.pos[t]=Math.max(0,S.pos[t]-1)}else if(S.pos[t]>0)S.pos[t]--;render()}
+
+function rowsHTML(t,sc,keys){
+  const I=INST[t];
+  return `<div class="rows">${keys.map(k=>{const v=sc[k],b=band(v),c=concern(t,k,v);
+    const sc2=I.subColors&&I.subColors[k];return `<div class="row" data-sub="${k}"${sc2?` style="--tc:var(${sc2})"`:""}><div class="name">${esc(I.subs[k].label)}<span class="chip b${c}">${I.bands[b]}</span></div><div class="val">${fmt(v)}</div><div class="bar"><i style="width:${((v-1)/5*100).toFixed(1)}%"></i></div><div class="def">${esc(I.subs[k].def)}</div></div>`}).join("")}</div>`;
+}
+
+function ladderSVG(sc,au){
+  const rows=[["Ventral","Safe & social","Ventral","--ven"],["Sympathetic","Mobilized","Symp","--sym"],["Dorsal","Shutdown","Dorsal","--dor"]];
+  const W=400,x0=118,x1=392,top=24,gap=66;
+  let g=`<svg class="ladder" viewBox="0 0 ${W} 250" role="img" aria-label="Autonomic ladder showing your three state scores">`;
+  g+=`<line x1="${x0-14}" y1="${top-10}" x2="${x0-14}" y2="${top+2*gap+30}" stroke="var(--rule)" stroke-width="2"/><line x1="${x1+14}" y1="${top-10}" x2="${x1+14}" y2="${top+2*gap+30}" stroke="var(--rule)" stroke-width="2"/>`;
+  rows.forEach(([nm,sub,k,col],i)=>{
+    const y=top+i*gap,v=sc[k],w=(v-1)/5*(x1-x0);
+    const isHome=au.home.split("–").includes(nm);
+    g+=`<text x="0" y="${y+12}" fill="var(--ink)" font-family="var(--f-disp)" font-size="18" font-weight="600">${nm}</text>`;
+    g+=`<text x="0" y="${y+30}" fill="var(--muted)" font-family="var(--f-body)" font-size="13">${sub}</text>`;
+    g+=`<rect x="${x0}" y="${y}" width="${x1-x0}" height="22" rx="4" fill="var(--soft)"/>`;
+    g+=`<rect x="${x0}" y="${y}" width="${w.toFixed(1)}" height="22" rx="4" fill="var(${col})"/>`;
+    g+=`<text x="${x1-6}" y="${y+16}" text-anchor="end" fill="var(--ink)" font-family="var(--f-mono)" font-size="13" font-weight="500">${v.toFixed(2)}</text>`;
+    if(isHome)g+=`<text x="${x0}" y="${y+40}" fill="var(${col})" font-family="var(--f-mono)" font-size="11">▲ HOME STATE</text>`;
+  });
+  const ry=top+3*gap-2,rw=(sc.Return-1)/5*(x1-x0);
+  g+=`<text x="0" y="${ry+12}" fill="var(--ink)" font-family="var(--f-disp)" font-size="15" font-weight="600">Return</text><text x="0" y="${ry+28}" fill="var(--muted)" font-family="var(--f-body)" font-size="12">to ventral</text>`;
+  g+=`<rect x="${x0}" y="${ry+4}" width="${x1-x0}" height="8" rx="4" fill="var(--soft)"/><rect x="${x0}" y="${ry+4}" width="${rw.toFixed(1)}" height="8" rx="4" fill="var(--d)"/><text x="${x1-6}" y="${ry+30}" text-anchor="end" fill="var(--muted)" font-family="var(--f-mono)" font-size="12">${sc.Return.toFixed(2)}</text>`;
+  return g+`</svg>`;
+}
+
+function resultsHTML(t){
+  const I=INST[t],sc=score(t),keys=Object.keys(I.subs);
+  let body="";
+  if(t==="D"){
+    const au=autonomic(sc);
+    const homeText=au.home==="Mixed"?"Your three states sit close together, so there's no single home state. Your profile reads as mixed.":au.home.includes("–")?`Your profile reads as ${au.home.replace("–"," and ")} together, with neither clearly ahead.`:`Your profile reads as ${au.home}-dominant.`;
+    body+=`<div class="card"><div class="eyebrow">The autonomic ladder</div>${ladderSVG(sc,au)}<p id="homeRead"><strong>${homeText}</strong></p><p class="def" style="color:var(--muted);font-size:13px">This describes felt states you reported over the past month. It can't tell you what your vagus nerve is doing.</p></div>`;
+    au.blends.forEach(b=>body+=`<div class="note info" data-blend="${b.k}"><strong>${b.title}.</strong> ${b.text}</div>`);
+    body+=`<h3>All four scales</h3>`+rowsHTML(t,sc,keys);
+  }else{
+    const sorted=keys.slice().sort((a,b)=>sc[b]-sc[a]);
+    body+=`<p>Ordered from highest to lowest. The faint line marks the scale midpoint.</p>`+rowsHTML(t,sc,sorted);
+  }
+  body+=careNote(t,sc);
+  body+=`<div class="qnav" style="margin-top:22px"><button class="btn" id="reviewBtn" type="button">Review answers</button><button class="btn" id="retakeBtn" type="button">Start over</button><button class="btn primary" type="button" data-go="synth">Go to Synthesis</button></div>`;
+  return body+shareHTML();
+}
+
+function synthHTML(){
+  const s=synth();
+  const head=`<div class="tabhead" style="--tc:var(--ink)"><div class="eyebrow">Synthesis</div><h2>Reading the inventories together</h2></div>`;
+  if(!s.open)return `<section>${head}<div class="card locked" id="synthLocked"><p>The Synthesis opens once any two inventories are complete. You've finished ${s.done.length} of 4.</p><div class="qnav">${TABS.filter(t=>!complete(t)).map(t=>`<button class="btn" type="button" data-go="${t}">${esc(INST[t].name)}</button>`).join("")}</div></div></section>`;
+  let h=`<section id="synthOpen">${head}`;
+  const fam=Object.keys(s.families);
+  if(fam.length){
+    const lead=fam.slice().sort((a,b)=>s.families[b]-s.families[a])[0];
+    h+=`<h3>Family profile</h3><div class="grid4">${fam.map(t=>`<div class="tile ${t===lead&&fam.length>1?"lead":""}" style="border-top:4px solid var(${INST[t].color})"><div class="k">${esc(INST[t].name)}</div><div class="v">${s.families[t].toFixed(2)}</div></div>`).join("")}</div>`;
+  }
+  if(s.flat)h+=`<div class="note info" id="flatNote">Your coping scores sit within half a point of each other, so no pattern stands out. A flat profile is a real result: it can mean you lean on many patterns about equally, or that answers drifted toward the middle.</div>`;
+  else if(s.top.length)h+=`<h3>Your three most prominent patterns</h3><div class="rows" id="topList">${s.top.map(x=>{const b=band(x.v);return `<div class="row" style="--tc:var(${INST[x.tab].color})"><div class="name">${esc(INST[x.tab].subs[x.k].label)}<span class="chip b${b}">${INST[x.tab].bands[b]}</span></div><div class="val">${fmt(x.v)}</div><div class="bar"><i style="width:${((x.v-1)/5*100).toFixed(1)}%"></i></div><div class="def">${esc(INST[x.tab].name)} · ${esc(INST[x.tab].subs[x.k].def)}</div></div>`}).join("")}</div>`;
+  const fk=Object.keys(s.four).filter(f=>s.four[f]!=null);
+  if(fk.length){
+    const lead=fk.slice().sort((a,b)=>s.four[b]-s.four[a]);
+    const close=lead.length>1&&s.four[lead[0]]-s.four[lead[1]]<0.25;
+    h+=`<h3>Lean on Walker's four Fs</h3><p>An interpretive grouping of your coping patterns by the survival response they most resemble. ${close?"Your top two are close, so read this as a blend.":""}</p><div class="grid4" id="fourF">${["Fight","Flight","Freeze","Fawn"].map(f=>`<div class="tile ${s.four[f]!=null&&f===lead[0]&&!close?"lead":""}"><div class="k">${f}</div><div class="v">${s.four[f]==null?"—":s.four[f].toFixed(2)}</div></div>`).join("")}</div><p style="font-size:13px;color:var(--muted);margin-top:8px">Fawn here draws only on self-defeating humor and forced positivity. For people-pleasing itself, see Fawn in the Series IV Activation Response Profile and Subjugation and Self-Sacrifice in Series IX.</p>`;
+  }
+  if(s.auto){
+    const a=s.auto;
+    h+=`<h3>Nervous system and coping</h3><p>Your autonomic profile reads as <strong>${a.home==="Mixed"?"mixed":a.home.replace("–"," and ")+(a.home.includes("–")?"":"-dominant")}</strong>, with ${["limited","moderate","strong"][a.retBand]} return to ventral.</p>`;
+    if(a.blends.length)h+=`<p>${a.blends.map(b=>`<strong>${b.title}</strong>`).join(" and ")} also showed up in your state profile.</p>`;
+    if(s.cross.length)h+=`<ul id="crossList">${s.cross.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`;
+    else if(s.done.length>1)h+=`<p id="noCross">None of the state–pattern pairings this instrument looks for reached the high range together.</p>`;
+  }else h+=`<div class="note info">Complete the Autonomic State Profile to see how your coping patterns line up with your nervous system state.</div>`;
+  return h+shareHTML()+`</section>`;
+}
+
+/* reliability: filled in by the build harness */
+const SIM=/*SIM*/{"N":1500,"runs":20,"alpha":{"A.Perf":{"mean":0.827,"p5":0.789},"A.Conceal":{"mean":0.813,"p5":0.774},"A.Work":{"mean":0.815,"p5":0.773},"A.HyperInd":{"mean":0.819,"p5":0.792},"A.Overfunc":{"mean":0.822,"p5":0.791},"A.Control":{"mean":0.813,"p5":0.775},"A.Imposter":{"mean":0.815,"p5":0.775},"B.Dissoc":{"mean":0.819,"p5":0.781},"B.Daydream":{"mean":0.822,"p5":0.792},"B.Distract":{"mean":0.821,"p5":0.792},"B.Handicap":{"mean":0.813,"p5":0.779},"B.Minimize":{"mean":0.823,"p5":0.783},"B.Intellect":{"mean":0.824,"p5":0.803},"B.Humor":{"mean":0.816,"p5":0.772},"B.PosIn":{"mean":0.823,"p5":0.793},"B.PosOut":{"mean":0.809,"p5":0.781},"C.AppPre":{"mean":0.817,"p5":0.77},"C.AppSafe":{"mean":0.814,"p5":0.786},"C.Spend":{"mean":0.815,"p5":0.783},"C.Subst":{"mean":0.817,"p5":0.782},"C.Keep":{"mean":0.82,"p5":0.793},"D.Ventral":{"mean":0.822,"p5":0.778},"D.Symp":{"mean":0.816,"p5":0.783},"D.Dorsal":{"mean":0.814,"p5":0.789},"D.Return":{"mean":0.811,"p5":0.783}}}/*/SIM*/;
+
+function methodHTML(){
+  let rows="";
+  TABS.forEach(t=>Object.keys(INST[t].subs).forEach(k=>{const s=SIM&&SIM.alpha[t+"."+k];rows+=`<tr><td>${INST[t].code}</td><td>${esc(INST[t].subs[k].label)}</td><td>6</td><td>3F / 3R</td><td class="n">${s?s.mean.toFixed(3):"—"}</td><td class="n">${s?s.p5.toFixed(3):"—"}</td></tr>`}));
+  return `<section class="method"><div class="tabhead" style="--tc:var(--ink)"><div class="eyebrow">Psychometric appendix</div><h2>Method</h2></div>
+  <h3>Structure</h3>
+  <p>Four inventories, 25 subscales, 150 items. Every subscale has six items: three worded toward the pattern and three worded away from it. Scores are subscale means on a 1–6 scale, so a respondent who answers every item the same way lands at 3.50 on every subscale. Bands are fixed cut points on the response scale, not percentiles: 2.60 or below, between, and 4.40 or above.</p>
+  <p>Items appear one per screen in a fixed interleaved order, with no two items from the same subscale back to back. Subscale names appear only in results.</p>
+  <h3>Reliability (simulated)</h3>
+  <p>Values come from a Monte Carlo simulation (${SIM?SIM.N.toLocaleString():"—"} synthetic respondents per run, ${SIM?SIM.runs:"—"} runs) using a one-factor model per subscale, with forward loadings drawn from .60–.85 and reverse loadings from .50–.75, responses cut to six ordinal points. They estimate how the item structure should behave. They are not data from real respondents.</p>
+  <div class="tbl"><table id="alphaTable"><thead><tr><th>Inst.</th><th>Subscale</th><th>Items</th><th>Keying</th><th>α mean</th><th>α 5th pct</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <h3>Construct anchors</h3>
+  <div class="tbl"><table><thead><tr><th>Subscale</th><th>Anchored to</th></tr></thead><tbody>${TABS.map(t=>Object.keys(INST[t].subs).map(k=>`<tr><td>${esc(INST[t].subs[k].label)}</td><td>${esc(INST[t].subs[k].anchor)}</td></tr>`).join("")).join("")}</tbody></table></div>
+  <p>Every item is original, written to the published construct definition. No item reproduces a published instrument.</p>
+  <h3>Methodological decisions</h3>
+  <ul>
+    <li><b>Scope set against the rest of the series.</b> People-pleasing, codependency, hypervigilance, emotional shutdown, catastrophizing, the inner critic, mistrust, splitting, stonewalling, and masking are measured in other series instruments and are not repeated here. Fawn proper lives in Series IV; Subjugation, Self-Sacrifice and Approval-Seeking in Series IX.</li>
+    <li><b>"Trauma response" is a hypothesis, not a measurement.</b> Popular lists call every pattern here a trauma response. The research supports these as coping patterns; where they came from varies by person. The instrument measures the pattern only.</li>
+    <li><b>Perfectionism split from Series IX.</b> Series IX Unrelenting Standards measures high personal standards. This instrument measures the fear side (concern over mistakes, doubt, socially prescribed perfectionism) and concealment, which IX does not.</li>
+    <li><b>Toxic positivity treated as phenomenology.</b> The construct has little validation; one thesis found only a single existing measure, of uncertain reliability. It is anchored here to experiential avoidance, expressive suppression, spiritual bypassing, and invalidation research, and split into an inward and an outward form.</li>
+    <li><b>Appearance scales are not a BDD screen.</b> Body dysmorphic disorder is a DSM-5 diagnosis. These scales measure preoccupation and safety behaviors only, and items deliberately avoid weight, shape, and food so they don't drift into eating-disorder content.</li>
+    <li><b>Excluded for safety.</b> Self-harm, disordered eating (including comfort eating and compulsive exercise), and compulsive sexual behavior are not instrumented. A self-scored quiz isn't the right tool for them.</li>
+    <li><b>Excluded as unvalidated.</b> "Oversharing" and "trauma dumping" appear on popular lists but have no validated construct, and the labels stigmatize.</li>
+    <li><b>Substance items measure motive, not quantity.</b> They ask about using alcohol or other substances to change how you feel. They don't ask how much or how often and can't indicate a substance use disorder.</li>
+    <li><b>Walker 4F grouping is interpretive.</b> The Synthesis groups patterns by the survival response they most resemble. The grouping follows Walker's descriptions and has not been tested empirically.</li>
+  </ul>
+  <h3>The autonomic tab and the polyvagal debate</h3>
+  <ul>
+    <li><b>What it uses.</b> The ventral, sympathetic, and dorsal states follow Porges' polyvagal theory as it is used clinically, with Deb Dana's autonomic ladder for the results display. The nearest validated self-report tool, the Neuroception of Psychological Safety Scale (Cogan et al., co-authored by Porges), informed the Ventral scale; the Body Perception Questionnaire informed Sympathetic and Dorsal.</li>
+    <li><b>Why the framing is careful.</b> The theory's physiology is heavily disputed. Grossman (2023) and a 2026 international expert evaluation led by Grossman argue its core anatomical and evolutionary claims are untenable; Porges' 2026 reply argues the critique misstates the theory. Clinicians on both sides agree that felt safety shapes perception and relationships.</li>
+    <li><b>What results say.</b> Results describe self-reported felt states organized by the polyvagal map. They read "your profile reads as dorsal-dominant," never "you are in dorsal vagal," and make no claim about vagal activity.</li>
+    <li><b>Separate from Series IV.</b> The Series IV Activation Response Profile measures what you do under threat. This tab measures how your body feels by default, so items stay with sensation and energy rather than behavior.</li>
+    <li><b>Healthy scales score up.</b> Ventral and Return to Ventral are scored so higher is healthier. Their reverse items describe the absence of that state.</li>
+    <li><b>Blended states.</b> Functional freeze is flagged when Sympathetic and Dorsal are both 4.00 or above; engaged mobilization and restful stillness follow Dana's descriptions of blended states. These rules are interpretive cut points.</li>
+  </ul>
+  <h3>Limitations</h3>
+  <ul>
+    <li>No norms. Bands are fixed cut points, not percentiles.</li>
+    <li>Reliability figures are simulated. Real-sample alphas and a factor analysis are the next step before any published claim.</li>
+    <li>Several pairs sit close together and are the first to check for redundancy with real data: Perfectionistic Concerns and Imperfection Concealment; Forced Positivity and Minimizing; Hyper-Independence and Overfunctioning; Ventral and Sympathetic.</li>
+    <li>Self-report only. Work Compulsion, Overfunctioning, Hyper-Independence, Invalidating Positivity and Self-Defeating Humor are visible to others and would benefit from an observer form.</li>
+    <li>Dissociation is hard to self-report accurately, because the experience itself can blur awareness.</li>
+    <li>Not diagnostic. Nothing here identifies a disorder.</li>
+  </ul>
+  <h3>Sources</h3>
+  <ul>
+    <li>Bach, B., Lockwood, G., &amp; Young, J. E. (2018). A new look at the schema therapy model. <i>Cognitive Behaviour Therapy, 47</i>(4), 328–349.</li>
+    <li>Bowen, M. (1978). <i>Family therapy in clinical practice</i>. Jason Aronson.</li>
+    <li>Andreassen, C. S., et al. (2012). The development of a work addiction scale. <i>Scandinavian Journal of Psychology, 53</i>(3), 265–272.</li>
+    <li>Andreassen, C. S., et al. (2015). The Bergen Shopping Addiction Scale. <i>Frontiers in Psychology, 6</i>, 1374.</li>
+    <li>Carleton, R. N., Norton, P. J., &amp; Asmundson, G. J. G. (2007). Fearing the unknown: A short version of the Intolerance of Uncertainty Scale. <i>Journal of Anxiety Disorders, 21</i>, 105–117.</li>
+    <li>Carver, C. S. (1997). You want to measure coping but your protocol's too long: Consider the Brief COPE. <i>International Journal of Behavioral Medicine, 4</i>, 92–100.</li>
+    <li>Clance, P. R. (1985). <i>The impostor phenomenon</i>. Peachtree.</li>
+    <li>Cogan, N., et al. (2025). Neuroception of psychological safety scale (NPSS): Validation with a UK based adult community sample. <i>European Journal of Psychotraumatology, 16</i>(1), 2490329.</li>
+    <li>Dana, D. (2018). <i>The polyvagal theory in therapy</i>. Norton.</li>
+    <li>Frost, R. O., Marten, P., Lahart, C., &amp; Rosenblate, R. (1990). The dimensions of perfectionism. <i>Cognitive Therapy and Research, 14</i>, 449–468.</li>
+    <li>Grossman, P. (2023). Fundamental challenges and likely refutations of the five basic premises of the polyvagal theory. <i>Biological Psychology, 180</i>, 108589.</li>
+    <li>Grossman, P., et al. (2026). Why the polyvagal theory is untenable. <i>Clinical Neuropsychiatry, 23</i>(1), 100–112.</li>
+    <li>Hewitt, P. L., et al. (2003). The interpersonal expression of perfection: Perfectionistic self-presentation. <i>Journal of Personality and Social Psychology, 84</i>, 1303–1325.</li>
+    <li>Martin, R. A., et al. (2003). Individual differences in uses of humor: The Humor Styles Questionnaire. <i>Journal of Research in Personality, 37</i>, 48–75.</li>
+    <li>Porges, S. W. (2011). <i>The polyvagal theory</i>. Norton.</li>
+    <li>Porges, S. W. (2026). When a critique becomes untenable. <i>Clinical Neuropsychiatry, 23</i>(1), 113–128.</li>
+    <li>Somer, E., et al. (2016). Development and validation of the Maladaptive Daydreaming Scale (MDS-16). <i>Consciousness and Cognition, 39</i>, 77–91.</li>
+    <li>Veale, D., et al. (2014). Development of an Appearance Anxiety Inventory. <i>Behavioural and Cognitive Psychotherapy, 42</i>, 605–616.</li>
+    <li>Walker, P. (2013). <i>Complex PTSD: From surviving to thriving</i>. Azure Coyote.</li>
+  </ul></section>`;
+}
+
+/* keyboard */
+document.addEventListener("keydown",e=>{
+  if(!TABS.includes(S.tab)||!document.getElementById("qcard"))return;
+  if(e.key>="1"&&e.key<="6"&&!e.metaKey&&!e.ctrlKey){e.preventDefault();answer(+e.key)}
+  else if(e.key==="Backspace"){e.preventDefault();back()}
+});
+
+/* theme */
+function themeNow(){const a=document.documentElement.getAttribute("data-theme");if(a)return a;return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}
+function setThemeLabel(){$("#themeBtn").textContent=themeNow()==="dark"?"Light mode":"Dark mode"}
+$("#themeBtn").onclick=()=>{document.documentElement.setAttribute("data-theme",themeNow()==="dark"?"light":"dark");setThemeLabel()};
+setThemeLabel();
+
+const start=(location.hash||"").slice(1);
+S.tab=["home","synth","method",...TABS].includes(start)?start:"home";
+renderTabs();render();
+
+window.__T={reportText,report,mailtoHref,validEmail,buildPDF,LAB,INST,ORDER,TABS,S,score,band,concern,autonomic,synth,answer,back,showTab,careNote,SIM,
+  fill(tab,fn){ORDER[tab].forEach((it,j)=>{S.ans[tab][j]=fn(it,j)});S.pos[tab]=ORDER[tab].length-1;renderTabs();render()},
+  reset(){TABS.forEach(t=>{S.ans[t].fill(null);S.pos[t]=0;S.started[t]=false});S.tab="home";renderTabs();render()}};
+})();
+</script>
+
+</body></html>

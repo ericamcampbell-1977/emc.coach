@@ -1,0 +1,668 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Series XII · Parts &amp; Self</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column, tab rail on top, one question per screen; results as ruled rows; synthesis opens on a radial "system map" (Self at the center, exiles ringed around it, protectors reaching out). */
+:root{
+  --paper:#F3F1EC; --sheet:#FAF9F6; --ink:#24232B; --muted:#66636F; --rule:#D9D6DE;
+  --acc:#45488F; --acc-soft:#DEDFF0; --amber:#8A5D14;
+  --ex:#9A3F58; --cr:#2C5A88; --pl:#4E57A3; --vg:#24727C;
+  --nm:#A15A12; --fl:#B0382A; --dc:#7B5592; --sq:#5C7A2E; --sl:#2F7A5A;
+  --wc:#9A3F58; --up:#8A5D14; --dn:#4F6584; --wa:#2F7A5A;
+  --care:#F2E2E4; --flag:#F2EAD7;
+  --c:var(--acc);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#18171D; --sheet:#211F27; --ink:#E9E6EF; --muted:#A29EAC; --rule:#36333F;
+  --acc:#A9ACEB; --acc-soft:#2D2E4C; --amber:#D9A75A;
+  --ex:#E08DA3; --cr:#86B3E0; --pl:#A3A9EB; --vg:#73C3C9;
+  --nm:#E3A35E; --fl:#EE8C7C; --dc:#C4A1DB; --sq:#AECB7C; --sl:#80C9A5;
+  --wc:#E08DA3; --up:#DDAA55; --dn:#9DB2D3; --wa:#80C9A5;
+  --care:#3B2329; --flag:#3A311F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#18171D; --sheet:#211F27; --ink:#E9E6EF; --muted:#A29EAC; --rule:#36333F;
+  --acc:#A9ACEB; --acc-soft:#2D2E4C; --amber:#D9A75A;
+  --ex:#E08DA3; --cr:#86B3E0; --pl:#A3A9EB; --vg:#73C3C9;
+  --nm:#E3A35E; --fl:#EE8C7C; --dc:#C4A1DB; --sq:#AECB7C; --sl:#80C9A5;
+  --wc:#E08DA3; --up:#DDAA55; --dn:#9DB2D3; --wa:#80C9A5;
+  --care:#3B2329; --flag:#3A311F; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.theme{all:unset;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--rule);padding:4px 9px;border-radius:3px;white-space:nowrap}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(30px,6vw,44px);line-height:1.08;margin:0;text-wrap:balance}
+h1 em{font-style:italic;color:var(--acc)}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+.five{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.five b{color:var(--ink);font-weight:500}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0}
+nav{display:flex;gap:2px;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+nav button{all:unset;cursor:pointer;padding:10px 12px 9px;font-size:14px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;display:flex;gap:8px;align-items:baseline}
+nav button small{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.panel{display:flex;flex-direction:column;gap:22px}
+.intro{display:flex;flex-direction:column;gap:14px;max-width:62ch}
+.intro h2,.res h2,.card h3{font-family:var(--display);font-weight:500;margin:0;text-wrap:balance}
+.intro h2,.res h2{font-size:26px}
+.intro p{margin:0}
+.meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 16px}
+.btn{all:unset;cursor:pointer;align-self:flex-start;background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:3px;font-weight:500;font-size:15px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.row-btns{display:flex;flex-wrap:wrap;gap:10px}
+.q{display:flex;flex-direction:column;gap:18px;min-height:340px}
+.qmeta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.track{height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+.track i{display:block;height:100%;background:var(--acc);transition:width .2s}
+.stem{font-family:var(--display);font-size:clamp(22px,4.4vw,28px);line-height:1.3;margin:6px 0 4px;min-height:3.9em;text-wrap:balance}
+.scale{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.scale button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border:1px solid var(--rule);border-radius:3px;background:var(--sheet);text-align:center}
+.scale button b{font-family:var(--mono);font-weight:500;font-size:17px}
+.scale button span{font-size:11.5px;line-height:1.25;color:var(--muted)}
+.scale button:hover{border-color:var(--muted)}
+.scale button[aria-pressed="true"]{background:var(--acc-soft);border-color:var(--acc)}
+.scale button[aria-pressed="true"] b{color:var(--acc)}
+.qnav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.qnav button{all:unset;cursor:pointer;font-size:14px;color:var(--muted)}
+.qnav button[disabled]{opacity:.35;cursor:default}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+@media (max-width:520px){.scale{grid-template-columns:repeat(3,minmax(0,1fr))}.hint{display:none}}
+.res{display:flex;flex-direction:column;gap:20px}
+.group{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:8px 0 -10px}
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;padding:14px 0 14px 12px;border-bottom:1px solid var(--rule);border-left:3px solid var(--c)}
+.srow h4{margin:0;font-size:15.5px;font-weight:600}
+.srow .val{font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums;text-align:right}
+.srow .def,.srow .read{grid-column:1/-1;margin:0;font-size:14px;color:var(--muted)}
+.srow .read{color:var(--ink)}
+.bt{grid-column:1/-1;position:relative;height:6px;background:var(--rule);border-radius:3px}
+.bt i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.bt u{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--muted);opacity:.5}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;border:1px solid var(--rule);color:var(--muted);margin-left:8px;vertical-align:2px;font-weight:400}
+.chip.b4{background:var(--c);border-color:var(--c);color:var(--paper)}
+.chip.b3{border-color:var(--c);color:var(--c)}
+.flagbox{background:var(--flag);border-left:3px solid var(--amber);padding:12px 14px;border-radius:0 3px 3px 0;font-size:14.5px;margin:0;max-width:62ch;display:flex;flex-direction:column;gap:6px}
+.flagbox b{font-family:var(--display);font-weight:500;font-size:17px}
+.care{background:var(--care);border-left:3px solid var(--ex);padding:12px 14px;border-radius:0 3px 3px 0;font-size:14.5px;margin:0;max-width:62ch}
+.note{font-size:13.5px;color:var(--muted);max-width:62ch;margin:0}
+.cards{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+.card h3{font-size:20px}
+.card p{margin:0;font-size:15px}
+.card .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card.locked{background:transparent;border-style:dashed}
+.card.locked p{color:var(--muted)}
+.map{display:flex;justify-content:center}
+.map svg{width:100%;max-width:440px;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.strip{position:relative;height:34px;margin:4px 8px 0}
+.strip::before{content:"";position:absolute;left:0;right:0;top:15px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--dn),var(--rule) 40%,var(--rule) 60%,var(--up))}
+.strip .mk{position:absolute;top:8px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:var(--wa);border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--wa)}
+.strip-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.xw{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px 12px;align-items:center;font-size:14px}
+.xw .m{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-align:center}
+.xw span b{font-family:var(--mono);font-weight:500}
+footer.legal{border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:10px;font-size:12.5px;line-height:1.55;color:var(--muted);max-width:72ch}
+footer.legal h2{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;margin:0;color:var(--muted)}
+footer.legal p{margin:0}
+footer.legal b{color:var(--ink);font-weight:500}
+footer.legal .tel{font-family:var(--mono);color:var(--ink);user-select:all;white-space:nowrap}
+footer.legal button{all:unset;cursor:pointer;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.apx{display:flex;flex-direction:column;gap:18px;max-width:68ch}
+.apx h3{font-family:var(--display);font-weight:500;font-size:20px;margin:6px 0 0}
+.apx p,.apx li{font-size:14.5px}
+.apx p{margin:0}
+.apx ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:6px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:460px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.send{display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;max-width:420px}
+.field label{font-size:14px;font-weight:500}
+.field input{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:9px 11px;min-width:0}
+.field input:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.field input[aria-invalid="true"]{border-color:var(--fl)}
+.err{font-size:13px;color:var(--fl);margin:0}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;max-width:62ch;cursor:pointer}
+.check input{margin-top:4px;width:16px;height:16px;accent-color:var(--acc);flex:none}
+.check small{display:block;color:var(--muted);font-size:13px}
+.btn[aria-disabled="true"]{opacity:.45;cursor:default}
+.status{font-size:13.5px;color:var(--ink);min-height:1.2em;margin:0}
+details.prev summary{cursor:pointer;font-size:14px;color:var(--muted)}
+details.prev textarea{display:block;width:100%;min-height:240px;margin-top:8px;font-family:var(--mono);font-size:12.5px;line-height:1.5;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:10px;resize:vertical}
+@media (prefers-reduced-motion:reduce){.track i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="top"><div class="eyebrow">Series XII · Internal systems</div><button class="theme" id="themeBtn" type="button"></button></div>
+    <h1>Parts &amp; Self: <em>who is running the system</em></h1>
+    <p class="lede">A self-report map of your inner system in two lenses: Richard Schwartz's Internal Family Systems (exiles, managers, firefighters and Self) and the Wounded Child, Adaptive Child and Wise Adult from Pia Mellody and Terry Real's relational work.</p>
+    <div class="five"><span><i class="dot" style="background:var(--ex)"></i><b>Exiles</b></span><span><i class="dot" style="background:var(--cr)"></i><b>Managers</b></span><span><i class="dot" style="background:var(--fl)"></i><b>Firefighters</b></span><span><i class="dot" style="background:var(--sl)"></i><b>Self</b></span><span><i class="dot" style="background:var(--up)"></i><b>Adaptive Child</b></span><span><i class="dot" style="background:var(--wa)"></i><b>Wise Adult</b></span></div>
+  </header>
+  <nav role="tablist" id="tabs"></nav>
+  <main class="panel" id="view"></main>
+  <footer class="legal" id="legal">
+    <h2>Disclaimer</h2>
+    <p><b>For education and self-reflection only.</b> Series XII is a self-report questionnaire written for a book project. It is not a psychological test, a clinical assessment or a diagnosis, and it has not been validated or normed on a real population. Scores describe how you answered on one occasion and can shift with mood, stress and circumstances.</p>
+    <p><b>Not professional advice.</b> Nothing here is medical, psychological, counseling or therapeutic advice, and using it does not create a professional relationship of any kind. Parts work can bring up strong feelings and old memories. If it does, an IFS-trained or trauma-informed licensed therapist is the right companion for going further.</p>
+    <p><b>If you are struggling.</b> This questionnaire does not ask about self-harm or suicidal thoughts. If you are having them, call or text <span class="tel">988</span> (Suicide &amp; Crisis Lifeline). In an emergency, call <span class="tel">911</span>. These are U.S. services; outside the U.S., contact your local emergency number.</p>
+    <p><b>Trademarks and sources.</b> Internal Family Systems and IFS are associated with Richard C. Schwartz and the IFS Institute. This questionnaire is independent and is not affiliated with, sponsored by or endorsed by the IFS Institute, Richard Schwartz, Pia Mellody, Terrence Real or the Relational Life Institute. All items are original and are not reproduced from any published instrument, including the IFS Scale (DeLand &amp; Schwartz). Research cited in the appendix is credited to its authors.</p>
+    <p><b>Privacy.</b> Your answers are saved only in this browser, on this device, so you can resume later. This page sends nothing on its own. If you choose to email your results, your own email app sends the message after you review it, and only to the addresses you choose. Ticking the Evolution Lab Collective box adds evolutionlabcollective@gmail.com as a recipient. <button type="button" id="clear-data">Clear my answers</button><span id="clear-msg" role="status"></span></p>
+    <p><b>No warranty.</b> This questionnaire is provided "as is," without warranties of any kind. To the fullest extent permitted by law, the author is not liable for any decision made or action taken based on it.</p>
+    <p>© 2026 Erica Campbell. All rights reserved.</p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const ALPHA = /*ALPHA*/{"PRT": {"EX": {"mean": 0.819, "p05": 0.778, "items": 6}, "CR": {"mean": 0.815, "p05": 0.779, "items": 6}, "PL": {"mean": 0.818, "p05": 0.773, "items": 6}, "VG": {"mean": 0.816, "p05": 0.776, "items": 6}, "NM": {"mean": 0.815, "p05": 0.775, "items": 6}, "FL": {"mean": 0.814, "p05": 0.762, "items": 6}, "DC": {"mean": 0.815, "p05": 0.769, "items": 6}, "SQ": {"mean": 0.817, "p05": 0.779, "items": 6}, "SL": {"mean": 0.817, "p05": 0.773, "items": 6}}, "RLT": {"WC": {"mean": 0.817, "p05": 0.78, "items": 6}, "UP": {"mean": 0.814, "p05": 0.771, "items": 6}, "DN": {"mean": 0.813, "p05": 0.771, "items": 6}, "WA": {"mean": 0.816, "p05": 0.777, "items": 6}}}/*END*/;
+const F = t => ({ t, r: false }), R = t => ({ t, r: true });
+const SCALE = ["Strongly disagree","Disagree","Slightly disagree","Slightly agree","Agree","Strongly agree"];
+const COL = { EX:"var(--ex)", CR:"var(--cr)", PL:"var(--pl)", VG:"var(--vg)", NM:"var(--nm)", FL:"var(--fl)", DC:"var(--dc)", SQ:"var(--sq)", SL:"var(--sl)", WC:"var(--wc)", UP:"var(--up)", DN:"var(--dn)", WA:"var(--wa)" };
+const MGR = ["CR","PL","VG"], FF = ["NM","FL","DC"], PROT = [...MGR,...FF], SELF = ["SQ","SL"];
+/* Flag cutoffs on the raw mean response, set so about 1% of simulated honest responders trip them (see appendix). */
+const ACQ = /*ACQ*/{"PRT": [3.13, 3.87], "RLT": [2.96, 4.04]}/*END*/;
+const LEAD_GAP = 1.0, STYLE_GAP = 0.75, POLAR = 4.5, QUIET_PROT = 4.0, QUIET_EX = 3.0;
+
+const INSTR = {
+  PRT: { code:"PRT", tab:"Parts", name:"Parts & Self", seed:1212,
+    intro:"Rate how true each statement is of you in recent months. There are no good or bad answers here. In this model every reaction, even an extreme one, began as an attempt to help.",
+    groups:[["Exiles",["EX"]],["Managers",MGR],["Firefighters",FF],["Self",SELF]],
+    subs:{
+      EX:{ label:"Exiles", fam:"Exile", def:"Young, hurt places that carry old shame, fear, loneliness or a sense of being unwanted.",
+        hi:"Old hurt is close to the surface for you and can arrive with more force than the present moment explains.", lo:"Old hurt rarely surfaces with force. That can mean it has healed, or that protectors keep it well out of view.",
+        items:[F("Old feelings of being unwanted can come back to me with surprising force."),F("I carry a sense of shame that feels older than anything I've done."),F("Underneath how I come across, I often feel small."),
+               R("Painful memories from childhood rarely stir up strong feelings in me now."),R("I feel basically worthwhile, even on bad days."),R("When I'm hurt, the feeling stays in proportion to what happened.")]},
+      CR:{ label:"Inner Critic", fam:"Manager", def:"A manager that tries to prevent failure and rejection by finding fault first.",
+        hi:"A harsh inner voice works hard to keep you from falling short.", lo:"Your inner voice is not harsh by default.",
+        items:[F("When I make a mistake, an inner voice tells me how stupid I was."),F("I hold myself to standards I would never apply to a friend."),F("I replay my failures long after everyone else has moved on."),
+               R("When I fall short, I can speak to myself with kindness."),R("I can let a mistake go once I've learned from it."),R("My self-talk is mostly encouraging.")]},
+      PL:{ label:"Pleaser", fam:"Manager", def:"A manager that keeps you safe by keeping others pleased, close and not angry.",
+        hi:"Keeping others happy takes a lot of your energy, often at the cost of your own preferences.", lo:"Other people's approval does not steer you much.",
+        items:[F("I adjust my opinions to match whoever I'm with."),F("I feel anxious until I know someone isn't upset with me."),F("I say yes to requests when I want to say no."),
+               R("I can disappoint someone without much inner turmoil."),R("I state my preferences even when others might disagree."),R("Other people's moods don't decide how my day goes.")]},
+      VG:{ label:"Vigilant Controller", fam:"Manager", def:"A manager that stays on guard, plans ahead and keeps things under control so nothing hurts you by surprise.",
+        hi:"Part of you is always on watch, scanning for what could go wrong.", lo:"You can let things unfold without much guarding.",
+        items:[F("I scan situations for what could go wrong."),F("I feel uneasy when I'm not in control of how things turn out."),F("I plan for the worst so I won't be caught off guard."),
+               R("I can let things unfold without a backup plan."),R("I adapt easily when plans change at the last minute."),R("I trust myself to handle problems as they come.")]},
+      NM:{ label:"Numbing & Escape", fam:"Firefighter", def:"A firefighter that puts out emotional pain fast with food, drink, screens, spending or other quick relief.",
+        hi:"When pain breaks through, a part of you reaches for quick relief, sometimes at a cost.", lo:"You rarely reach for escape when feelings run high.",
+        items:[F("When feelings get too big, I reach for something to take the edge off."),F("I turn to food, drink, screens or shopping to escape a bad mood."),F("After an upsetting moment, I do things on impulse that I later regret."),
+               R("I can sit with a painful feeling without needing to escape it."),R("When I'm upset, I can wait before acting."),R("I can stop my ways of unwinding whenever I choose.")]},
+      FL:{ label:"Flare", fam:"Firefighter", def:"A firefighter that meets hurt with sudden anger, pushing the threat away before the pain can land.",
+        hi:"Hurt can turn into anger quickly, before you choose it.", lo:"Anger rarely takes over before you can choose what to do with it.",
+        items:[F("When I feel hurt, I lash out before I can stop myself."),F("Small frustrations can set off anger that surprises me."),F("My temper rises quickly when I feel criticized."),
+               R("I stay steady when someone pushes my buttons."),R("My anger builds slowly enough that I can choose what to do with it."),R("I can feel angry without raising my voice.")]},
+      DC:{ label:"Disconnect", fam:"Firefighter", def:"A protector that gets you out of overwhelming moments by going blank, distant or checked out.",
+        hi:"When things get intense, part of you takes you away from the moment.", lo:"You tend to stay present, even in hard moments.",
+        items:[F("I go blank when a conversation gets emotionally intense."),F("Sometimes I feel like I'm watching my life from outside myself."),F("When things get hard, I mentally check out."),
+               R("I stay present in my body during stressful moments."),R("I can feel my emotions clearly even when they're unpleasant."),R("I remember difficult conversations clearly afterward.")]},
+      SQ:{ label:"Self-energy", fam:"Self", def:"The qualities IFS links to Self: calm, curiosity, compassion, clarity, confidence, courage, creativity and connectedness.",
+        hi:"You have steady access to calm, curiosity and compassion, including toward yourself.", lo:"Calm and self-compassion feel hard to reach right now.",
+        items:[F("I can approach my own reactions with curiosity instead of judgment."),F("At times I feel a deep calm that doesn't depend on circumstances."),F("I feel compassion for the younger version of myself."),
+               R("When I look inward, I mostly find things I wish weren't there."),R("I rarely feel connected to anything larger than my problems."),R("Inner calm feels out of reach for me most of the time.")]},
+      SL:{ label:"Self-leadership", fam:"Self", def:"The ability to notice a part has taken over, step back from it and steer from a steadier place.",
+        hi:"You can notice when a part has taken the wheel and find your way back.", lo:"Once a strong reaction takes over, it tends to run the show.",
+        items:[F("When I notice a strong feeling has taken over, I can step back from it."),F("I can hold two conflicting feelings at once without picking a side."),F("After being upset, I find my way back to center fairly quickly."),
+               R("Once a strong emotion takes over, it runs the show until it's spent."),R("When I'm torn inside, one side usually wins by force."),R("I lose track of who I am when I'm under stress.")]}
+    }},
+  RLT: { code:"RLT", tab:"Child & Adult", name:"Wounded Child, Adaptive Child, Wise Adult", seed:2424,
+    intro:"These statements are about how you show up with the people closest to you: a partner, family or close friends. Think about recent months.",
+    groups:[["Wounded Child",["WC"]],["Adaptive Child",["UP","DN"]],["Wise Adult",["WA"]]],
+    subs:{
+      WC:{ label:"Wounded Child", fam:"Child", def:"The moments when a present-day hurt drops you back into feeling young, small and helpless.",
+        hi:"Hurt from people close to you can make you feel much younger than you are.", lo:"You stay your own age, even when someone close hurts you.",
+        items:[F("When someone I love pulls away, I feel as helpless as a small child."),F("A loved one's tone of voice can make me feel like a scared kid again."),F("In conflict, I can feel much younger than my actual age."),
+               R("Even when I'm hurt by someone close, I still feel like a capable adult."),R("A loved one's disapproval stings without flooding me."),R("In conflict with people I love, I respond from my present-day self.")]},
+      UP:{ label:"Adaptive Child · one-up", fam:"Adaptive", def:"The childhood strategy of protecting yourself by being right, superior or in charge. Real calls this grandiosity.",
+        hi:"Under stress you tend to move up: correcting, judging or taking control.", lo:"You rarely move into superiority under stress.",
+        items:[F("In an argument, I focus on proving I'm right."),F("I get impatient with people who don't see things as clearly as I do."),F("When someone lets me down, I tell them exactly what they did wrong."),
+               R("I can concede a point without needing the last word."),R("I treat other people's views as being as valid as mine."),R("When someone disagrees with me, I consider that they might be right.")]},
+      DN:{ label:"Adaptive Child · one-down", fam:"Adaptive", def:"The childhood strategy of protecting yourself by shrinking, deferring or collapsing into shame.",
+        hi:"Under stress you tend to move down: blaming yourself and losing your footing.", lo:"Conflict rarely knocks your sense of worth.",
+        items:[F("When something goes wrong in a relationship, I assume the problem is me."),F("When I'm criticized, I collapse instead of responding."),F("After a conflict, I feel worthless for days."),
+               R("I can hear criticism without concluding I'm a bad person."),R("After a conflict, my sense of worth stays intact."),R("I see myself as an equal to the people I'm close to.")]},
+      WA:{ label:"Wise Adult", fam:"Adult", def:"Real's functional adult: same-as, not one-up or one-down. Speaks plainly, owns their part and sets limits with warmth.",
+        hi:"Your grown-up self is usually available in close relationships.", lo:"Your grown-up self is hard to reach in heated moments.",
+        items:[F("In a conflict, I can say what I need without attacking."),F("I can set a firm limit kindly."),F("When I've hurt someone, I take responsibility without making excuses."),
+               R("In heated moments, I say things I know won't get me what I want."),R("I find it hard to ask for what I need in plain words."),R("When I'm upset with someone, I wait for them to fix it.")]}
+    }}
+};
+const KEYS = ["PRT","RLT"];
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr,rnd){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+/* Blind interleave: draw from a subscale with the most items left, never the one just used. */
+function orderFor(key){
+  const I=INSTR[key], rnd=mulberry32(I.seed), pools={};
+  for(const s in I.subs) pools[s]=shuffle(I.subs[s].items.map((_,i)=>i),rnd);
+  const out=[]; let prev=null;
+  for(;;){
+    const left=Object.keys(pools).filter(s=>pools[s].length);
+    if(!left.length) break;
+    let c=left.filter(s=>s!==prev); if(!c.length) c=left;
+    const mx=Math.max(...c.map(s=>pools[s].length));
+    const top=c.filter(s=>pools[s].length===mx);
+    const s=top[Math.floor(rnd()*top.length)];
+    out.push({sub:s,i:pools[s].shift(),id:""}); out[out.length-1].id=`${key}.${s}.${out[out.length-1].i}`;
+    prev=s;
+  }
+  return out;
+}
+const ORDER = Object.fromEntries(KEYS.map(k=>[k,orderFor(k)]));
+
+function score(key,ans){
+  const I=INSTR[key], res={};
+  for(const s in I.subs){
+    const it=I.subs[s].items; let sum=0,n=0;
+    it.forEach((x,i)=>{const v=ans[`${key}.${s}.${i}`]; if(v){sum+=x.r?7-v:v;n++}});
+    res[s]= n===it.length ? sum/n : null;
+  }
+  return res;
+}
+const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const BANDS={part:["Quiet","Present","Active","Leading"],res:["Limited","Emerging","Steady","Strong"]};
+function bandIdx(v){return v<2.5?0:v<3.5?1:v<4.5?2:3}
+function bandKind(s){return ["SQ","SL","WA"].includes(s)?"res":"part"}
+function band(v,s){return BANDS[bandKind(s)][bandIdx(v)]}
+function composites(p){return {mgr:mean(MGR.map(s=>p[s])), ff:mean(FF.map(s=>p[s])), prot:mean(PROT.map(s=>p[s])), self:mean(SELF.map(s=>p[s])), ex:p.EX}}
+function leadership(c){const d=c.self-c.prot;return d>=LEAD_GAP-1e-9?"Self-led":d<=-LEAD_GAP+1e-9?"Protector-led":"Shared"}
+function protStyle(c){if(c.mgr<3&&c.ff<3)return "Quiet protectors";const d=c.mgr-c.ff;return d>=STYLE_GAP-1e-9?"Manager-led":d<=-STYLE_GAP+1e-9?"Firefighter-led":"Mixed"}
+function polarized(p){return Math.max(p.CR,p.VG)>=POLAR-1e-9&&Math.max(p.NM,p.FL)>=POLAR-1e-9}
+function quietCenter(c){return c.prot>=QUIET_PROT-1e-9&&c.ex<QUIET_EX-1e-9}
+function stance(r){
+  if(r.UP>=4&&r.DN>=4) return "Swinging";
+  if(r.UP<3.5&&r.DN<3.5) return r.WA>=4.5?"Same-as":"Steady, still growing";
+  return r.UP-r.DN>=0.5?"One-up":r.DN-r.UP>=0.5?"One-down":"Swinging";
+}
+function acqIndex(key,ans){const o=ORDER[key];let s=0,n=0;o.forEach(x=>{const v=ans[x.id];if(v){s+=v;n++}});return n===o.length?s/n:null}
+function acqFlag(key,ans){const a=acqIndex(key,ans);if(a===null)return null;return a>=ACQ[key][1]-1e-9?"yea":a<=ACQ[key][0]+1e-9?"nay":null}
+const f2=v=>v.toFixed(2);
+
+/* state */
+const STORE="seriesXII-parts-v1";
+const fresh=()=>({tab:"PRT",ans:{},pos:{PRT:0,RLT:0},phase:{PRT:"intro",RLT:"intro"}});
+let S=fresh();
+try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans) S=Object.assign(S,p)}}catch(e){}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
+function isDone(k){return ORDER[k].every(o=>S.ans[o.id])}
+function answered(k){return ORDER[k].filter(o=>S.ans[o.id]).length}
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+/* theme toggle: label names the mode it switches to */
+function curTheme(){const a=document.documentElement.getAttribute("data-theme");if(a)return a;return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}
+function paintTheme(){$("#themeBtn").textContent=curTheme()==="dark"?"Light mode":"Dark mode"}
+$("#themeBtn").onclick=()=>{document.documentElement.setAttribute("data-theme",curTheme()==="dark"?"light":"dark");paintTheme();if(S.tab==="SYN")render()};
+
+function renderTabs(){
+  const tabs=[...KEYS.map(k=>({id:k,label:INSTR[k].tab,sm:isDone(k)?"done":`${answered(k)}/${ORDER[k].length}`})),{id:"SYN",label:"Synthesis",sm:""},{id:"APX",label:"Appendix",sm:""}];
+  $("#tabs").innerHTML=tabs.map(t=>`<button role="tab" data-tab="${t.id}" aria-selected="${S.tab===t.id}">${t.label}${t.sm?`<small>${t.sm}</small>`:""}</button>`).join("");
+  $("#tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;save();render()});
+}
+function render(){
+  renderTabs(); paintTheme();
+  const v=$("#view");
+  if(KEYS.includes(S.tab)){
+    const k=S.tab, ph=S.phase[k];
+    v.innerHTML = ph==="q" ? qHTML(k) : (ph==="done"&&isDone(k)) ? resultsHTML(k) : introHTML(k);
+    bindPanel(k);
+  } else if(S.tab==="SYN"){ v.innerHTML=synHTML(); bindSend(); }
+  else v.innerHTML=apxHTML();
+}
+function introHTML(k){
+  const I=INSTR[k], n=ORDER[k].length, subs=Object.keys(I.subs).length, a=answered(k);
+  return `<section class="intro"><div class="eyebrow">${I.code}</div><h2>${I.name}</h2><p>${I.intro}</p>
+  <div class="meta"><span>${n} items</span><span>${subs} subscales, revealed after</span><span>about ${Math.ceil(n/5)} min</span></div>
+  <div class="row-btns"><button class="btn" data-act="start">${a&&!isDone(k)?"Resume":"Begin"}</button>${isDone(k)?`<button class="btn ghost" data-act="results">See results</button>`:""}</div></section>`;
+}
+function qHTML(k){
+  const o=ORDER[k], p=Math.min(S.pos[k],o.length-1), item=INSTR[k].subs[o[p].sub].items[o[p].i], cur=S.ans[o[p].id];
+  return `<section class="q" aria-live="polite"><div class="qmeta"><span>Item ${String(p+1).padStart(2,"0")} of ${o.length}</span><span>${INSTR[k].tab}</span></div>
+  <div class="track"><i style="width:${(answered(k)/o.length*100).toFixed(1)}%"></i></div>
+  <p class="stem" id="stem">${esc(item.t)}</p>
+  <div class="scale" role="group" aria-label="Response">${SCALE.map((lab,i)=>`<button type="button" id="opt-${i+1}" data-v="${i+1}" aria-pressed="${cur===i+1}"><b>${i+1}</b><span>${lab}</span></button>`).join("")}</div>
+  <div class="qnav"><button type="button" data-act="back" ${p===0?"disabled":""}>← Back</button><span class="hint">1–6 to answer · Backspace to go back</span></div></section>`;
+}
+function answer(k,v){
+  const o=ORDER[k], p=Math.min(S.pos[k],o.length-1);
+  S.ans[o[p].id]=v;
+  if(isDone(k) && p>=o.length-1) S.phase[k]="done";
+  else { S.pos[k]=p+1; if(S.pos[k]>=o.length){ S.pos[k]=o.findIndex(x=>!S.ans[x.id]) } }
+  save(); render();
+}
+function back(k){ if(S.pos[k]>0){S.pos[k]--; save(); render()} }
+function bindPanel(k){
+  const v=$("#view");
+  v.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{
+    const a=b.dataset.act;
+    if(a==="start"){S.phase[k]="q"; if(isDone(k)||S.pos[k]>=ORDER[k].length) S.pos[k]=Math.max(0,ORDER[k].findIndex(x=>!S.ans[x.id])); save(); render()}
+    if(a==="results"){S.phase[k]="done";save();render()}
+    if(a==="send"){S.tab="SYN";save();render();const c=document.getElementById("send");if(c&&c.scrollIntoView)c.scrollIntoView({block:"start"})}
+    if(a==="back") back(k);
+    if(a==="review"){S.phase[k]="q";S.pos[k]=ORDER[k].length-1;save();render()}
+    if(a==="retake"){ORDER[k].forEach(o=>delete S.ans[o.id]);S.pos[k]=0;S.phase[k]="intro";save();render()}
+  });
+  v.querySelectorAll(".scale button").forEach(b=>b.onclick=()=>answer(k,+b.dataset.v));
+}
+document.addEventListener("keydown",e=>{
+  const k=S.tab; if(!KEYS.includes(k)||S.phase[k]!=="q") return;
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  if(/^[1-6]$/.test(e.key)){e.preventDefault();answer(k,+e.key)}
+  else if(e.key==="Backspace"){e.preventDefault();back(k)}
+});
+
+/* results */
+function srow(k,s,v){
+  const sub=INSTR[k].subs[s], bi=bandIdx(v), b=band(v,s);
+  const read=v>=4.5?sub.hi:v<2.5?sub.lo:"Present, without standing out at either end.";
+  return `<div class="srow" data-sub="${s}" style="--c:${COL[s]}"><h4>${sub.label}<span class="chip b${bi+1}">${b}</span></h4><span class="val">${f2(v)}</span>
+  <div class="bt"><i style="width:${((v-1)/5*100).toFixed(1)}%;background:${COL[s]}"></i><u style="left:50%"></u></div>
+  <p class="def">${sub.def}</p><p class="read">${read}</p></div>`;
+}
+function flagHTML(k){
+  const fl=acqFlag(k,S.ans); if(!fl) return "";
+  return `<div class="flagbox" data-flag="${fl}"><b>Check your answer pattern</b><span>You ${fl==="yea"?"agreed":"disagreed"} with most statements in this section, including ones that say opposite things (average response ${f2(acqIndex(k,S.ans))} on the 1–6 scale). That pulls every score toward the middle and hides your real profile. If you were answering quickly, consider retaking it.</span></div>`;
+}
+function resultsHTML(k){
+  const sc=score(k,S.ans), I=INSTR[k];
+  let care="";
+  if(k==="PRT"&&(sc.EX>=4.5||sc.DC>=4.5)) care=`<p class="care" data-care="prt">Scores this high on ${sc.EX>=4.5&&sc.DC>=4.5?"exiles and disconnecting":sc.EX>=4.5?"exiles":"disconnecting"} often mean old pain is close to the surface. Exploring it is usually safer and more useful with an IFS-trained or trauma-informed therapist than alone. The contacts at the bottom of this page are there if you need them.</p>`;
+  if(k==="RLT"&&sc.DN>=4.5) care=`<p class="care" data-care="rlt">Feeling worthless after conflict this often is painful to carry. A therapist who works with shame or relational patterns can help, and so can telling someone you trust.</p>`;
+  const groups=I.groups.map(([g,subs])=>`<div class="group">${g}</div><div class="rows">${subs.map(s=>srow(k,s,sc[s])).join("")}</div>`).join("");
+  return `<section class="res"><div class="eyebrow">${I.code} · Results</div><h2>${I.name}</h2>${flagHTML(k)}${care}${groups}
+  <p class="note">Parts bands: Quiet under 2.50 · Present 2.50–3.49 · Active 3.50–4.49 · Leading 4.50 and up. Self and Wise Adult use Limited, Emerging, Steady and Strong at the same cut points. The tick marks the 3.50 midpoint.</p>
+  <p class="note">The Synthesis tab reads these together.</p>
+  <div class="row-btns"><button class="btn" data-act="send">Email or save results</button><button class="btn ghost" data-act="review">Review answers</button><button class="btn ghost" data-act="retake">Retake</button></div></section>`;
+}
+
+/* signature visual: system map */
+function sysMap(p){
+  const W=440,H=380,cx=220,cy=190,R0=80,L=64;
+  const ang={CR:-150,PL:-90,VG:-30,NM:30,FL:90,DC:150};
+  const short={CR:"Critic",PL:"Pleaser",VG:"Controller",NM:"Escape",FL:"Flare",DC:"Disconnect"};
+  const pt=(a,r)=>[cx+r*Math.cos(a*Math.PI/180),cy+r*Math.sin(a*Math.PI/180)];
+  const c=composites(p); let g="";
+  PROT.forEach(s=>{const a=ang[s],v=p[s],[x0,y0]=pt(a,R0),[x1,y1]=pt(a,R0+L),[xv,yv]=pt(a,R0+(v-1)/5*L);
+    g+=`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="var(--rule)" stroke-width="18" stroke-linecap="round"/>`;
+    g+=`<line x1="${x0}" y1="${y0}" x2="${xv}" y2="${yv}" stroke="${COL[s]}" stroke-width="18" stroke-linecap="round"/>`;
+    const [lx,ly]=pt(a,R0+L+18), anc=Math.abs(lx-cx)<8?"middle":lx>cx?"start":"end";
+    g+=`<text x="${lx}" y="${ly-2}" text-anchor="${anc}" font-family="Inter, sans-serif" font-size="12.5" font-weight="600" fill="${COL[s]}">${short[s]}</text>`;
+    g+=`<text x="${lx}" y="${ly+12}" text-anchor="${anc}" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">${f2(v)}</text>`;});
+  const exO=(0.15+0.85*(c.ex-1)/5).toFixed(2);
+  g+=`<circle cx="${cx}" cy="${cy}" r="66" fill="none" stroke="var(--ex)" stroke-width="12" stroke-opacity="${exO}"/>`;
+  g+=`<circle cx="${cx}" cy="${cy}" r="66" fill="none" stroke="var(--rule)" stroke-width="1"/>`;
+  const rs=14+(c.self-1)/5*40;
+  g+=`<circle cx="${cx}" cy="${cy}" r="56" fill="none" stroke="var(--rule)" stroke-dasharray="3 4"/>`;
+  g+=`<circle cx="${cx}" cy="${cy}" r="${rs.toFixed(1)}" fill="var(--sl)" fill-opacity=".85"/>`;
+  g+=`<text x="${cx}" y="${cy+4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="15" font-weight="500" fill="var(--paper)">${rs>26?"Self":""}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="System map: Self ${f2(c.self)} at the center, exiles ${f2(c.ex)} as the ring, six protectors as spokes">${g}</svg>`;
+}
+const LEAD_TXT={"Self-led":"Self has more say than your protectors right now. Parts still show up, but you can usually notice them and steer.",
+  "Shared":"Self and your protectors share the wheel. Some days you steer, some days a part does. This is the most common pattern.",
+  "Protector-led":"Your protectors are doing most of the driving. In IFS terms they're working overtime, usually because they don't yet trust that the system is safe without them."};
+const STYLE_TXT={"Manager-led":"Your protection is mostly preventive. Managers try to keep pain from ever arising: criticizing, pleasing or controlling ahead of time.",
+  "Firefighter-led":"Your protection is mostly reactive. Firefighters step in after pain breaks through: escaping, flaring or checking out.",
+  "Mixed":"You use both preventive and reactive protection in similar measure.",
+  "Quiet protectors":"Neither managers nor firefighters are working hard. If your exile score is also low, that may reflect real ease. If something feels off, read the note below."};
+const STANCE_TXT={"One-up":"Under stress your Adaptive Child tends to move up: being right, correcting, taking over. Real calls this grandiosity. It protects by making you bigger than the hurt.",
+  "One-down":"Under stress your Adaptive Child tends to move down: self-blame, shrinking, collapse. Real calls this shame. It protects by making you smaller than the conflict.",
+  "Swinging":"You move both up and down. Many people swing: shame in one moment, then righteous anger to climb out of it.",
+  "Same-as":"You mostly stay level with people: neither better than nor less than. Real calls this same-as, the Wise Adult's home ground.",
+  "Steady, still growing":"You rarely move far up or down, but your Wise Adult skills are still developing. Staying level is easier than speaking up from there."};
+function locked(title,need){return `<div class="card locked" data-card="${title}"><div class="k">Locked</div><h3>${title}</h3><p>Complete ${need} to unlock this reading.</p></div>`}
+const dot=s=>`<i class="dot" style="background:${COL[s]}"></i>`;
+const LABEL=s=>(INSTR.PRT.subs[s]||INSTR.RLT.subs[s]).label;
+
+function synHTML(){
+  const dP=isDone("PRT"), dR=isDone("RLT");
+  const p=dP?score("PRT",S.ans):null, r=dR?score("RLT",S.ans):null, out=[];
+  if(p){
+    const c=composites(p), lead=leadership(c);
+    out.push(`<div class="card" data-card="map"><div class="k">System map · PRT</div><h3>Your inner system at a glance</h3>
+    <div class="map">${sysMap(p)}</div>
+    <div class="legend"><span>${dot("SL")}Self (disc size) ${f2(c.self)}</span><span>${dot("EX")}Exiles (ring depth) ${f2(c.ex)}</span><span>Upper spokes: managers · lower: firefighters</span></div>
+    <p class="note">Longer spokes mean a protector is more active. A larger Self disc means more access to Self-energy and Self-leadership. A deeper ring means exiles are closer to the surface.</p></div>`);
+    const LT=LEAD_TXT[lead];
+    out.push(`<div class="card" data-card="lead" data-state="${lead}"><div class="k">Who leads · Self vs. protectors</div><h3>${lead}</h3><p>${LT}</p>
+    <p class="note">Self composite ${f2(c.self)} vs. protector average ${f2(c.prot)} (difference ${(c.self-c.prot>=0?"+":"")}${f2(c.self-c.prot)}; a gap of ${LEAD_GAP.toFixed(1)} or more either way sets the label).</p></div>`);
+    const st=protStyle(c), top=PROT.slice().sort((a,b)=>p[b]-p[a]).slice(0,2);
+    const ST=STYLE_TXT[st];
+    let extra="";
+    if(polarized(p)) extra+=`<div class="flagbox" data-flag="polar"><b>A possible polarization</b><span>A strong manager (${LABEL(MGR.filter(s=>["CR","VG"].includes(s)).sort((a,b)=>p[b]-p[a])[0])}) and a strong firefighter (${LABEL(["NM","FL"].sort((a,b)=>p[b]-p[a])[0])}) are both leading. IFS describes this as a classic standoff: the tighter one clamps down, the harder the other breaks out, and each sees the other as the problem. Both are usually protecting the same exile.</span></div>`;
+    if(quietCenter(c)) extra+=`<div class="flagbox" data-flag="quiet"><b>Strong protectors, quiet exiles</b><span>Your protectors score high while your exile score is low. Schwartz and DeLand note that parts which are fully exiled can't be reported, so they score low. A low exile score next to strong protectors may mean the hurt is well guarded rather than absent. Treat this as a question, not a finding.</span></div>`;
+    out.push(`<div class="card" data-card="style" data-state="${st}"><div class="k">Protector strategy · managers vs. firefighters</div><h3>${st}</h3><p>${ST}</p>
+    <p class="note">Manager average ${f2(c.mgr)} · Firefighter average ${f2(c.ff)}. Most active: ${top.map(s=>`${dot(s)}${LABEL(s)} ${f2(p[s])}`).join(" · ")}.</p>${extra}</div>`);
+  } else { out.push(locked("System map","Parts")); out.push(locked("Who leads","Parts")); out.push(locked("Protector strategy","Parts")); }
+  if(r){
+    const s=stance(r), pos=Math.max(0,Math.min(100,50+(r.UP-r.DN)/5*50));
+    const TX=STANCE_TXT[s];
+    out.push(`<div class="card" data-card="stance" data-state="${s}"><div class="k">Relational stance · RLT</div><h3>${s}</h3><p>${TX}</p>
+    <div class="strip" aria-hidden="true"><span class="mk" style="left:${pos.toFixed(1)}%"></span></div>
+    <div class="strip-l"><span>one-down ${f2(r.DN)}</span><span>same-as</span><span>one-up ${f2(r.UP)}</span></div>
+    <p class="note">${dot("WA")}Wise Adult ${f2(r.WA)} (${band(r.WA,"WA")}) · ${dot("WC")}Wounded Child ${f2(r.WC)} (${band(r.WC,"WC")}). The marker shows the balance of one-up minus one-down.</p></div>`);
+  } else out.push(locked("Relational stance","Child & Adult"));
+  if(p&&r){
+    const c=composites(p), ac=Math.max(r.UP,r.DN);
+    const pairs=[["Wounded Child",r.WC,"Exiles",c.ex],["Adaptive Child (stronger side)",ac,"Protectors (average)",c.prot],["Wise Adult",r.WA,"Self",c.self]];
+    const split=pairs.filter(x=>Math.abs(x[1]-x[3])>=1.5);
+    out.push(`<div class="card" data-card="xwalk"><div class="k">Crosswalk · RLT × PRT</div><h3>The two lenses side by side</h3>
+    <p>The two models describe overlapping ground. The Wounded Child sits close to IFS exiles, the Adaptive Child close to protectors, and the Wise Adult close to Self. Where your scores agree, the pattern is probably robust. Where they split, the difference is the interesting part.</p>
+    <div class="xw">${pairs.map(x=>`<span>${x[0]} <b>${f2(x[1])}</b></span><span class="m">↔</span><span>${x[2]} <b>${f2(x[3])}</b></span>`).join("")}</div>
+    ${split.length?`<p class="note">Split of 1.5 or more: ${split.map(x=>x[0]+" vs. "+x[2]).join("; ")}. The RLT lens asks only about close relationships, so a split often means a pattern shows up with intimates more (or less) than in life at large.</p>`:`<p class="note">No pair splits by 1.5 points or more. The two lenses tell a consistent story.</p>`}</div>`);
+  } else out.push(locked("Crosswalk","both instruments"));
+  const fl=KEYS.filter(k=>isDone(k)&&acqFlag(k,S.ans)).map(k=>INSTR[k].tab);
+  const warn=fl.length?`<div class="flagbox" data-flag="syn"><b>Answer-pattern check</b><span>${fl.join(" and ")} ${fl.length>1?"were":"was"} answered with mostly the same response, so the readings that use ${fl.length>1?"them":"it"} are less trustworthy.</span></div>`:"";
+  return `<section class="res"><div class="eyebrow">Synthesis</div><h2>Reading the system</h2><p class="note">Cards unlock as you finish each instrument. In IFS no part is bad: each one took its job to protect you. These are prompts for reflection, not a diagnosis.</p>${warn}<div class="cards">${out.join("")}${sendHTML(dP||dR)}</div></section>`;
+}
+
+/* ---------- results export: email, copy, PDF ---------- */
+const ELC="evolutionlabcollective@gmail.com";
+const SEND={to:"",elc:false};
+const EMAIL_RE=/^[^\s@,;<>()"]+@[^\s@,;<>()"]+\.[A-Za-z]{2,}$/;
+const HEX={EX:"#9A3F58",CR:"#2C5A88",PL:"#4E57A3",VG:"#24727C",NM:"#A15A12",FL:"#B0382A",DC:"#7B5592",SQ:"#5C7A2E",SL:"#2F7A5A",WC:"#9A3F58",UP:"#8A5D14",DN:"#4F6584",WA:"#2F7A5A"};
+const BAND_KEY="Scores run from 1 to 6. Parts: Quiet under 2.50, Present 2.50–3.49, Active 3.50–4.49, Leading 4.50 and up. Self and Wise Adult use Limited, Emerging, Steady and Strong at the same cut points.";
+const LEGAL="For education and self-reflection only. Series XII is not a psychological test, clinical assessment or diagnosis, and it has not been validated or normed on a real population. If you are struggling, call or text 988 (U.S.). In an emergency, call 911.";
+function readFor(sub,v){return v>=4.5?sub.hi:v<2.5?sub.lo:"Present, without standing out at either end."}
+function reportData(){
+  const sections=[],readings=[];
+  KEYS.filter(isDone).forEach(k=>{const I=INSTR[k],sc=score(k,S.ans);
+    sections.push({code:k,title:I.name,flag:acqFlag(k,S.ans),groups:I.groups.map(([g,subs])=>({name:g,rows:subs.map(s=>({s,label:I.subs[s].label,v:sc[s],band:band(sc[s],s),read:readFor(I.subs[s],sc[s])}))}))})});
+  const p=isDone("PRT")?score("PRT",S.ans):null, r=isDone("RLT")?score("RLT",S.ans):null;
+  if(p){const c=composites(p),lead=leadership(c),st=protStyle(c);
+    readings.push({k:"Who leads",title:lead,text:LEAD_TXT[lead],note:`Self ${f2(c.self)} vs. protector average ${f2(c.prot)}`});
+    readings.push({k:"Protector strategy",title:st,text:STYLE_TXT[st],note:`Managers ${f2(c.mgr)} · Firefighters ${f2(c.ff)}`});
+    if(polarized(p)) readings.push({k:"Pattern",title:"A possible polarization",text:"A strong manager and a strong firefighter are both leading. IFS describes this as a standoff: the tighter one clamps down, the harder the other breaks out. Both are usually protecting the same exile."});
+    if(quietCenter(c)) readings.push({k:"Pattern",title:"Strong protectors, quiet exiles",text:"Your protectors score high while your exile score is low. Fully exiled parts can't be reported, so the hurt may be well guarded rather than absent. Treat this as a question, not a finding."});}
+  if(r){const s=stance(r);readings.push({k:"Relational stance",title:s,text:STANCE_TXT[s],note:`One-up ${f2(r.UP)} · One-down ${f2(r.DN)} · Wise Adult ${f2(r.WA)}`});}
+  if(p&&r){const c=composites(p);readings.push({k:"Crosswalk",title:"The two lenses side by side",text:`Wounded Child ${f2(r.WC)} next to Exiles ${f2(c.ex)}. Adaptive Child (stronger side) ${f2(Math.max(r.UP,r.DN))} next to Protectors ${f2(c.prot)}. Wise Adult ${f2(r.WA)} next to Self ${f2(c.self)}.`});}
+  return {date:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),sections,readings};
+}
+const RULE_LINE="━━━━━━━━━━━━━━━━━━━━━━";
+const blocks=v=>{const n=Math.round((v-1)/5*10);return "■".repeat(n)+"□".repeat(10-n)};
+/* compact = the version that goes into the email body (kept short so every email app accepts it) */
+function textReport(d,compact){
+  const L=["SERIES XII · PARTS & SELF",`Your results · ${d.date}`,""];
+  if(compact) L.push("Short version. For the full report with explanations, download the PDF from the questionnaire.","");
+  d.sections.forEach(sec=>{
+    if(compact) L.push(`== ${sec.title.toUpperCase()} ==`); else L.push(RULE_LINE,sec.title.toUpperCase(),RULE_LINE);
+    if(sec.flag) L.push(compact?"Note: answer-pattern check flagged this section.":"Note: you gave mostly the same response to statements that say opposite things, so these scores may sit closer to the middle than your real profile.");
+    sec.groups.forEach(g=>{const solo=g.rows.length===1&&g.rows[0].label===g.name; L.push(""); if(!solo) L.push(g.name.toUpperCase());
+      g.rows.forEach(r=>{ if(compact) L.push(`${r.label}: ${f2(r.v)} (${r.band})`); else L.push(`${r.label}: ${f2(r.v)} · ${r.band}`,blocks(r.v),r.read,""); })});
+    L.push("");
+  });
+  if(d.readings.length){
+    if(compact) L.push("== READING THE SYSTEM =="); else L.push(RULE_LINE,"READING THE SYSTEM",RULE_LINE);
+    d.readings.filter(x=>!compact||x.k!=="Crosswalk").forEach(x=>{if(!compact) L.push(""); L.push(`${x.k}: ${x.title}`); if(!compact){L.push(x.text); if(x.note) L.push(x.note)}});
+    L.push("");
+  }
+  if(compact) L.push("Scores run 1 to 6. For education and self-reflection only; not a diagnosis. If you are struggling, call or text 988 (U.S.).","","© 2026 Erica Campbell");
+  else L.push(BAND_KEY,"",LEGAL,"","© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n");
+}
+function mailtoHref(){
+  const me=SEND.to.trim(), cc=SEND.elc?[ELC]:[];
+  const to=me?[me]:cc, ccs=me?cc:[];
+  const q=[];
+  if(ccs.length) q.push(`cc=${ccs.join(",")}`);
+  q.push(`subject=${encodeURIComponent("My Series XII results: Parts & Self")}`);
+  q.push(`body=${encodeURIComponent(textReport(reportData(),true))}`);
+  return `mailto:${to.join(",")}?${q.join("&")}`;
+}
+function sendHTML(on){
+  if(!on) return locked("Email or save your results","at least one instrument");
+  const v=SEND.to.trim(), bad=!!v&&!EMAIL_RE.test(v);
+  return `<div class="card send" data-card="send" id="send"><div class="k">Keep your results</div><h3>Email or save your results</h3>
+  <p>Includes every instrument you've finished so far.</p>
+  <div class="field"><label for="em-to">Your email address</label><input id="em-to" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" value="${esc(SEND.to)}" aria-invalid="${bad}" aria-describedby="em-err"><p class="err" id="em-err" ${bad?"":"hidden"}>Check the address. It should look like name@example.com.</p></div>
+  <label class="check" for="em-elc"><input id="em-elc" type="checkbox" ${SEND.elc?"checked":""}><span>Also send a copy to Evolution Lab Collective<small>${ELC} will receive your results and your email address.</small></span></label>
+  <div class="row-btns"><a class="btn" id="em-open" href="${esc(mailtoHref())}" aria-disabled="${bad}">Open in my email app</a><button class="btn ghost" type="button" id="em-copy">Copy results</button><button class="btn ghost" type="button" id="em-pdf" hidden>Download PDF</button></div>
+  <p class="status" id="em-status" role="status"></p>
+  <p class="note">Your email app opens with the message filled in, so you can review it before you send. Nothing is sent from this page. If no email app opens, use Copy results and paste them into a new email.<span id="em-pdfnote" hidden> To include the full report, download the PDF and attach it.</span></p>
+  <details class="prev"><summary>Preview the full text</summary><textarea id="em-text" readonly aria-label="Full results text">${esc(textReport(reportData(),false))}</textarea></details></div>`;
+}
+let DL=null;
+function showPdf(){const on=!!(DL&&window.jspdf&&window.jspdf.jsPDF), b=$("#em-pdf"), n=$("#em-pdfnote"); if(b) b.hidden=!on; if(n) n.hidden=!on}
+(async()=>{try{DL=(window.claude&&window.claude.use)?await window.claude.use("downloads"):null}catch(e){DL=null} showPdf()})();
+function bindSend(){
+  const to=$("#em-to"); if(!to) return;
+  const elc=$("#em-elc"), a=$("#em-open"), st=$("#em-status");
+  const refresh=()=>{SEND.to=to.value; SEND.elc=elc.checked; const v=SEND.to.trim(), bad=!!v&&!EMAIL_RE.test(v);
+    to.setAttribute("aria-invalid",bad); $("#em-err").hidden=!bad; a.setAttribute("aria-disabled",bad); a.href=mailtoHref()};
+  to.addEventListener("input",refresh); elc.addEventListener("change",refresh);
+  a.addEventListener("click",e=>{ if(a.getAttribute("aria-disabled")==="true"){e.preventDefault(); to.focus(); return}
+    st.textContent="Opening your email app. If nothing happens, use Copy results instead."});
+  $("#em-copy").onclick=()=>{
+    const t=$("#em-text");
+    const fall=()=>{t.closest("details").open=true; t.focus(); t.select(); st.textContent="The text is selected. Press Ctrl+C (or ⌘C on a Mac) to copy it."};
+    try{const pr=navigator.clipboard&&navigator.clipboard.writeText(t.value); if(!pr){fall();return} pr.then(()=>{st.textContent="Copied. Paste it into a new email."},fall)}catch(e){fall()}
+  };
+  $("#em-pdf").onclick=async()=>{
+    st.textContent="Preparing your PDF…";
+    try{const r=await DL.save({filename:"Series XII - Parts and Self results.pdf",data:buildPDF(reportData())}); st.textContent=r.status==="saved"?"PDF saved.":"PDF sent."}
+    catch(e){const c=e&&e.code; st.textContent=c==="declined"?"Download cancelled.":c==="rate_limited"?"A download prompt is already open. Finish that one first.":"The PDF couldn't be saved in this view. Use Copy results instead."}
+  };
+  showPdf();
+}
+/* PDF uses jsPDF's built-in fonts (Latin-1 plus a few typographic marks), so strip anything outside that set. */
+const PDFSAFE=s=>String(s).replace(/−/g,"-").replace(/≥/g,">=").replace(/≤/g,"<=").replace(/[↔→]/g,"/").replace(/[^\x00-\xFF–—‘’“”•…]/g,"");
+function buildPDF(d){
+  const doc=new window.jspdf.jsPDF({unit:"pt",format:"letter"});
+  const W=612,M=56,CW=W-2*M,BOT=730; let y=M;
+  const INK="#24232B",MUT="#66636F",RULEC="#D9D6DE",ACC="#45488F";
+  const T=(t,x,yy,o)=>doc.text(PDFSAFE(t),x,yy,o||{});
+  const need=h=>{if(y+h>BOT){doc.addPage(); y=M}};
+  const font=(f,s,sz,c)=>{doc.setFont(f,s); doc.setFontSize(sz); doc.setTextColor(c)};
+  const wrap=(t,sz,c,f="helvetica",s="normal",lh=1.42)=>{font(f,s,sz,c); doc.splitTextToSize(PDFSAFE(t),CW).forEach(l=>{need(sz*lh); doc.text(l,M,y+sz); y+=sz*lh})};
+  const label=t=>{font("helvetica","bold",7.5,MUT); doc.setCharSpace(1.1); T(t.toUpperCase(),M,y+8); doc.setCharSpace(0)};
+  label("Series XII · Parts & Self"); y+=20;
+  font("times","normal",30,INK); T("Your results",M,y+26); y+=38;
+  wrap(d.date,10.5,MUT); y+=8;
+  doc.setDrawColor(ACC); doc.setLineWidth(1.6); doc.line(M,y,M+52,y); y+=24;
+  d.sections.forEach(sec=>{
+    need(70); font("times","normal",18,INK); T(sec.title,M,y+16); y+=28;
+    if(sec.flag){wrap("Answer-pattern check: you gave mostly the same response to statements that say opposite things, so these scores may sit closer to the middle than your real profile.",9.5,"#8A5D14"); y+=6}
+    sec.groups.forEach(g=>{
+      need(50); label(g.name); y+=16;
+      g.rows.forEach(r=>{
+        font("helvetica","normal",9.5,MUT); const rl=doc.splitTextToSize(PDFSAFE(r.read),CW-14), h=30+rl.length*13;
+        need(h+10);
+        doc.setFillColor(HEX[r.s]); doc.rect(M,y,2.5,h,"F");
+        font("helvetica","bold",11,INK); T(r.label,M+12,y+11);
+        font("courier","bold",10.5,HEX[r.s]); T(`${f2(r.v)}  ${r.band.toUpperCase()}`,W-M,y+11,{align:"right"});
+        const bx=M+12,bw=CW-12,by=y+18;
+        doc.setFillColor(RULEC); doc.roundedRect(bx,by,bw,4,2,2,"F");
+        doc.setFillColor(HEX[r.s]); doc.roundedRect(bx,by,Math.max(4,bw*(r.v-1)/5),4,2,2,"F");
+        doc.setDrawColor(MUT); doc.setLineWidth(.5); doc.line(bx+bw/2,by-2.5,bx+bw/2,by+6.5);
+        font("helvetica","normal",9.5,MUT); rl.forEach((l,i)=>doc.text(l,M+12,y+38+i*13));
+        y+=h+12;
+      });
+      y+=4;
+    });
+    y+=10;
+  });
+  if(d.readings.length){
+    need(70); font("times","normal",18,INK); T("Reading the system",M,y+16); y+=30;
+    d.readings.forEach(x=>{need(60); label(x.k); y+=14; font("times","bold",13.5,INK); T(x.title,M,y+12); y+=20;
+      wrap(x.text,10,INK); if(x.note){y+=2; wrap(x.note,9,MUT,"courier")} y+=12});
+  }
+  need(100); y+=4; doc.setDrawColor(RULEC); doc.setLineWidth(.5); doc.line(M,y,W-M,y); y+=12;
+  wrap(BAND_KEY+" The tick on each bar marks the 3.50 midpoint.",8.5,MUT); y+=5;
+  wrap(LEGAL,8.5,MUT); y+=5;
+  wrap("© 2026 Erica Campbell. All rights reserved.",8.5,MUT);
+  const n=doc.getNumberOfPages();
+  for(let i=1;i<=n;i++){doc.setPage(i); font("helvetica","normal",8,MUT); doc.text(PDFSAFE(`Series XII · Parts & Self   ${i} of ${n}`),W-M,766,{align:"right"})}
+  return doc.output("arraybuffer");
+}
+
+/* appendix */
+function apxHTML(){
+  const rows=KEYS.flatMap(k=>Object.keys(INSTR[k].subs).map(s=>{const a=(ALPHA[k]||{})[s]||{}, sub=INSTR[k].subs[s], it=sub.items;
+    return `<tr><td>${k}</td><td>${dot(s)}${sub.label}</td><td>${sub.fam}</td><td class="n">${it.length}</td><td class="n">${it.filter(x=>!x.r).length}F / ${it.filter(x=>x.r).length}R</td><td class="n">${a.mean!=null?a.mean.toFixed(3):"–"}</td><td class="n">${a.p05!=null?a.p05.toFixed(3):"–"}</td></tr>`}));
+  const total=KEYS.reduce((a,k)=>a+ORDER[k].length,0), nsub=KEYS.reduce((a,k)=>a+Object.keys(INSTR[k].subs).length,0);
+  return `<section class="apx"><div class="eyebrow">Psychometric appendix</div>
+  <p><b>Series XII</b> has ${total} items across ${nsub} subscales in two instruments. Every subscale has six items, three forward-keyed and three reverse-keyed, on the house 6-point scale with no neutral midpoint. Subscale scores are item means after reverse items are rescored (7 − response), so answering 6 to everything lands every subscale at exactly 3.50. Items appear one at a time in a fixed interleaved order, so no two items from the same subscale are adjacent and subscale names appear only in results.</p>
+  <h3>Reliability (simulated)</h3>
+  <p>Values come from a Monte Carlo simulation (N = 1,400 synthetic respondents per run, 200 runs per subscale) using a one-factor model with forward loadings drawn from .60–.85 and reverse loadings from .50–.75, cut to six ordinal points. They estimate how the item structure should behave. They are not data from real respondents.</p>
+  <div class="tbl"><table><thead><tr><th>Inst.</th><th>Subscale</th><th>Family</th><th>Items</th><th>Keying</th><th>α mean</th><th>α 5th pct</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>
+  <h3>Accuracy checks (simulated)</h3>
+  <p>On 20,000 simulated respondents with correlated traits (shared factor r = .30): subscale scores correlate about .90 with the true trait; a strong yea-saying bias shifts scores by less than .02 points because of balanced keying; the answer-pattern check flags about 1% of honest responders (cutoffs ${ACQ.PRT[0]} / ${ACQ.PRT[1]} for Parts, ${ACQ.RLT[0]} / ${ACQ.RLT[1]} for Child &amp; Adult) and catches 99–100% of strong yea-sayers. Flags never change scores.</p>
+  <h3>Construct sources</h3>
+  <ul>
+    <li><b>Internal Family Systems.</b> Schwartz's model of the mind as a system of parts (exiles; proactive managers; reactive firefighters) around an undamaged Self with eight qualities (calm, curiosity, compassion, clarity, confidence, courage, creativity, connectedness). Subscale content follows the type definitions in Schwartz &amp; Sweezy (2020) and the factor structure reported for the IFS Scale.</li>
+    <li><b>Prior instrument.</b> The IFS Scale (DeLand, with Schwartz) is the only published IFS self-report measure: 57 items, 8 parts subscales plus Self, α = .98, normed on 1,174 adults from a deliberately high-trauma sample, and available only to trained clinicians for a fee. Series XII borrows none of its items. Its findings shaped three decisions: separate subscales for protector types rather than one "parts" total; Self scored as its own dimension rather than as the absence of parts (DeLand's factor analysis supported this, with two Self factors, qualities and leadership, mirrored here as Self-energy and Self-leadership); and the "strong protectors, quiet exiles" flag, from her note that fully exiled parts necessarily score low.</li>
+    <li><b>Wounded Child, Adaptive Child, Wise Adult.</b> From Pia Mellody's developmental model (<i>Facing Codependence</i>, 1989) as extended by Terrence Real in Relational Life Therapy (<i>The New Rules of Marriage</i>, 2007; <i>Us</i>, 2022), including the one-up (grandiosity) and one-down (shame) positions of the Adaptive Child and the same-as stance of the Wise Adult.</li>
+  </ul>
+  <h3>Methodological decisions</h3>
+  <ul>
+    <li><b>Phenomenology, not diagnosis.</b> IFS and RLT are clinical models with growing outcome research, not validated personality taxonomies. Neither the parts types nor the child/adult modes have an established factor structure in the general population. Scores describe how strongly you report each kind of experience.</li>
+    <li><b>Self-harm subscale excluded.</b> The IFS Scale includes a self-harming parts subscale and instructs clinicians to assess anyone scoring above 5. An unsupervised online questionnaire can't do that follow-up, so Series XII asks no self-harm or suicide items and lists crisis contacts in the footer instead.</li>
+    <li><b>Addictive behavior kept functional.</b> Numbing &amp; Escape asks whether you reach for quick relief when feelings run high. It does not ask about substances or amounts and is not a substance-use screen.</li>
+    <li><b>Disconnect kept mild.</b> Items describe everyday going-blank and checking-out, not dissociative symptoms such as amnesia or identity disruption. It is not a dissociation screen.</li>
+    <li><b>Manager types chosen by prevalence.</b> IFS allows any number of manager roles. Critic, Pleaser and Vigilant Controller map onto the three manager subscales in DeLand's factor work (self-critical, pleasing, anxious/pessimistic). Other common managers (caretaker, intellectualizer, workaholic) are not separately measured.</li>
+    <li><b>Two exile subscales, deliberately.</b> Exiles (PRT) asks about carried burdens in general; Wounded Child (RLT) asks about age regression in close relationships. They should correlate. The crosswalk card reports where they diverge.</li>
+    <li><b>Synthesis cut points are design choices.</b> The leadership gap (1.0), protector-style gap (0.75), polarization threshold (4.5) and quiet-center rule (protectors ≥ 4.0, exiles &lt; 3.0) are fixed rules chosen for interpretability. They have not been calibrated against real data.</li>
+    <li><b>Overlap with Series IX.</b> Schema modes (Young) cover similar ground: Vulnerable Child ≈ exiles and Wounded Child, Detached Protector ≈ Disconnect, Punitive Parent ≈ Inner Critic, Healthy Adult ≈ Self and Wise Adult. Series XII uses different items and frames the material in IFS and RLT terms.</li>
+  </ul>
+  <h3>Limitations</h3>
+  <ul>
+    <li>No norms. Bands are fixed cut points on the response scale, not percentiles.</li>
+    <li>Reliability and accuracy figures are simulated. Real-sample alphas and a factor analysis are the next step before any published claim.</li>
+    <li>Self-report can't see fully exiled parts or protectors that deny their own existence. An observer form, or work with a therapist, is the real check.</li>
+    <li>Not a diagnostic tool, and not a substitute for IFS therapy.</li>
+  </ul>
+  <h3>Sources</h3>
+  <ul>
+    <li>Schwartz, R. C., &amp; Sweezy, M. (2020). <i>Internal Family Systems Therapy</i> (2nd ed.). Guilford.</li>
+    <li>Schwartz, R. C. (2021). <i>No Bad Parts</i>. Sounds True.</li>
+    <li>DeLand, L. (n.d.). <i>The IFS Scale</i>. IFS Institute, ifs-institute.com/resources/research/ifs-scale.</li>
+    <li>Hodgdon, H. B., Anderson, F. G., Southwell, E., Hrubec, W., &amp; Schwartz, R. (2022). Internal Family Systems (IFS) therapy for posttraumatic stress disorder among survivors of multiple childhood trauma: A pilot effectiveness study. <i>Journal of Aggression, Maltreatment &amp; Trauma, 31</i>(1), 22–43.</li>
+    <li>Mellody, P. (1989). <i>Facing Codependence</i>. Harper &amp; Row.</li>
+    <li>Real, T. (2007). <i>The New Rules of Marriage</i>. Ballantine.</li>
+    <li>Real, T. (2022). <i>Us: Getting Past You and Me to Build a More Loving Relationship</i>. Goop Press.</li>
+    <li>Young, J. E., Klosko, J. S., &amp; Weishaar, M. E. (2003). <i>Schema Therapy</i>. Guilford.</li>
+  </ul></section>`;
+}
+
+document.getElementById("clear-data").onclick=()=>{
+  S=fresh(); try{localStorage.removeItem(STORE)}catch(e){}
+  render(); document.getElementById("clear-msg").textContent=" Cleared. Your answers have been removed from this browser.";
+};
+window.__S12={INSTR,ORDER,KEYS,COL,MGR,FF,PROT,SELF,score,band,bandIdx,composites,leadership,protStyle,polarized,quietCenter,stance,acqIndex,acqFlag,orderFor,get S(){return S},render,answer,back,isDone,ALPHA,ACQ,SEND,ELC,reportData,textReport,mailtoHref,buildPDF,EMAIL_RE};
+render();
+</script>
+
+</body></html>

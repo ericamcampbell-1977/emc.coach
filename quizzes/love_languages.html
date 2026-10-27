@@ -3,6 +3,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: single reading column, tab rail on top, one question per screen; results as ruled rows with a pentagon chart. */
@@ -133,6 +134,24 @@ table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:440px}
 th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule)}
 th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
 td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.share{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.share h3{font-family:var(--display);font-weight:500;font-size:20px;margin:0}
+.share > p{margin:0;font-size:15px;max-width:62ch}
+.field{display:flex;flex-direction:column;gap:6px;max-width:420px}
+.field label{font-size:14px;font-weight:500}
+.field input{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:9px 11px;min-width:0}
+.field input:focus-visible{outline:2px solid var(--rose);outline-offset:1px}
+.field input[aria-invalid="true"]{border-color:var(--rose)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;max-width:62ch;cursor:pointer}
+.check input{margin-top:4px;width:16px;height:16px;accent-color:var(--rose);flex:none}
+.addr{font-family:var(--mono);font-size:13px;overflow-wrap:anywhere}
+.consent{margin:0;font-size:13.5px;color:var(--ink);background:var(--flag);border-left:3px solid var(--amber);padding:8px 12px;border-radius:0 3px 3px 0;max-width:62ch}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.actions .btn{align-self:auto}
+.status{font-size:13.5px;margin:0;min-height:1.2em}
+.status.err{color:var(--rose)}
+details.preview summary{cursor:pointer;font-size:14px;color:var(--muted)}
+details.preview pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto;margin:8px 0 0;font-family:var(--mono);font-size:12.5px;line-height:1.5;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:10px}
 @media (prefers-reduced-motion:reduce){.track i{transition:none}}
 </style>
 
@@ -151,9 +170,9 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
     <p><b>Not professional advice.</b> Nothing here is medical, psychological, counseling, therapeutic or legal advice, and using it does not create a professional relationship of any kind. Don't use your results as the sole basis for decisions about a relationship, your health or your safety. For concerns about your relationship or well-being, talk with a licensed mental health professional.</p>
     <p><b>If you are in danger.</b> If you feel unsafe with a partner, contact the National Domestic Violence Hotline at <span class="tel">1-800-799-7233</span> or text <span class="tel">START</span> to <span class="tel">88788</span>. If you are in crisis, call or text <span class="tel">988</span>. In an emergency, call <span class="tel">911</span>. These are U.S. services; outside the U.S., contact your local emergency number.</p>
     <p><b>Trademarks and sources.</b> "The 5 Love Languages" is a trademark of its owner. This questionnaire is independent and is not affiliated with, sponsored by, or endorsed by Gary Chapman or his publishers. All items are original and are not reproduced from any published instrument. Research cited in the appendix is credited to its authors.</p>
-    <p><b>Privacy.</b> Your answers are saved only in this browser, on this device, so you can resume later. They are not sent to the author or anyone else. <button type="button" id="clear-data">Clear my answers</button><span id="clear-msg" role="status"></span></p>
+    <p><b>Privacy.</b> Your answers are saved only in this browser, on this device, so you can resume later. This page sends nothing on its own. If you choose to email your results, your own email app sends the message after you review it, and only to the addresses you choose. Ticking the Evolution Lab Collective box adds evolutionlabcollective@gmail.com as a recipient, and that address then receives your results. <button type="button" id="clear-data">Clear my answers</button><span id="clear-msg" role="status"></span></p>
     <p><b>No warranty.</b> This questionnaire is provided "as is," without warranties of any kind. To the fullest extent permitted by law, the author is not liable for any decision made or action taken based on it.</p>
-    <p>© 2026. All rights reserved.</p>
+    <p>© 2026 Erica Campbell. All rights reserved.</p>
   </footer>
 </div>
 
@@ -277,7 +296,7 @@ const f2=v=>v.toFixed(2);
 
 /* state */
 const STORE="seriesX-love-v1";
-let S={tab:"LLR",ans:{},pos:{LLR:0,LLE:0,PRS:0},phase:{LLR:"intro",LLE:"intro",PRS:"intro"}};
+let S={tab:"LLR",ans:{},pos:{LLR:0,LLE:0,PRS:0},phase:{LLR:"intro",LLE:"intro",PRS:"intro"},email:"",cc:false};
 try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans) S=Object.assign(S,p)}}catch(e){}
 function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
 function isDone(k){return ORDER[k].every(o=>S.ans[o.id])}
@@ -301,6 +320,7 @@ function render(){
     bindPanel(k);
   } else if(S.tab==="SYN"){ v.innerHTML=synHTML(); }
   else { v.innerHTML=apxHTML(); }
+  bindShare();
 }
 
 function introHTML(k){
@@ -387,7 +407,7 @@ function resultsHTML(k){
   return `<section class="res"><div class="eyebrow">${I.code} · Results</div><h2>${I.name}</h2>${top}
   ${rowsHTML(k,sc)}
   <p class="note">Bands: Low under 2.50 · Modest 2.50–3.49 · Substantial 3.50–4.49 · Strong 4.50 and up. The tick marks the 3.50 midpoint.</p>
-  <div class="row-btns"><button class="btn ghost" data-act="review">Review answers</button><button class="btn ghost" data-act="retake">Retake</button></div></section>`;
+  <div class="row-btns"><button class="btn ghost" data-act="review">Review answers</button><button class="btn ghost" data-act="retake">Retake</button></div>${shareHTML()}</section>`;
 }
 
 /* synthesis */
@@ -431,7 +451,7 @@ function synHTML(){
   }
   const fl=KEYS.filter(k=>isDone(k)&&acqFlag(k,S.ans)).map(k=>INSTR[k].tab);
   const warn=fl.length?`<div class="flagbox" data-flag="syn"><b>Answer-pattern check</b><span>${fl.join(" and ")} ${fl.length>1?"were":"was"} answered with mostly the same response, so the readings that use ${fl.length>1?"them":"it"} are less trustworthy.</span></div>`:"";
-  return `<section class="res"><div class="eyebrow">Synthesis</div><h2>Reading the three together</h2><p class="note">Cards unlock as you finish each instrument. These are prompts for reflection and conversation, not a diagnosis or a compatibility score.</p>${warn}<div class="cards">${out.join("")}</div></section>`;
+  return `<section class="res"><div class="eyebrow">Synthesis</div><h2>Reading the three together</h2><p class="note">Cards unlock as you finish each instrument. These are prompts for reflection and conversation, not a diagnosis or a compatibility score.</p>${warn}<div class="cards">${out.join("")}</div>${KEYS.some(isDone)?shareHTML():""}</section>`;
 }
 
 /* appendix */
@@ -484,12 +504,164 @@ function apxHTML(){
   </ul></section>`;
 }
 
+
+/* ---------- keep / share results ---------- */
+const LAB="evolutionlabcollective@gmail.com";
+const RGB={WA:[163,65,44],QT:[43,101,133],GI:[138,93,20],AS:[70,112,58],PT:[135,57,122],U:[34,105,106],V:[74,78,143],C:[140,59,74]};
+const INK=[42,36,33], MUTED=[110,98,91], RULE=[222,212,198];
+function today(){try{return new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})}catch(e){return new Date().toISOString().slice(0,10)}}
+/* One structure feeds the email text, the PDF and the text file, so they always agree with the page. */
+function reportData(){
+  const secs=[];
+  KEYS.filter(isDone).forEach(k=>{
+    const I=INSTR[k], sc=score(k,S.ans), rows=Object.keys(I.subs).map(s=>({key:s,label:I.subs[s].label,v:sc[s],band:band(sc[s])}));
+    const sec={key:k,title:I.name,rows,notes:[]};
+    if(k!=="PRS"){const sh=shape(sc);sec.notes.push(`Profile shape: ${sh.label} (range ${f2(sh.range)}).`)}
+    else{const comp=(sc.U+sc.V+sc.C)/3;sec.notes.push(`Composite responsiveness: ${f2(comp)} (${band(comp)}).`)}
+    const fl=acqFlag(k,S.ans); if(fl) sec.notes.push(`Answer-pattern check: you ${fl==="yea"?"agreed":"disagreed"} with most statements, including opposite ones, so these scores are less trustworthy.`);
+    secs.push(sec);
+  });
+  const syn=[];
+  const r=isDone("LLR")?score("LLR",S.ans):null,e=isDone("LLE")?score("LLE",S.ans):null,p=isDone("PRS")?score("PRS",S.ans):null;
+  if(r){const sh=shape(r);syn.push({h:`Profile shape: ${sh.label}`,t:{Balanced:"Your five scores sit close together. Most people value all five when they're rated one at a time.",Leaning:"You lean toward some forms of love over others, but none is the only route in.",Pronounced:"You have a clear preference. Share it with a partner as a request, not a rule they have to decode."}[sh.label]})}
+  if(r&&e){const flat=shape(r).label==="Balanced"||shape(e).label==="Balanced",tr=topSet(r),te=topSet(e),st=flat?"flat":tr.some(l=>te.includes(l))?"same":"diff";
+    const gaps=LANGS.filter(l=>Math.abs(e[l]-r[l])>=GAP-1e-9);
+    syn.push({h:{flat:"Give vs. receive: no clear top language to compare",same:"Give vs. receive: you give the way you want to get",diff:"Give vs. receive: you give differently than you want to get"}[st],
+      t:gaps.length?`Gaps of ${GAP.toFixed(1)} points or more: ${gaps.map(l=>`${LNAME[l]} (you ${e[l]>r[l]?"give more than you seek":"seek more than you give"})`).join("; ")}.`:`No gap reaches ${GAP.toFixed(1)} points.`})}
+  if(p){const comp=(p.U+p.V+p.C)/3;syn.push({h:`Responsiveness: ${f2(comp)} (${band(comp)})`,t:comp<3.5?"Feeling understood, validated and cared for is the stronger predictor of satisfaction, and right now it's running low.":comp<4.5?"Responsiveness is in a workable middle range. Small, specific requests tend to move it most.":"You feel well understood, validated and cared for. That's the base that makes any of the five languages land."})}
+  const asks=r?topSet(r).map(l=>({key:l,name:LNAME[l],ask:ASKS[l]})):[];
+  return {date:today(),secs,syn,asks};
+}
+function reportText(){
+  const d=reportData(), L=[];
+  L.push("SERIES X · LOVE LANGUAGES, READ HONESTLY","Your results · "+d.date,"");
+  L.push("Scores run from 1 to 6, and 3.50 is the midpoint.","Bands: Low (under 2.50), Modest, Substantial, Strong (4.50 and up).");
+  d.secs.forEach(sec=>{
+    L.push("",sec.title.toUpperCase());
+    sec.rows.forEach(r=>L.push(`  ${r.label}: ${f2(r.v)} (${r.band})`));
+    sec.notes.forEach(n=>L.push("  "+n));
+  });
+  const missing=KEYS.filter(k=>!isDone(k)).map(k=>INSTR[k].tab);
+  if(missing.length) L.push("","Not yet completed: "+missing.join(", ")+".");
+  if(d.syn.length||d.asks.length){
+    L.push("","SYNTHESIS");
+    d.syn.forEach(x=>L.push("  "+x.h,"  "+x.t,""));
+    if(d.asks.length){L.push("  What to ask for:");d.asks.forEach(a=>L.push(`  - ${a.name}: ${a.ask}`));}
+  }
+  L.push("","----","For education and self-reflection only. Not a diagnosis, a clinical assessment or a compatibility score. Results have no norms and are not clinically validated.");
+  L.push("If you feel unsafe with a partner in the US, call the National Domestic Violence Hotline at 1-800-799-7233 or text START to 88788. In crisis, call or text 988. In an emergency, call 911.");
+  L.push("","© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n").replace(/\n{3,}/g,"\n\n");
+}
+const validEmail=e=>/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]{2,}$/.test(e);
+function mailtoHref(){
+  const to=(S.email||"").trim(), parts=[];
+  const toList=to?to:(S.cc?LAB:"");
+  if(to&&S.cc) parts.push("cc="+encodeURIComponent(LAB));
+  parts.push("subject="+encodeURIComponent("My results: Series X · Love Languages"));
+  parts.push("body="+encodeURIComponent(reportText()));
+  return "mailto:"+encodeURIComponent(toList).replace(/%40/g,"@")+"?"+parts.join("&");
+}
+function shareHTML(){
+  const n=KEYS.filter(isDone).length;
+  return `<div class="share" id="share"><h3>Keep your results</h3>
+  <p>Email them to yourself, copy them, or save a PDF. Your results include every section you've finished (${n} of 3)${n>=1?" and the Synthesis":""}.</p>
+  <div class="field"><label for="shareEmail">Your email address</label><input type="email" id="shareEmail" autocomplete="email" placeholder="you@example.com" value="${esc(S.email||"")}"></div>
+  <label class="check"><input type="checkbox" id="shareCc" ${S.cc?"checked":""}><span>Also send a copy to Evolution Lab Collective <span class="addr">${LAB}</span></span></label>
+  <p class="consent" id="ccConsent" ${S.cc?"":"hidden"}>Your results, including how you rated a partner's responsiveness, will go to this address as well as yours.</p>
+  <div class="actions">
+    <button class="btn" id="emailBtn" type="button">Open in my email app</button>
+    <button class="btn ghost" id="copyBtn" type="button">Copy results</button>
+    <button class="btn ghost" id="pdfBtn" type="button">Save as PDF</button>
+    <button class="btn ghost" id="txtBtn" type="button">Save as text</button>
+  </div>
+  <p class="status" id="shareStatus" role="status"></p>
+  <details class="preview"><summary>Preview the email text</summary><pre id="sharePre">${esc(reportText())}</pre></details></div>`;
+}
+function setStatus(msg,err){const el=document.getElementById("shareStatus");if(el){el.textContent=msg;el.className="status"+(err?" err":"")}}
+let lastMailto="";
+function emailClick(){
+  const e=(S.email||"").trim(), inp=document.getElementById("shareEmail");
+  if(e&&!validEmail(e)){if(inp)inp.setAttribute("aria-invalid","true");setStatus("That email address doesn't look complete. Check it and try again.",true);return}
+  if(!e&&!S.cc){if(inp)inp.setAttribute("aria-invalid","true");setStatus("Enter your email address, or tick the Evolution Lab box, so the message has somewhere to go.",true);return}
+  if(inp)inp.removeAttribute("aria-invalid");
+  lastMailto=mailtoHref();
+  const a=document.createElement("a");a.href=lastMailto;a.target="_top";a.rel="noopener";document.body.appendChild(a);
+  try{a.click()}catch(err){} a.remove();
+  setStatus("Your email app should open with the message filled in. Press Send there to deliver it. If nothing opened, use Copy results and paste them into an email to "+(e||LAB)+(e&&S.cc?" (cc "+LAB+")":"")+".");
+}
+function copyClick(){
+  const txt=reportText();
+  const fallback=()=>{const pre=document.getElementById("sharePre");if(pre){pre.closest("details").open=true;const rg=document.createRange();rg.selectNodeContents(pre);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(rg)}
+    setStatus("Your browser blocked copying. The text is selected below; copy it with your keyboard.")};
+  try{navigator.clipboard.writeText(txt).then(()=>setStatus("Copied. Paste it into an email or a note."),fallback)}catch(e){fallback()}
+}
+function pdfSafe(t){return String(t).replace(/[≥]/g,">=").replace(/[≤]/g,"<=").replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/—/g,"-").replace(/[^\x00-\xFF–·•©]/g,"")}
+function buildPDF(){
+  const J=window.jspdf&&window.jspdf.jsPDF; if(!J) return null;
+  const doc=new J({unit:"pt",format:"letter"}), d=reportData(), W=612, M=54, CW=W-2*M; let y=M;
+  const need=h=>{if(y+h>792-M){doc.addPage();y=M}};
+  const txt=(t,size,col,style,x,w)=>{doc.setFont("helvetica",style||"normal");doc.setFontSize(size);doc.setTextColor(...(col||INK));const lines=doc.splitTextToSize(pdfSafe(t),w||CW);need(lines.length*size*1.3);doc.text(lines,x||M,y+size);y+=lines.length*size*1.3;};
+  txt("SERIES X",9,MUTED,"bold"); y+=2;
+  txt("Love Languages, read honestly",22,INK,"bold"); y+=2;
+  txt("Your results · "+d.date,10.5,MUTED); y+=6;
+  txt("Scores run from 1 to 6, and 3.50 is the midpoint (tick on each bar). Bands: Low (under 2.50), Modest, Substantial, Strong (4.50 and up).",9.5,MUTED); y+=10;
+  d.secs.forEach(sec=>{
+    need(60); doc.setDrawColor(...RULE); doc.line(M,y,W-M,y); y+=12;
+    txt(sec.title,14,INK,"bold"); y+=6;
+    sec.rows.forEach(r=>{
+      need(30); const c=RGB[r.key]||INK;
+      doc.setFillColor(...c); doc.circle(M+4,y+6,3.5,"F");
+      doc.setFont("helvetica","bold");doc.setFontSize(10.5);doc.setTextColor(...INK);doc.text(pdfSafe(r.label),M+14,y+9.5);
+      doc.setFont("helvetica","normal");doc.setTextColor(...MUTED);doc.text(`${f2(r.v)}  ${r.band}`,W-M,y+9.5,{align:"right"});
+      y+=15; doc.setFillColor(...RULE); doc.roundedRect(M+14,y,CW-14,5,2.5,2.5,"F");
+      doc.setFillColor(...c); doc.roundedRect(M+14,y,Math.max(5,(CW-14)*(r.v-1)/5),5,2.5,2.5,"F");
+      doc.setDrawColor(...MUTED); doc.setLineWidth(.6); doc.line(M+14+(CW-14)/2,y-2,M+14+(CW-14)/2,y+7); y+=14;
+    });
+    sec.notes.forEach(n=>{txt(n,9.5,MUTED,"normal",M+14,CW-14);y+=2}); y+=8;
+  });
+  if(d.syn.length||d.asks.length){
+    need(60); doc.setDrawColor(...RULE); doc.line(M,y,W-M,y); y+=12; txt("Synthesis",14,INK,"bold"); y+=6;
+    d.syn.forEach(x=>{txt(x.h,11,INK,"bold");y+=2;txt(x.t,10,INK);y+=8});
+    if(d.asks.length){txt("What to ask for",11,INK,"bold");y+=2;d.asks.forEach(a=>{need(16);doc.setFillColor(...(RGB[a.key]||INK));doc.circle(M+4,y+6,3,"F");txt(a.name+": "+a.ask,10,INK,"normal",M+14,CW-14);y+=3})}
+    y+=6;
+  }
+  need(90); doc.setDrawColor(...RULE); doc.line(M,y,W-M,y); y+=10;
+  txt("For education and self-reflection only. Not a diagnosis, a clinical assessment or a compatibility score. Results have no norms and are not clinically validated. Not affiliated with or endorsed by Gary Chapman or his publishers.",8.5,MUTED); y+=4;
+  txt("If you feel unsafe with a partner in the US, call the National Domestic Violence Hotline at 1-800-799-7233 or text START to 88788. In crisis, call or text 988. In an emergency, call 911.",8.5,MUTED); y+=4;
+  txt("© 2026 Erica Campbell. All rights reserved.",8.5,MUTED);
+  return doc;
+}
+async function saveFile(filename,data,label){
+  try{
+    const dl=window.claude&&window.claude.use?await window.claude.use("downloads"):null;
+    if(dl){try{await dl.save({filename,data});setStatus(label+" saved.");return}catch(err){
+      if(err&&err.code==="declined"){setStatus("Save canceled.");return}
+      if(err&&err.code==="rate_limited"){setStatus("A save prompt is already open. Finish that one first.",true);return}
+    }}
+  }catch(e){}
+  try{const blob=data instanceof Blob?data:new Blob([data],{type:"text/plain;charset=utf-8"});const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);setStatus(label+" download started. If nothing downloaded, use Copy results instead.")}
+  catch(e){setStatus("Saving isn't available here. Use Copy results instead.",true)}
+}
+function pdfClick(){const doc=buildPDF();if(!doc){setStatus("The PDF tool didn't load. Check your connection, or use Save as text.",true);return}saveFile("series-x-love-languages-results.pdf",doc.output("blob"),"PDF")}
+function txtClick(){saveFile("series-x-love-languages-results.txt",reportText(),"Text file")}
+function bindShare(){
+  const em=document.getElementById("shareEmail"); if(!em) return;
+  em.oninput=()=>{S.email=em.value;em.removeAttribute("aria-invalid");save()};
+  const cc=document.getElementById("shareCc");
+  cc.onchange=()=>{S.cc=cc.checked;document.getElementById("ccConsent").hidden=!S.cc;save()};
+  document.getElementById("emailBtn").onclick=emailClick;
+  document.getElementById("copyBtn").onclick=copyClick;
+  document.getElementById("pdfBtn").onclick=pdfClick;
+  document.getElementById("txtBtn").onclick=txtClick;
+}
+
 document.getElementById("clear-data").onclick=()=>{
-  S={tab:"LLR",ans:{},pos:{LLR:0,LLE:0,PRS:0},phase:{LLR:"intro",LLE:"intro",PRS:"intro"}};
+  S={tab:"LLR",ans:{},pos:{LLR:0,LLE:0,PRS:0},phase:{LLR:"intro",LLE:"intro",PRS:"intro"},email:"",cc:false};
   try{localStorage.removeItem(STORE)}catch(e){}
   render(); document.getElementById("clear-msg").textContent=" Cleared. Your answers have been removed from this browser.";
 };
-window.__SX={INSTR,ORDER,KEYS,LANGS,COL,score,band,shape,acqIndex,acqFlag,topSet,orderFor,get S(){return S},render,answer,back,isDone,ALPHA,SHAPE_B,SHAPE_P,TOP_TOL,GAP,ACQ};
+window.__SX={INSTR,ORDER,KEYS,LANGS,COL,score,band,shape,acqIndex,acqFlag,topSet,orderFor,get S(){return S},render,answer,back,isDone,ALPHA,SHAPE_B,SHAPE_P,TOP_TOL,GAP,ACQ,LAB,reportText,reportData,mailtoHref,validEmail,buildPDF,emailClick,get lastMailto(){return lastMailto}};
 render();
 </script>
 

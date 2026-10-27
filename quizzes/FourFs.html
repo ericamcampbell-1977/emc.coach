@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --bg:#f2ede2;
@@ -256,6 +257,56 @@ details.appendix summary:focus-visible{outline:2px solid var(--slate);outline-of
 .synthCard p{font-size:14.5px;color:var(--muted);margin:0}
 .empty{color:var(--faint);font-size:15px;font-style:italic}
 
+/* ---------- keep-your-results (email / save) ---------- */
+.sendCard{
+  background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--accent);
+  border-radius:var(--r);padding:22px 22px 20px;margin:30px 0 8px
+}
+.sendCard .k{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--faint);margin:0 0 8px
+}
+.sendCard h4{font-family:'Fraunces',serif;font-weight:400;font-size:19px;margin:0 0 6px}
+.sendCard p.sub{font-size:14px;color:var(--muted);margin:0 0 16px}
+.field{margin:0 0 14px}
+.field label{display:block;font-size:12.5px;font-weight:500;color:var(--ink);margin:0 0 5px}
+.field input[type="email"]{
+  width:100%;max-width:360px;font-family:'Inter',sans-serif;font-size:14.5px;color:var(--ink);
+  background:var(--panel-hi);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px
+}
+.field input[type="email"]:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.field input[aria-invalid="true"]{border-color:var(--tag-high)}
+.field .err{color:var(--tag-high);font-size:12.5px;margin:6px 0 0}
+.check{
+  display:flex;gap:11px;align-items:flex-start;cursor:pointer;
+  font-size:14px;color:var(--ink);margin:4px 0 2px;max-width:60ch
+}
+.check input{margin-top:3px;flex:none;width:16px;height:16px;accent-color:var(--accent)}
+.check small{display:block;color:var(--faint);font-size:12px;margin-top:2px}
+.consent{
+  font-size:12.5px;color:var(--muted);background:var(--accent-soft);
+  border-radius:var(--r);padding:9px 12px;margin:10px 0 2px;max-width:60ch
+}
+.row-btns{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0 0}
+.sendCard .status{font-size:13px;color:var(--muted);margin:12px 0 0;min-height:1.2em}
+.sendCard .status.err{color:var(--tag-high)}
+.sendCard .note{
+  border:0;padding:0;font-size:12.5px;color:var(--faint);margin:14px 0 0;max-width:64ch
+}
+.prev{margin:14px 0 0}
+.prev summary{
+  cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--faint);list-style:none
+}
+.prev summary::-webkit-details-marker{display:none}
+.prev summary:before{content:"+ ";color:var(--accent)}
+.prev[open] summary:before{content:"− "}
+.prev textarea{
+  width:100%;height:220px;margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;
+  line-height:1.5;color:var(--muted);background:var(--panel-hi);
+  border:1px solid var(--line);border-radius:var(--r);padding:12px;resize:vertical
+}
+
 footer.foot{
   margin-top:56px;padding-top:22px;border-top:1px solid var(--line)
 }
@@ -307,6 +358,7 @@ footer.foot p b{color:var(--muted);font-weight:600}
   <p><b>Not a diagnostic or clinical instrument.</b> These four inventories are educational self-reflection tools. They describe tendencies you report about yourself; they do not identify, diagnose, screen for, or rule out any mental-health condition, disorder, or impairment, and a high or low score is not a clinical finding.</p>
   <p><b>Not clinically validated or normed.</b> The inventories are modeled on published research frameworks but have not been validated, normed, or tested for reliability in any human sample. The reliability figures shown are from computer simulation of the item structure only and do not describe performance with real respondents. Results have no established predictive, diagnostic, or comparative meaning.</p>
   <p><b>Not professional advice, and no substitute for it.</b> Nothing here is medical, psychological, psychiatric, or therapeutic advice, and use of these tools creates no therapist–client, clinician–patient, or other professional relationship. For any concern about your mental health, relationships, or safety, consult a qualified, licensed professional. If you may be in crisis or at risk of harm, contact your local emergency services or a crisis line in your area.</p>
+  <p><b>Your results and privacy.</b> Everything you answer stays in your browser; this page has no server and sends nothing on its own. The "Keep your results" option opens your own email app with your results written into the message — you decide whether to send it. If you tick "Also send a copy to Evolution Lab Collective," your results and the email address you send from will go to that organization as well; leave it unticked to keep your results to yourself.</p>
   <p><b>Use at your own discretion.</b> The inventories are provided "as is," without warranty of any kind. The author accepts no liability for any decision made or action taken in reliance on them. The underlying frameworks remain the intellectual property of their respective authors; all items here are original wordings written independently and are not reproductions of any published scale.</p>
 </footer>
 </div>
@@ -627,6 +679,213 @@ function bandLabel(b, type){
 function esc(s){ return String(s).replace(/&(?!\w+;)/g,"&amp;").replace(/</g,"&lt;"); }
 
 /* ============================================================
+   KEEP YOUR RESULTS — email hand-off, PDF, text, copy
+   ============================================================ */
+const ELC = "evolutionlabcollective@gmail.com";
+const EMAIL_RE = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]{2,}$/;
+const SEND = { to:"", elc:false };     /* session-held, survives re-render */
+let LAST_SYNTH = [];                    /* synthesis cards, set by renderSynthesis */
+
+function stripTags(s){ return String(s).replace(/<[^>]+>/g,""); }
+function effType(instId, subKey){
+  const inst = INSTRUMENTS[instId];
+  if(inst.type === "skill") return "skill";
+  if((inst.skillSubscales||[]).includes(subKey)) return "skill";
+  return inst.type;
+}
+function doneIds(){ return Object.keys(RESULTS); }
+
+/* plain-text report — used for the email body, copy, text download, preview */
+function reportText(){
+  const L = [];
+  L.push("ACTIVATION & CONFLICT PATTERN INVENTORIES");
+  L.push("My results — " + new Date().toLocaleDateString());
+  L.push("");
+  doneIds().forEach(id=>{
+    const inst = INSTRUMENTS[id], m = RESULTS[id].means;
+    L.push(inst.title.toUpperCase() + "  (" + inst.key + ")");
+    Object.keys(inst.subscales).forEach(k=>{
+      const mean = m[k];
+      L.push("  " + inst.subscales[k].label + ": " + mean.toFixed(2) + " / 6.00 (" + bandLabel(band(mean), effType(id,k)) + ")");
+    });
+    L.push("");
+  });
+  if(LAST_SYNTH.length){
+    L.push("SYNTHESIS");
+    LAST_SYNTH.forEach(c=>{ L.push("• " + c.h); L.push("  " + stripTags(c.p)); L.push(""); });
+  }
+  L.push("—");
+  L.push("These inventories are educational self-reflection tools, not diagnostic or clinically validated instruments. Scores have no norms and do not identify any condition.");
+  L.push("If you are in crisis in the US, call or text 988, or call 911. Elsewhere, contact your local emergency or crisis line.");
+  L.push("");
+  L.push("© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n");
+}
+
+function mailtoHref(){
+  const me = SEND.to.trim();
+  const cc = SEND.elc ? [ELC] : [];
+  const to = me ? [me] : cc;          /* no personal address + box ticked → send to ELC */
+  const ccs = me ? cc : [];
+  const q = [];
+  if(ccs.length) q.push("cc=" + encodeURIComponent(ccs.join(",")));
+  q.push("subject=" + encodeURIComponent("My results — Activation & Conflict Pattern Inventories"));
+  q.push("body=" + encodeURIComponent(reportText()));
+  return "mailto:" + to.map(encodeURIComponent).join(",").replace(/%40/g,"@") + "?" + q.join("&");
+}
+
+function hexToRGB(h){ h=h.replace("#",""); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+/* jsPDF's built-in fonts are WinAnsi only — map glyphs outside it so arrows
+   and smart punctuation don't render as mojibake. HTML and the UTF-8 email
+   body keep the originals. */
+function pdfSafe(s){
+  return String(s)
+    .replace(/→/g,"->").replace(/←/g,"<-")
+    .replace(/[‘’]/g,"'").replace(/[“”]/g,'"')
+    .replace(/[^\x00-\xff]/g,"-");
+}
+function buildPDF(){
+  const J = window.jspdf && window.jspdf.jsPDF;
+  if(!J) return null;
+  const doc = new J({unit:"pt", format:"letter"});
+  const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 54;
+  let y = M;
+  const need = h => { if(y + h > H - M){ doc.addPage(); y = M; } };
+  doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.setTextColor(30);
+  doc.text("Activation & Conflict Pattern Inventories", M, y); y += 20;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(120);
+  doc.text("My results — " + new Date().toLocaleDateString(), M, y); y += 26;
+  doneIds().forEach(id=>{
+    const inst = INSTRUMENTS[id], m = RESULTS[id].means;
+    need(34);
+    doc.setFont("helvetica","bold"); doc.setFontSize(12.5); doc.setTextColor(30);
+    doc.text(inst.title, M, y); y += 17;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    Object.keys(inst.subscales).forEach(k=>{
+      need(20);
+      const mean = m[k], frac = (mean-1)/5;
+      const bx = M+190, bw = 170, bh = 7;
+      doc.setTextColor(50); doc.text(inst.subscales[k].label, M, y);
+      doc.setFillColor(230,223,208); doc.rect(bx, y-7, bw, bh, "F");
+      const col = hexToRGB(inst.subscales[k].color);
+      doc.setFillColor(col[0],col[1],col[2]); doc.rect(bx, y-7, bw*frac, bh, "F");
+      doc.setTextColor(100); doc.setFontSize(9);
+      doc.text(mean.toFixed(2) + "  " + bandLabel(band(mean), effType(id,k)), bx+bw+8, y);
+      doc.setFontSize(10); y += 16;
+    });
+    y += 10;
+  });
+  if(LAST_SYNTH.length){
+    need(28); doc.setFont("helvetica","bold"); doc.setFontSize(12.5); doc.setTextColor(30);
+    doc.text("Synthesis", M, y); y += 17;
+    LAST_SYNTH.forEach(c=>{
+      need(26); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(40);
+      doc.splitTextToSize(pdfSafe(c.h), W-2*M).forEach(ln=>{ need(14); doc.text(ln, M, y); y += 13; });
+      doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(70);
+      doc.splitTextToSize(pdfSafe(stripTags(c.p)), W-2*M).forEach(ln=>{ need(13); doc.text(ln, M, y); y += 12.5; });
+      y += 8;
+    });
+  }
+  need(56); doc.setDrawColor(205); doc.line(M, y, W-M, y); y += 14;
+  doc.setFontSize(8); doc.setTextColor(120);
+  const disc = "Educational self-reflection tool, not a diagnostic or clinically validated instrument. Scores have no norms and do not identify any condition. US crisis: call or text 988, or call 911. © 2026 Erica Campbell. All rights reserved.";
+  doc.splitTextToSize(disc, W-2*M).forEach(ln=>{ need(11); doc.text(ln, M, y); y += 10; });
+  return doc;
+}
+
+async function saveFile(filename, data){
+  try{
+    const dl = (window.claude && window.claude.use) ? await window.claude.use("downloads") : null;
+    if(dl){ await dl.save({filename, data}); return true; }
+  }catch(e){ if(e && e.code === "declined") return false; }
+  try{
+    const blob = data instanceof Blob ? data : new Blob([data], {type:"application/octet-stream"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    return true;
+  }catch(e){ return false; }
+}
+
+function sendCardHTML(){
+  const n = doneIds().length;
+  const bad = !!SEND.to.trim() && !EMAIL_RE.test(SEND.to.trim());
+  return `<div class="sendCard" id="sendCard">
+    <p class="k">Keep your results</p>
+    <h4>Email or save your results</h4>
+    <p class="sub">Includes every inventory you've finished so far (${n} of 4)${n>=2?", plus the synthesis":""}. Nothing is sent from this page — your own email app opens with the message ready for you to review and send.</p>
+    <div class="field">
+      <label for="em-to">Your email address</label>
+      <input id="em-to" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" value="${esc(SEND.to)}" aria-invalid="${bad}" aria-describedby="em-err">
+      <p class="err" id="em-err" ${bad?"":"hidden"}>Check the address — it should look like name@example.com.</p>
+    </div>
+    <label class="check" for="em-elc">
+      <input id="em-elc" type="checkbox" ${SEND.elc?"checked":""}>
+      <span>Also send a copy to Evolution Lab Collective<small>${ELC}</small></span>
+    </label>
+    <p class="consent" id="em-consent" ${SEND.elc?"":"hidden"}>Your results — including every subscale score shown above — will be sent to this address in addition to your own.</p>
+    <div class="row-btns">
+      <button class="action" type="button" id="em-open">Open in my email app</button>
+      <button class="ghost" type="button" id="em-copy">Copy results</button>
+      <button class="ghost" type="button" id="em-pdf">Download PDF</button>
+      <button class="ghost" type="button" id="em-txt">Download text</button>
+    </div>
+    <p class="status" id="em-status" role="status"></p>
+    <p class="note">If no email app opens, use Copy results or Download text and paste them into a new message. A web page can't attach a file to an email, so the PDF is a separate download you can attach yourself.</p>
+    <details class="prev"><summary>Preview the full text</summary><textarea id="em-text" readonly aria-label="Full results text">${esc(reportText())}</textarea></details>
+  </div>`;
+}
+
+function bindSend(){
+  const to = document.getElementById("em-to");
+  if(!to) return;
+  const elc = document.getElementById("em-elc");
+  const consent = document.getElementById("em-consent");
+  const err = document.getElementById("em-err");
+  const status = document.getElementById("em-status");
+  const setStatus = (msg, isErr)=>{ if(status){ status.textContent = msg||""; status.className = "status" + (isErr?" err":""); } };
+  const refresh = ()=>{
+    SEND.to = to.value; SEND.elc = elc.checked;
+    const bad = !!SEND.to.trim() && !EMAIL_RE.test(SEND.to.trim());
+    to.setAttribute("aria-invalid", bad);
+    if(err) err.hidden = !bad;
+    if(consent) consent.hidden = !elc.checked;
+  };
+  to.addEventListener("input", refresh);
+  elc.addEventListener("change", refresh);
+
+  document.getElementById("em-open").addEventListener("click", ()=>{
+    const v = SEND.to.trim();
+    if(v && !EMAIL_RE.test(v)){ setStatus("That email address doesn't look complete. Check it and try again.", true); return; }
+    if(!v && !SEND.elc){ setStatus("Enter your email address, or tick the Evolution Lab box, so the message has somewhere to go.", true); return; }
+    const a = document.createElement("a");
+    a.href = mailtoHref(); a.target = "_top"; a.rel = "noopener";
+    document.body.appendChild(a); try{ a.click(); }catch(e){} a.remove();
+    setStatus("Your email app should open with the message filled in — press Send there. If nothing opened, use Copy results below.");
+  });
+  document.getElementById("em-copy").addEventListener("click", async ()=>{
+    const txt = reportText();
+    try{ await navigator.clipboard.writeText(txt); setStatus("Results copied. Paste them into an email or note."); }
+    catch(e){
+      const ta = document.getElementById("em-text");
+      if(ta){ ta.closest("details").open = true; ta.focus(); ta.select(); }
+      setStatus("Couldn't copy automatically — the full text is open below; select and copy it.", true);
+    }
+  });
+  document.getElementById("em-pdf").addEventListener("click", async ()=>{
+    const doc = buildPDF();
+    if(!doc){ setStatus("The PDF library didn't load (it needs a network connection). Use Download text instead.", true); return; }
+    const ok = await saveFile("conflict-pattern-results.pdf", doc.output("blob"));
+    setStatus(ok ? "PDF ready." : "Couldn't save the PDF here. Use Download text, or try on your own device.", !ok);
+  });
+  document.getElementById("em-txt").addEventListener("click", async ()=>{
+    const ok = await saveFile("conflict-pattern-results.txt", reportText());
+    setStatus(ok ? "Text file ready." : "Couldn't save the file here. Use Copy results instead.", !ok);
+  });
+}
+
+/* ============================================================
    RENDER — START SCREEN
    ============================================================ */
 function renderStart(inst){
@@ -945,6 +1204,7 @@ function renderSynthesis(){
     if(!cards.length){
       cards.push({h:`One instrument so far`, p:`Cross-readings need at least two. The pairings that produce the most useful signal are Activation Response with Conflict Communication, and Conflict Communication with Regulation Capacity.`});
     }
+    LAST_SYNTH = cards.slice();
     body = cards.map(x=>`<div class="synthCard"><h4>${x.h}</h4><p>${x.p}</p></div>`).join("")
       + `<p class="note" style="margin-top:26px">Completed this session: ${done.map(d=>RESULTS[d].title).join(" · ")}. Results are held in memory only — reloading the page clears them.</p>`;
   }
@@ -952,7 +1212,9 @@ function renderSynthesis(){
     <h2>Synthesis</h2>
     <p class="subtitle">Cross-instrument readings</p>
     <p class="lede">Each instrument measures a different layer of the same event: the reflex, the behavior it produces, the strategy laid over it, and the capacity available to interrupt it. The interesting findings usually live between them rather than inside any one.</p>
-    ${body}`;
+    ${body}
+    ${done.length ? sendCardHTML() : ""}`;
+  if(done.length) bindSend();
 }
 
 /* ============================================================

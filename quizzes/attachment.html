@@ -153,6 +153,32 @@
   .legal p{font-size:11.5px;color:var(--ink-soft);line-height:1.6;margin:0 0 8px}
   .foot{margin-top:22px;font-size:12px;color:var(--ink-soft);line-height:1.6}
   .hidden{display:none}
+  /* share / export */
+  .sharecard{border:1px solid var(--hair);border-radius:var(--radius);background:#fff;padding:18px 20px}
+  .chk{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink);cursor:pointer;margin:0 0 12px;line-height:1.4}
+  .chk:last-of-type{margin-bottom:4px}
+  .chk input{width:17px;height:17px;margin:1px 0 0;accent-color:var(--l1);cursor:pointer;flex:none}
+  .chk .sub{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .emailin{width:100%;max-width:340px;font-family:"Inter",sans-serif;font-size:14px;color:var(--ink);
+    background:#fff;border:1px solid var(--hair);border-radius:var(--radius);padding:9px 11px;margin:0 0 14px 27px;transition:border-color .12s}
+  .emailin:focus{outline:none;border-color:var(--l1)}
+  .emailin.bad{border-color:var(--alert)}
+  .sharenote{font-size:12px;color:var(--ink-soft);line-height:1.5;margin:12px 0 0}
+  .sharemsg{font-size:12.5px;margin:10px 0 0;min-height:1.2em}
+  .sharemsg.ok{color:var(--good)}.sharemsg.err{color:var(--alert)}
+  @media print{
+    @page{margin:16mm}
+    html,body{background:#fff!important}
+    body{padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .panel{border:none;box-shadow:none;padding:0}
+    #intro,#assess,.progress,.btnrow,.share,.foot > .mono,#reliBtn,#retakeBtn,#emailBtn,#pdfBtn,#copyBtn{display:none!important}
+    .res-block{break-inside:avoid}
+    .readout{background:#fff!important;color:var(--ink)!important;border:1px solid var(--hair)!important}
+    .readout .rk{color:var(--ink-soft)!important}
+    .interp,.rel-panel,.stylecard,.actpanel,.sharecard{break-inside:avoid}
+    .print-head{display:block!important}
+  }
+  .print-head{display:none}
 </style>
 </head>
 <body>
@@ -205,6 +231,10 @@
   <!-- RESULTS -->
   <section id="results" class="hidden">
     <div class="panel">
+      <div class="print-head" style="border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:18px">
+        <div class="mono" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)">Relational Attachment &amp; Bonding Inventory · RABI-C</div>
+        <div style="font-family:'Fraunces',serif;font-size:22px;margin-top:4px">Results summary</div>
+      </div>
       <p class="eyebrow">Results · not a diagnosis</p>
       <h1 class="res-h1">Your profile</h1>
       <p style="color:var(--ink-soft);margin:6px 0 0">Three readings, meant to be held together — not one label.</p>
@@ -221,6 +251,21 @@
           <div class="meter-labels"><span>Minimal</span><span>Some</span><span>Elevated</span><span>High</span></div></div></div>
       <div class="res-block"><p class="eyebrow">Composite readout</p><div class="readout" id="readout"></div></div>
       <div class="interp" id="interp"></div>
+
+      <div class="res-block share"><p class="eyebrow">Save or send your results</p>
+        <div class="sharecard">
+          <label class="chk"><input type="checkbox" id="emailSelf"> <span>Email a copy to myself<span class="sub">Opens your email app with a formatted summary ready to send.</span></span></label>
+          <input type="email" id="emailAddr" class="emailin hidden" placeholder="you@example.com" autocomplete="email">
+          <label class="chk"><input type="checkbox" id="emailCollective"> <span>Also send to Evolution Lab Collective<span class="sub">evolutionlabcollective@gmail.com</span></span></label>
+          <div class="btnrow" style="margin-top:14px">
+            <button class="btn" id="emailBtn">Email my results</button>
+            <button class="btn ghost" id="pdfBtn">Save as PDF</button>
+            <button class="btn ghost" id="copyBtn">Copy results</button>
+          </div>
+          <p class="sharemsg" id="shareMsg" role="status" aria-live="polite"></p>
+          <p class="sharenote"><strong>Email</strong> opens your own mail app with the summary pre-filled — nothing is sent until you send it, and your answers never leave your device otherwise. <strong>Save as PDF</strong> opens your browser's print dialog; choose &ldquo;Save as PDF&rdquo; as the destination for a polished copy to keep or attach.</p>
+        </div></div>
+
       <div class="btnrow" style="margin-top:26px"><button class="btn ghost" id="retakeBtn">Retake</button>
         <button class="btn" id="reliBtn">Show psychometric appendix</button></div>
       <div id="appendixWrap"></div>
@@ -361,6 +406,7 @@ document.getElementById("startBtn").onclick=()=>{document.getElementById("intro"
 
 const raw=it=>it.r?(7-answers[it.id]):answers[it.id];
 function subMean(code){const rel=BANK.filter(it=>it.sub===code);const v=rel.map(raw).filter(x=>x!=null);return v.reduce((a,b)=>a+b,0)/v.length;}
+let LAST=null;
 
 document.getElementById("scoreBtn").onclick=()=>{
   const m={};Object.keys(SUBMETA).forEach(c=>m[c]=subMean(c));
@@ -415,6 +461,11 @@ document.getElementById("scoreBtn").onclick=()=>{
     `<div class="rline"><span class="rk">// core criteria (Dutton-Painter)</span><span>${(ir>=MID?"intermittent ✓":"intermittent –")+"  "+(pwr>=MID?"power-imbal ✓":"power-imbal –")}</span></div>`;
 
   document.getElementById("interp").innerHTML=interpretation({style,verdict,sec,ir,pwr,rwr,tbl,cb});
+
+  LAST={date:new Date().toLocaleString(), m, style, verdict, anx, avo, con, coh, dys, sec,
+        tbl, tblRaw, secAdj, cbTag:cb.tag,
+        core:{ir:ir>=MID, pwr:pwr>=MID, rwr:rwr>=MID}};
+
   document.getElementById("assess").classList.add("hidden");
   document.getElementById("results").classList.remove("hidden");
   window.scrollTo({top:0,behavior:'instant'});
@@ -477,6 +528,107 @@ document.getElementById("reliBtn").onclick=function(){
     <p class="cap"><strong>Source constructs.</strong> Dispositional dimensions follow the ECR-R two-factor (anxiety/avoidance) model; the four prototypes follow Bartholomew's quadrant. Bonding subscales operationalize Dutton &amp; Painter's traumatic-bonding criteria (power imbalance + intermittent reinforcement) with love-bombing, reset-without-repair, cognitive distortion, and entrapment. Activation subscales (contingency, coherence, dysregulation) are an original extension distinguishing reactive activation from stable disorganization. Items are clean-room originals mapped to published construct definitions; not clinically normed.</p>`;
   this.parentElement.after(div);this.textContent="Hide psychometric appendix";
 };
+/* ===== results export: plain-text report, email (mailto), PDF (print), copy ===== */
+const COLLECTIVE="evolutionlabcollective@gmail.com";
+const pad=(s,n)=>String(s).padEnd(n);
+
+function plainReport(){
+  if(!LAST) return "";
+  const m=LAST.m, secTag=LAST.sec>=4.5?"present":LAST.sec>=3?"partial":"thin";
+  const f=n=>n.toFixed(2);
+  const L=[];
+  L.push("RELATIONAL ATTACHMENT & BONDING INVENTORY  (RABI-C)");
+  L.push("Results summary · "+LAST.date);
+  L.push("=".repeat(56));
+  L.push("");
+  L.push("LENS 1 — DISPOSITIONAL ATTACHMENT");
+  L.push("  Style: "+LAST.style);
+  L.push("  "+pad("Anxiety",20)+f(LAST.anx)+" / 6");
+  L.push("  "+pad("Avoidance",20)+f(LAST.avo)+" / 6");
+  L.push("");
+  L.push("LENS 2 — ACTIVATION PROFILE");
+  L.push("  Reading: "+LAST.verdict);
+  L.push("  "+pad("Contingency",20)+f(LAST.con)+" / 6");
+  L.push("  "+pad("Strategy coherence",20)+f(LAST.coh)+" / 6");
+  L.push("  "+pad("Dysregulation",20)+f(LAST.dys)+" / 6");
+  L.push("");
+  L.push("LENS 3 — THE BOND HELD IN MIND");
+  L.push("  "+pad("Trauma-bonding likelihood",28)+f(LAST.tbl)+" / 6   ["+LAST.cbTag.toUpperCase()+"]");
+  L.push("  "+pad("Secure Base & Repair",28)+f(LAST.sec)+" / 6   ["+secTag+"]");
+  L.push("  "+pad("Idealization / Love Bombing",28)+f(m.LB)+" / 6");
+  L.push("  "+pad("Intermittent Reinforcement",28)+f(m.IR)+" / 6");
+  L.push("  "+pad("Reset Without Repair",28)+f(m.RWR)+" / 6");
+  L.push("  "+pad("Power Imbalance / Control",28)+f(m.PWR)+" / 6");
+  L.push("  "+pad("Cognitive Distortion",28)+f(m.CD)+" / 6");
+  L.push("  "+pad("Entrapment / Dependency",28)+f(m.ENT)+" / 6");
+  L.push("");
+  L.push("  Core criteria (Dutton-Painter):");
+  L.push("    Intermittent reinforcement: "+(LAST.core.ir?"present":"low"));
+  L.push("    Power imbalance:            "+(LAST.core.pwr?"present":"low"));
+  L.push("    Reset without repair:       "+(LAST.core.rwr?"present":"low"));
+  L.push("");
+  const ie=document.getElementById("interp");
+  const interp=((ie.innerText||ie.textContent||"").trim());
+  if(interp){ L.push("INTERPRETATION"); interp.split(/\n+/).map(x=>x.trim()).filter(Boolean).forEach(x=>L.push("  "+x)); L.push(""); }
+  L.push("-".repeat(56));
+  L.push("Not a diagnosis. Educational and self-reflective use only; not");
+  L.push("clinically validated or normed. © 2026 Erica Campbell.");
+  return L.join("\n");
+}
+
+function setMsg(text,kind){const el=document.getElementById("shareMsg");el.textContent=text||"";el.className="sharemsg"+(kind?" "+kind:"");}
+
+const emailSelf=document.getElementById("emailSelf"),
+      emailAddr=document.getElementById("emailAddr"),
+      emailCollective=document.getElementById("emailCollective");
+emailSelf.addEventListener("change",()=>{
+  emailAddr.classList.toggle("hidden",!emailSelf.checked);
+  if(emailSelf.checked){emailAddr.focus();} else {emailAddr.classList.remove("bad");}
+  setMsg("");
+});
+const validEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
+document.getElementById("emailBtn").onclick=()=>{
+  if(!LAST){setMsg("Finish the inventory first.","err");return;}
+  const to=[];
+  if(emailSelf.checked){
+    const addr=emailAddr.value.trim();
+    if(!validEmail(addr)){emailAddr.classList.add("bad");emailAddr.focus();setMsg("Enter a valid email to send yourself a copy.","err");return;}
+    emailAddr.classList.remove("bad"); to.push(addr);
+  }
+  if(emailCollective.checked) to.push(COLLECTIVE);
+  const subject="My RABI-C results — "+LAST.style;
+  const body=plainReport();
+  const href="mailto:"+encodeURIComponent(to.join(","))
+    +"?subject="+encodeURIComponent(subject)
+    +"&body="+encodeURIComponent(body);
+  // mailto bodies can be truncated by some clients; copy to clipboard as a safety net.
+  if(navigator.clipboard) navigator.clipboard.writeText(body).catch(()=>{});
+  window.location.href=href;
+  const who = to.length? ("to "+to.join(" and ")) : "(choose a recipient in your mail app)";
+  setMsg("Opening your email app "+who+". Your results are also copied to the clipboard as a backup.","ok");
+};
+
+document.getElementById("pdfBtn").onclick=()=>{
+  if(!LAST){setMsg("Finish the inventory first.","err");return;}
+  if(document.getElementById("appendix")){ /* leave appendix as-is; it prints if open */ }
+  setMsg("Opening the print dialog — choose “Save as PDF” as the destination.","ok");
+  setTimeout(()=>window.print(),120);
+};
+
+document.getElementById("copyBtn").onclick=async()=>{
+  if(!LAST){setMsg("Finish the inventory first.","err");return;}
+  const text=plainReport();
+  try{ await navigator.clipboard.writeText(text); setMsg("Results copied to the clipboard.","ok"); }
+  catch(e){
+    const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");setMsg("Results copied to the clipboard.","ok");}
+    catch(_){setMsg("Couldn't copy automatically — use Save as PDF instead.","err");}
+    ta.remove();
+  }
+};
+
 document.getElementById("retakeBtn").onclick=()=>location.reload();
 updateProgress();
 </script>

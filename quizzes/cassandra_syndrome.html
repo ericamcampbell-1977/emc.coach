@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --bg:#ECEFF3;
@@ -192,6 +193,28 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:26px 0 48px}
 .legal .co{color:var(--muted);font-size:12.5px;margin:0}
 .excise{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:14.5px;color:var(--muted);margin-top:12px}
 .excise b{color:var(--ink);font-weight:600}
+
+/* keep-your-results card */
+.share{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow);margin-top:18px}
+.share h3{margin:0 0 4px;font-size:21px}
+.share > p{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+.share .field{margin:0 0 12px}
+.share label{display:block;font-size:13px;color:var(--ink);margin:0 0 6px;font-weight:500}
+.share input[type=email]{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;background:var(--panel-hi);color:var(--ink);font:inherit;font-size:15px}
+.share input[type=email]:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.share input[aria-invalid="true"]{border-color:var(--danger)}
+.share .err{color:var(--danger);font-size:12.5px;margin:6px 0 0}
+.share .check{display:flex;align-items:flex-start;gap:10px;font-weight:400;cursor:pointer;margin:2px 0 0}
+.share .check input{margin-top:3px;flex:none;width:16px;height:16px;accent-color:var(--accent)}
+.share .check small{display:block;color:var(--faint);font-size:12px;margin-top:3px}
+.share .consent{background:var(--accent-soft);border-radius:8px;padding:9px 12px;color:var(--ink);font-size:13px;margin:10px 0 0}
+.share .actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.share .status{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);margin:10px 0 0;min-height:1em}
+.share .prev{margin-top:12px}
+.share .prev summary{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);cursor:pointer}
+.share .prev textarea{width:100%;min-height:200px;margin-top:8px;border:1px solid var(--line);border-radius:9px;background:var(--panel-hi);color:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.5;padding:10px;resize:vertical}
+a.btn{display:inline-flex;align-items:center;text-decoration:none}
+.btn.sm{padding:10px 16px;font-size:12px}
 @media (max-width:520px){
   header.top h1{font-size:32px}.stem{font-size:23px}
   .card{padding:20px 18px}
@@ -213,6 +236,8 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:26px 0 48px}
 
 <footer><div class="wrap legal">
   <p class="mono" style="color:var(--muted);margin:0 0 18px">Self-report · non-diagnostic · for reflection, not assessment. Higher scores indicate more of the named experience.</p>
+  <h4>Privacy</h4>
+  <p>Your answers stay in this browser and aren't saved once you close the page. Nothing is sent anywhere unless you choose to email your results, which opens your own email app with the message already filled in — nothing goes out until you press Send there. If you tick the box to include Evolution Lab Collective, a copy of your results and your email address goes to that address too; leave it unticked to keep your results to yourself.</p>
   <h4>Legal Disclaimer</h4>
   <p>This instrument is provided for general educational and self-reflective purposes only. It is not a medical device, a psychological or clinical assessment, or a diagnostic tool, and it is not a substitute for professional evaluation, diagnosis, or treatment by a qualified health-care or mental-health provider. Your use of it does not create any clinician–client, therapist–patient, or other professional relationship.</p>
   <p>The subscales, scores, thresholds, and interpretive text are derived from published psychological constructs but have not been clinically validated, standardized, or normed on any population. Any reliability figures shown are produced by statistical simulation, not by data collected from respondents. Results describe general tendencies and patterns — not fixed traits, and not statements of fact about any identified person.</p>
@@ -464,7 +489,7 @@ function buildOrder(instKey){
 }
 
 /* expose for tests */
-window.__SUITE={BANK,SCALE,BANDS,bandOf,scoreItem,subMean,instResults,instOverall,buildOrder};
+window.__SUITE={BANK,SCALE,BANDS,bandOf,scoreItem,subMean,instResults,instOverall,buildOrder,reportText,mailtoHref,pdfReport};
 
 /* ============================================================
    UI
@@ -613,10 +638,12 @@ function renderInstResults(inst){
     rd.innerHTML=`<div class="tag">Cassandra profile</div><h3>What this reads</h3><p>${msg}</p>`;
     stage.appendChild(rd);
     const cf=document.createElement("div"); cf.className="card";
-    cf.innerHTML=`<p class="note" style="margin:0 0 12px">A focused front-door read. Go deeper with the full instruments, or jump to any tab above.</p>
-      <div class="row"><button class="btn ghost" id="redo">Retake Cassandra</button>
-      <button class="btn" id="next">Go deeper → RII</button></div>`;
+    cf.innerHTML=`<p class="note" style="margin:0 0 12px">A focused front-door read. Email or save it, go deeper with the full instruments, or jump to any tab above.</p>
+      <div class="row"><button class="btn" id="save">Email or save results</button>
+      <button class="btn ghost" id="next">Go deeper → RII</button>
+      <button class="btn ghost" id="redo">Retake Cassandra</button></div>`;
     stage.appendChild(cf);
+    cf.querySelector("#save").onclick=()=>{ active="SYN"; renderTabs(); route(); window.scrollTo({top:0}); };
     cf.querySelector("#redo").onclick=()=>{ delete STATE.results.CAS; renderInstIntro("CAS"); };
     cf.querySelector("#next").onclick=()=>{ active="RII"; renderTabs(); route(); window.scrollTo({top:0}); };
     return;
@@ -627,13 +654,125 @@ function renderInstResults(inst){
   foot.innerHTML=`<p class="note" style="margin:0 0 12px">${remaining.length? `Next: ${remaining.join(", ")}. Complete all four to unlock the Synthesis.` : `All four instruments complete — open the <b>Synthesis</b> tab.`}</p>
     <div class="row">
       <button class="btn ghost" id="redo">Retake ${B.code}</button>
+      <button class="btn ghost" id="save2">Email or save results</button>
       ${remaining.length? `<button class="btn" id="next">Continue → ${remaining[0]}</button>`:`<button class="btn" id="toSyn">Open Synthesis →</button>`}
     </div>`;
   stage.appendChild(foot);
   const redo=foot.querySelector("#redo"); if(redo) redo.onclick=()=>{ delete STATE.results[inst]; renderInstIntro(inst); };
   const nx=foot.querySelector("#next"); if(nx) nx.onclick=()=>{ active=remaining[0]; renderTabs(); route(); window.scrollTo({top:0}); };
   const ts=foot.querySelector("#toSyn"); if(ts) ts.onclick=()=>{ active="SYN"; renderTabs(); route(); window.scrollTo({top:0}); };
+  const sv=foot.querySelector("#save2"); if(sv) sv.onclick=()=>{ active="SYN"; renderTabs(); route(); window.scrollTo({top:0}); };
 }
+
+/* ---------- results report + email/save (shared pattern across the suite) ---------- */
+const LAB="evolutionlabcollective@gmail.com";
+const SEND={email:"",cc:false};
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DONE5=()=>["CAS","RII","CCP","EII","REP"].filter(k=>STATE.results[k]);
+function escAttr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function reportText(){
+  const L=[], today=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  L.push("SERIES VII · RELATIONAL TRAUMA","Your results · "+today,"");
+  L.push("Scores run 1.00–6.00; the neutral midpoint is 3.50.","Bands: below 3.00 Minimal · 3.00–4.49 Present · 4.50 and above Pronounced.","");
+  DONE5().forEach(k=>{
+    const B=BANK[k], res=STATE.results[k], ov=instOverall(k,res);
+    L.push(B.name.toUpperCase()+"  —  overall "+ov.toFixed(2)+" ("+bandOf(ov).label+")");
+    Object.keys(B.subs).forEach(sk=>{const m=res[sk];L.push("  • "+B.subs[sk].label+": "+m.toFixed(2)+" ("+bandOf(m).label+")");});
+    L.push("");
+  });
+  const left=["CAS","RII","CCP","EII","REP"].filter(k=>!STATE.results[k]).map(k=>BANK[k].code);
+  if(left.length) L.push("Not yet taken: "+left.join(", "),"");
+  if(["RII","CCP","EII","REP"].every(k=>STATE.results[k])){
+    const rep=instOverall("REP",STATE.results.REP), ccp=instOverall("CCP",STATE.results.CCP);
+    L.push("SYNTHESIS");
+    L.push("  • Deprivation (REP) "+rep.toFixed(2)+" vs coercion (CCP) "+ccp.toFixed(2)+" — "+
+      (rep>=3.5&&ccp>=3.5?"both elevated (coercive deprivation)":rep>=3.5?"deprivation without marked coercion":ccp>=3.5?"coercion without marked deprivation":"neither axis pronounced")+".","");
+  }
+  L.push("This is a self-reflection tool, not a diagnosis. Results have no norms and are not clinically validated.");
+  L.push("If you feel unsafe, contact a domestic-abuse helpline or local emergency services. In the US, call or text 988 for mental-health crisis support, or 911 in an emergency.","");
+  L.push("© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n");
+}
+function mailtoHref(){
+  const me=SEND.email.trim(), cc=SEND.cc?[LAB]:[];
+  const to=me?me:(cc.length?cc.join(","):""), ccs=me?cc:[];
+  const q=[];
+  if(ccs.length) q.push("cc="+encodeURIComponent(ccs.join(",")));
+  q.push("subject="+encodeURIComponent("My Series VII results · Relational Trauma"));
+  q.push("body="+encodeURIComponent(reportText()));
+  return "mailto:"+to+"?"+q.join("&");
+}
+function pdfReport(){
+  const J=window.jspdf&&window.jspdf.jsPDF; if(!J) return null;
+  const doc=new J({unit:"pt",format:"letter"}); const W=612, M=54; let y=64;
+  doc.setFont("helvetica","bold");doc.setFontSize(18);doc.setTextColor(30);doc.text("Series VII · Relational Trauma",M,y);y+=22;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(90);
+  doc.text("Your results · "+new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),M,y);y+=15;
+  doc.text("Scores 1.00–6.00 · midpoint 3.50 · Minimal <3.00 · Present 3.00–4.49 · Pronounced 4.50+",M,y);y+=24;
+  const bands=[[3,[79,127,107]],[4.5,[194,144,47]],[6.01,[178,58,76]]];
+  function bar(val){const x=M,wd=W-2*M; let c=[178,58,76]; for(const[hi,cc] of bands){if(val<hi){c=cc;break;}}
+    doc.setFillColor(226,231,237);doc.rect(x,y,wd,6,"F");
+    doc.setFillColor(c[0],c[1],c[2]);doc.rect(x,y,Math.max(3,(val-1)/5*wd),6,"F");y+=15;}
+  DONE5().forEach(k=>{
+    if(y>700){doc.addPage();y=64;}
+    const B=BANK[k],res=STATE.results[k],ov=instOverall(k,res);
+    doc.setFont("helvetica","bold");doc.setFontSize(13);doc.setTextColor(30);doc.text(B.name+"  —  "+ov.toFixed(2)+" ("+bandOf(ov).label+")",M,y);y+=17;
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60);
+    Object.keys(B.subs).forEach(sk=>{if(y>735){doc.addPage();y=64;}const m=res[sk];
+      doc.text(B.subs[sk].label+" — "+m.toFixed(2)+" ("+bandOf(m).label+")",M,y);y+=11;bar(m);});
+    y+=12;
+  });
+  if(y>660){doc.addPage();y=64;}
+  doc.setFontSize(8.5);doc.setTextColor(120);
+  doc.text(doc.splitTextToSize("Self-reflection tool, not a diagnosis. Results have no norms and are not clinically validated. If you feel unsafe, contact a domestic-abuse helpline or local emergency services; in the US call or text 988, or 911 in an emergency. © 2026 Erica Campbell. All rights reserved.",W-2*M),M,y);
+  return doc;
+}
+function shareHTML(){
+  const done=DONE5().map(k=>BANK[k].code);
+  const bad=!!SEND.email.trim() && !EMAIL_RE.test(SEND.email.trim());
+  return `<div class="share" id="share">
+    <h3>Email or save your results</h3>
+    <p>Includes every instrument you've finished so far${done.length?": "+done.join(", "):""}. Your answers aren't stored anywhere once you close this page.</p>
+    <div class="field"><label for="em">Email the results to yourself</label>
+      <input id="em" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="${escAttr(SEND.email)}" aria-invalid="${bad}" aria-describedby="emerr">
+      <p class="err" id="emerr" ${bad?"":"hidden"}>Check the address — it should look like you@example.com.</p></div>
+    <label class="check"><input type="checkbox" id="cc" ${SEND.cc?"checked":""}><span>Also send a copy to Evolution Lab Collective<small>${LAB} will receive your results and your email address.</small></span></label>
+    <p class="consent" id="consent" ${SEND.cc?"":"hidden"}>Ticking this sends your relational-trauma results to Evolution Lab Collective as well. Leave it unticked to keep them to yourself.</p>
+    <div class="actions">
+      <a class="btn sm" id="a-mail" href="${escAttr(mailtoHref())}">Open in my email app</a>
+      <button class="btn ghost sm" type="button" id="a-copy">Copy results</button>
+      <button class="btn ghost sm" type="button" id="a-pdf">Download PDF</button>
+      <button class="btn ghost sm" type="button" id="a-txt">Download text</button>
+    </div>
+    <p class="status" id="sstatus" role="status" aria-live="polite"></p>
+    <p class="note" style="font-size:12.5px;color:var(--faint);margin-top:8px">Your email app opens with the message already written in — nothing sends until you press Send there. No email app? Use Copy results. To include the formatted report, download the PDF and attach it.</p>
+    <details class="prev"><summary>Preview the text</summary><textarea readonly aria-label="Results text">${escAttr(reportText())}</textarea></details>
+  </div>`;
+}
+function bindShare(){
+  const em=document.getElementById("em"); if(!em) return;
+  const cc=document.getElementById("cc"), a=document.getElementById("a-mail"),
+    st=document.getElementById("sstatus"), consent=document.getElementById("consent"), err=document.getElementById("emerr");
+  const refresh=()=>{ SEND.email=em.value; SEND.cc=cc.checked;
+    const v=SEND.email.trim(), bad=!!v&&!EMAIL_RE.test(v);
+    em.setAttribute("aria-invalid",bad); if(err) err.hidden=!bad;
+    if(consent) consent.hidden=!cc.checked;
+    a.setAttribute("href",mailtoHref()); };
+  em.addEventListener("input",refresh); cc.addEventListener("change",refresh);
+  a.addEventListener("click",e=>{ const v=SEND.email.trim();
+    if(v&&!EMAIL_RE.test(v)){e.preventDefault();refresh();st.textContent="Check the email address first.";return;}
+    if(!v&&!SEND.cc){e.preventDefault();st.textContent="Enter your email, or tick the box to send to Evolution Lab.";return;}
+    st.textContent="Opening your email app… if nothing happens, use Copy results."; });
+  document.getElementById("a-copy").onclick=async()=>{ try{await navigator.clipboard.writeText(reportText());st.textContent="Results copied to the clipboard.";}
+    catch(e){const ta=document.querySelector("#share textarea"); if(ta){ta.focus();ta.select();} st.textContent="Press Ctrl/Cmd-C to copy the selected text.";} };
+  document.getElementById("a-txt").onclick=()=>{ const b=new Blob([reportText()],{type:"text/plain"}), u=URL.createObjectURL(b), x=document.createElement("a");
+    x.href=u;x.download="relational-trauma-results.txt";document.body.appendChild(x);x.click();x.remove();URL.revokeObjectURL(u);st.textContent="Text file downloaded."; };
+  document.getElementById("a-pdf").onclick=()=>{ const doc=pdfReport();
+    if(!doc){st.textContent="The PDF library didn't load — use Download text, or try again with an internet connection.";return;}
+    doc.save("relational-trauma-results.pdf");st.textContent="PDF downloaded."; };
+}
+function appendShare(){ if(!DONE5().length) return; const sc=document.createElement("div"); sc.innerHTML=shareHTML(); stage.appendChild(sc.firstElementChild); bindShare(); }
 
 /* ---------- synthesis ---------- */
 function renderSynthesis(){
@@ -645,7 +784,7 @@ function renderSynthesis(){
       <h2 style="font-size:27px;margin:.2em 0 .3em">The cross-read</h2>
       <p class="note">Complete all four instruments to see how they read together. Still to do: <b>${need.join(", ")}</b>.</p>
       <p class="placeholder">The centrepiece here separates <i>deprivation</i> from <i>coercion</i> — the distinction the "Cassandra" construct collapses.</p>`;
-    stage.appendChild(c); return;
+    stage.appendChild(c); appendShare(); return;
   }
   const R=STATE.results;
   const rep=instOverall("REP",R.REP);      // deprivation axis (y)
@@ -702,6 +841,8 @@ function renderSynthesis(){
     `High emotional deprivation (${ED.toFixed(2)}) alongside the sense of not being believed (${BD.toFixed(2)}) is exactly what the "Cassandra" label points at — the felt experience of being both starved and disbelieved. This suite shows it as two measurable experiences rather than a partner-caused disorder, and deliberately makes no claim about who or what is responsible. The Method tab explains why.`);
 
   stage.appendChild(sigs);
+
+  appendShare();
 
   const reset=document.createElement("div"); reset.className="card";
   reset.innerHTML=`<div class="row"><button class="btn ghost" id="resetAll">Clear all responses</button></div>`;

@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Series V — Series X structure (cool slate base, per-subscale accent colors,
    per-instrument signature hue, full light/dark theming). */
@@ -152,6 +153,20 @@ details .body{padding-top:14px;font-size:13.5px;color:var(--ink2)}
   border:1px solid var(--rule);border-radius:2px;padding:5px 9px;color:var(--muted)}
 .chip.done{border-color:var(--good);color:var(--good)}
 
+/* keep-your-results card */
+.share{margin-top:26px}
+.share h3{margin:0 0 4px}
+.share .fld{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+.share .fld input{display:block;width:100%;margin-top:6px;font-family:var(--body);font-size:14.5px;color:var(--ink);
+  background:var(--paper);border:1px solid var(--rule);border-radius:2px;padding:10px 12px}
+.share .fld input:focus{outline:none;border-color:var(--sig)}
+.share .optin{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--ink2);cursor:pointer;margin:0 0 6px}
+.share .optin input{margin-top:3px;flex:none;accent-color:var(--sig);width:15px;height:15px}
+.share .consent{font-size:12px;color:var(--muted);border-left:2px solid var(--sig);padding-left:12px;margin:8px 0 2px}
+.share .actions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0}
+.share .actions .go{padding:10px 18px}
+.share-msg{font-family:var(--mono);font-size:11.5px;color:var(--good);letter-spacing:.04em;min-height:1.2em;margin:12px 0 0}
+
 footer{border-top:1px solid var(--rule);margin-top:50px;padding-top:20px;font-size:12px;color:var(--muted)}
 .legal{font-size:11.5px;line-height:1.6;color:var(--muted)}
 .legal b{color:var(--ink2);font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:400}
@@ -186,7 +201,7 @@ footer{border-top:1px solid var(--rule);margin-top:50px;padding-top:20px;font-si
 <footer>
   <p class="legal">
     <b>Legal notice &amp; disclaimer</b>
-    These instruments are provided for educational, informational, and self-reflective purposes only. They are <b style="display:inline;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:11.5px">not</b> diagnostic tools and are not a substitute for professional evaluation, diagnosis, or treatment by a qualified physician, psychologist, psychiatrist, or other licensed health provider. They have not been clinically validated or normed on any population; the reliability figures shown are the output of statistical simulations describing the <i>structure</i> of each instrument, not evidence of its performance on real respondents. No score, band, or interpretation generated here constitutes medical or psychological advice, and nothing here establishes a clinician–patient relationship. Never disregard professional advice or delay seeking it because of something you read in this material. If you are in crisis or may harm yourself or others, contact your local emergency services or, in the US, call or text 988 (Suicide &amp; Crisis Lifeline). Items are original works written independently; the published constructs they are modelled on are cited, with their authors, in each instrument's psychometric appendix, and no affiliation with or endorsement by those authors is claimed or implied. Provided "as is," without warranty of any kind. You use these instruments at your own discretion and risk, and the author accepts no liability for any decision or outcome arising from their use. © 2026. All rights reserved.
+    These instruments are provided for educational, informational, and self-reflective purposes only. They are <b style="display:inline;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:11.5px">not</b> diagnostic tools and are not a substitute for professional evaluation, diagnosis, or treatment by a qualified physician, psychologist, psychiatrist, or other licensed health provider. They have not been clinically validated or normed on any population; the reliability figures shown are the output of statistical simulations describing the <i>structure</i> of each instrument, not evidence of its performance on real respondents. No score, band, or interpretation generated here constitutes medical or psychological advice, and nothing here establishes a clinician–patient relationship. Never disregard professional advice or delay seeking it because of something you read in this material. If you are in crisis or may harm yourself or others, contact your local emergency services or, in the US, call or text 988 (Suicide &amp; Crisis Lifeline). Items are original works written independently; the published constructs they are modelled on are cited, with their authors, in each instrument's psychometric appendix, and no affiliation with or endorsement by those authors is claimed or implied. If you choose to email your results, or tick the box to copy Evolution Lab Collective (evolutionlabcollective@gmail.com), your results and the email address you enter are shared only with the recipients you select, and only when you send the message from your own mail application; the page itself transmits nothing and stores nothing. Provided "as is," without warranty of any kind. You use these instruments at your own discretion and risk, and the author accepts no liability for any decision or outcome arising from their use. © 2026. All rights reserved.
   </p>
 </footer>
 </div>
@@ -664,9 +679,150 @@ function renderSyn(){
   ${done.length>=2?`<details><summary>Why these pairings</summary><div class="body">
    <p>Each card pairs a construct measured as a virtue against a construct measuring its cost. The design premise is that grit and resilience instruments are almost universally scored in one direction — more is better — and that the literature does not support that. Credé, Tynan and Harms' meta-analysis of 66,807 individuals found grit's higher-order structure unconfirmed and its correlation with conscientiousness so high (r ≈ .84) that the two may overlap completely, while the goal-adjustment literature finds that failure to disengage from unattainable goals predicts depressive symptoms.</p>
    <p>The PCI is not a validated instrument and has no published parent. It is a construct assembled from four established literatures — nonproductive persistence, goal disengagement/reengagement, John Henryism, and effort–reward imbalance — and should be treated as a research object, not a measure.</p>
-  </div></details>`:""}`;
+  </div></details>`:""}
+  ${shareCard()}`;
 }
-function wireSyn(){}
+
+/* ---------- keep-your-results (email / PDF / text) ---------- */
+const LAB_EMAIL="evolutionlabcollective@gmail.com";
+/* hex palette mirroring --d1..--d7 (light) for jsPDF, which can't read CSS vars */
+const PDF_PAL=["#1E6B68","#4B763A","#9A6511","#9A3F45","#2E6A88","#6A4878","#8A5A2B"];
+
+function instReport(key){
+  const st=STATE[key]; if(!st.scores) return "";
+  const inst=BANK[key], S=inst.subs;
+  const lines=[`${inst.code} - ${inst.name}`];
+  Object.keys(S).forEach(k=>{
+    lines.push(`  ${S[k].label}: ${st.scores[k].toFixed(2)} (${bandLabel(st.scores[k])})`);
+  });
+  if(key==="pci"){
+    const sc=st.scores, load=(sc.NP+sc.DD+sc.HE+sc.OC)/4, ret=(sc.RC+(7-sc.RD))/2;
+    const quad=load>=3.5?(ret>=3.5?"Sustainable Drive":"Overextension"):(ret>=3.5?"Underused":"Disengaged");
+    lines.push(`  [Load ${load.toFixed(2)} / Return ${ret.toFixed(2)} -> ${quad}]`);
+  }
+  return lines.join("\n");
+}
+function buildReport(){
+  const done=Object.keys(BANK).filter(k=>STATE[k].scores);
+  const out=["SERIES V - Perseverance, Recovery & the Cost of Enduring","Results summary",""];
+  done.forEach(k=>{ out.push(instReport(k)); out.push(""); });
+  out.push("Scores run 1.00-6.00; 3.50 is the exact midpoint. Higher is more of the named");
+  out.push("tendency, not better or worse - on the PCI especially, higher means more cost.");
+  out.push("");
+  out.push("Non-diagnostic, self-reflective instruments - not a clinical assessment. Reliability");
+  out.push("figures are simulations describing structure, not performance on real respondents.");
+  return out.join("\n");
+}
+function flash(msg,text,ok){ if(!msg)return; msg.textContent=text; msg.style.color=ok===false?"var(--bad)":"var(--good)"; }
+
+function emailResults(email,cc,msg){
+  const to=(email&&email.value||"").trim();
+  const subject="My Series V results";
+  const body=buildReport();
+  let url="mailto:"+to+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+  if(cc&&cc.checked) url+="&cc="+LAB_EMAIL;
+  const a=document.createElement("a"); a.href=url; a.rel="noopener";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  flash(msg, cc&&cc.checked ? "Opening your mail app (copy to Evolution Lab Collective included)…" : "Opening your mail app…");
+}
+function copyResults(msg){
+  const txt=buildReport();
+  const done=()=>flash(msg,"Results copied to your clipboard.");
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,msg));
+  } else fallbackCopy(txt,msg);
+}
+function fallbackCopy(txt,msg){
+  const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
+  ta.select(); try{document.execCommand("copy");flash(msg,"Results copied to your clipboard.");}
+  catch(e){flash(msg,"Couldn't copy automatically — select and copy the text download instead.",false);}
+  document.body.removeChild(ta);
+}
+function downloadBlob(text,name,mime){
+  const b=new Blob([text],{type:mime}); const u=URL.createObjectURL(b);
+  const a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(u),2000);
+}
+function downloadText(msg){ downloadBlob(buildReport(),"series-v-results.txt","text/plain;charset=utf-8"); flash(msg,"Text report downloaded."); }
+
+function buildPDF(msg){
+  const J=window.jspdf&&window.jspdf.jsPDF;
+  if(!J){ flash(msg,"PDF library didn't load — use Download text instead.",false); return; }
+  const doc=new J({unit:"pt",format:"letter"});
+  const W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight(), M=54;
+  let y=M;
+  const need=h=>{ if(y+h>H-M){ doc.addPage(); y=M; } };
+  doc.setFont("times","bold"); doc.setFontSize(18); doc.setTextColor(29,39,41);
+  doc.text("Series V - Results", M, y); y+=12;
+  doc.setDrawColor(205,213,211); doc.line(M,y,W-M,y); y+=22;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(91,104,107);
+  doc.text("Perseverance, Recovery & the Cost of Enduring", M, y); y+=24;
+  const done=Object.keys(BANK).filter(k=>STATE[k].scores);
+  done.forEach(k=>{
+    const inst=BANK[k], S=inst.subs, keys=Object.keys(S);
+    need(34);
+    doc.setFont("times","bold"); doc.setFontSize(13); doc.setTextColor(29,39,41);
+    doc.text(inst.code+" - "+inst.name, M, y); y+=18;
+    keys.forEach((sk,i)=>{
+      need(30);
+      const v=STATE[k].scores[sk], pct=(v-1)/5, barW=W-2*M;
+      doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(40,50,52);
+      doc.text(S[sk].label, M, y);
+      doc.setTextColor(110,118,120);
+      doc.text(v.toFixed(2)+"  "+bandLabel(v), W-M, y, {align:"right"}); y+=7;
+      doc.setFillColor(223,229,227); doc.rect(M,y,barW,6,"F");
+      const c=PDF_PAL[i%PDF_PAL.length];
+      doc.setFillColor(parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16));
+      doc.rect(M,y,barW*pct,6,"F"); y+=19;
+    });
+    if(k==="pci"){
+      const sc=STATE[k].scores, load=(sc.NP+sc.DD+sc.HE+sc.OC)/4, ret=(sc.RC+(7-sc.RD))/2;
+      const quad=load>=3.5?(ret>=3.5?"Sustainable Drive":"Overextension"):(ret>=3.5?"Underused":"Disengaged");
+      need(18); doc.setFont("helvetica","italic"); doc.setFontSize(9.5); doc.setTextColor(110,118,120);
+      doc.text("Load "+load.toFixed(2)+" / Return "+ret.toFixed(2)+"  ->  "+quad, M, y); y+=18;
+    }
+    y+=8;
+  });
+  need(60);
+  doc.setFont("helvetica","italic"); doc.setFontSize(8); doc.setTextColor(120,128,130);
+  const disc="Scores run 1.00-6.00; 3.50 is the exact midpoint. Non-diagnostic and not clinically validated. Reliability figures are statistical simulations describing instrument structure, not performance on real respondents. Not a substitute for professional evaluation, diagnosis, or treatment. (c) 2026. All rights reserved.";
+  doc.text(doc.splitTextToSize(disc,W-2*M), M, y);
+  doc.save("series-v-results.pdf");
+  flash(msg,"PDF report downloaded.");
+}
+
+function shareCard(){
+  const done=Object.keys(BANK).filter(k=>STATE[k].scores);
+  if(!done.length) return "";
+  return `
+  <div class="card share">
+    <h3>Keep your results</h3>
+    <p style="font-size:13.5px;color:var(--ink2);margin:0 0 16px">A web page can't send mail on its own, so <b>Open in my email app</b> launches your own mail client with the results written into the body as clean text. <b>PDF</b> and <b>Text</b> are formatted downloads you can keep or attach yourself.</p>
+    <label class="fld">Your email (optional — you can also just fill it in your mail app)
+      <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+    </label>
+    <label class="optin"><input id="ccbox" type="checkbox"> Also send a copy to Evolution Lab Collective</label>
+    <p id="consent" class="consent" hidden>Checking this adds <b>${LAB_EMAIL}</b> as a copied recipient, sharing your results and the address you enter with Evolution Lab Collective. Nothing is sent until you send the message from your own mail app.</p>
+    <div class="actions">
+      <button class="go" id="btn-email">Open in my email app</button>
+      <button class="ghost" id="btn-copy">Copy</button>
+      <button class="ghost" id="btn-pdf">Download PDF</button>
+      <button class="ghost" id="btn-txt">Download text</button>
+    </div>
+    <p class="share-msg" id="share-msg" aria-live="polite"></p>
+  </div>`;
+}
+
+function wireSyn(){
+  const el=document.getElementById("p-syn");
+  const cc=el.querySelector("#ccbox"), consent=el.querySelector("#consent"),
+        email=el.querySelector("#email"), msg=el.querySelector("#share-msg");
+  if(cc) cc.onchange=()=>{ consent.hidden=!cc.checked; };
+  const be=el.querySelector("#btn-email"); if(be) be.onclick=()=>emailResults(email,cc,msg);
+  const bc=el.querySelector("#btn-copy");  if(bc) bc.onclick=()=>copyResults(msg);
+  const bp=el.querySelector("#btn-pdf");   if(bp) bp.onclick=()=>buildPDF(msg);
+  const bt=el.querySelector("#btn-txt");   if(bt) bt.onclick=()=>downloadText(msg);
+}
 
 /* ---------- events ---------- */
 function wire(key){

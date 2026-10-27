@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <style>
   :root{
     --paper:#efe7d8; --paper-2:#f7f1e6; --card:#f9f4ea;
@@ -139,6 +140,38 @@
   .care b{color:var(--ink);font-weight:600}
   .care em{font-style:italic}
 
+  /* ---- keep-your-results card ---- */
+  .send{margin-top:30px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px 20px;position:relative;overflow:hidden}
+  .send::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--ego),var(--soul),var(--self))}
+  .send .k{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-faint)}
+  .send h3{font-family:'Fraunces',serif;font-weight:500;font-size:23px;margin-top:6px}
+  .send>p{font-size:13.5px;color:var(--ink-soft);margin-top:6px}
+  .field{margin-top:16px}
+  .field label{display:block;font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+  .field input[type=email]{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+  .field input[type=email]:focus{outline:2.5px solid var(--gold);outline-offset:1px;border-color:var(--indigo)}
+  .field input[aria-invalid=true]{border-color:#b0463c}
+  .err{font-size:12px;color:#b0463c;margin-top:6px}
+  .check{display:flex;gap:11px;align-items:flex-start;margin-top:15px;cursor:pointer;font-size:14px;color:var(--ink)}
+  .check input{margin-top:3px;width:17px;height:17px;flex:none;accent-color:var(--indigo);cursor:pointer}
+  .check small{display:block;font-size:12px;color:var(--ink-faint);margin-top:2px}
+  .consent{margin-top:11px;font-size:12.5px;color:var(--ink-soft);background:var(--self-tint);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+  .consent b{color:var(--ink);font-weight:600}
+  .row-btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+  .sbtn{font-family:inherit;font-size:14px;font-weight:500;padding:11px 18px;border-radius:100px;background:var(--indigo);color:#f7f1e6;border:1px solid var(--indigo);transition:transform .12s ease,background .12s ease;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+  .sbtn:hover{transform:translateY(-1px);background:#3a2f57}
+  .sbtn:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
+  .sbtn.ghost{background:transparent;color:var(--indigo);border-color:var(--line)}
+  .sbtn.ghost:hover{background:var(--paper-2)}
+  .sbtn[aria-disabled=true]{opacity:.4;pointer-events:none}
+  .sbtn[hidden]{display:none}
+  .sstatus{font-size:12.5px;color:var(--soul);margin-top:11px;min-height:1em;font-weight:500}
+  .snote{font-size:12px;color:var(--ink-faint);margin-top:11px;line-height:1.55}
+  .prev{margin-top:13px}
+  .prev summary{padding:0;font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--ink-soft);font-family:'Inter',sans-serif}
+  .prev summary::after{content:""}
+  .prev textarea{width:100%;height:150px;margin-top:9px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.5;color:var(--ink-soft);background:var(--paper-2);border:1px solid var(--line);border-radius:9px;padding:11px 13px;resize:vertical}
+
   details{margin-top:26px;border-top:1px solid var(--line)}
   summary{cursor:pointer;padding:16px 0 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft);list-style:none;display:flex;justify-content:space-between;align-items:center}
   summary::-webkit-details-marker{display:none}
@@ -200,6 +233,7 @@
       <p>This instrument is provided for general educational and self-reflective purposes only. It is not a medical device, a psychological or clinical assessment, or a diagnostic tool, and it is not a substitute for professional evaluation, diagnosis, or treatment by a qualified health-care or mental-health provider. Your use of it does not create any clinician–client, therapist–patient, or other professional relationship.</p>
       <p>The subscales, scores, thresholds, and interpretive text are derived from published psychological constructs but have not been clinically validated, standardized, or normed on any population. Any reliability figures shown are produced by statistical simulation, not by data collected from respondents. Results describe general tendencies and patterns — not fixed traits, and not statements of fact about any identified person.</p>
       <p>To the fullest extent permitted by law, the author and distributors make no warranties, express or implied, including as to accuracy, completeness, or fitness for a particular purpose, and disclaim all liability for any decision made or action taken in reliance on this instrument or its output. If you have concerns about your safety or mental health, seek the advice of a licensed professional or your local emergency services.</p>
+      <p><b style="color:var(--ink-soft)">Privacy.</b> Your answers are scored entirely in your browser and are not sent anywhere automatically. If you choose to email your results, the message is prepared in your own email app for you to review and send — nothing leaves this page on its own. If you tick the option to copy Evolution Lab Collective, that address will also receive your results and your email address.</p>
       <p class="copy">© 2026 Erica Campbell. All rights reserved.</p>
     </div>
   </section>
@@ -247,6 +281,8 @@
 
     <div class="care" id="careNote"></div>
 
+    <div id="sendMount"></div>
+
     <details>
       <summary>Psychometric appendix</summary>
       <div class="appendix">
@@ -270,6 +306,7 @@
     <div class="legal res">
       <h4>Legal Disclaimer</h4>
       <p>For general educational and self-reflective purposes only. Not a medical device, clinical assessment, or diagnostic tool, and not a substitute for professional evaluation, diagnosis, or treatment by a qualified provider. Subscales, scores, and interpretive text derive from published constructs but have not been clinically validated, standardized, or normed; any reliability figures are produced by statistical simulation, not respondent data. To the fullest extent permitted by law, the author and distributors disclaim all warranties and all liability for decisions made in reliance on this instrument. If you have concerns about your safety or mental health, consult a licensed professional or your local emergency services.</p>
+      <p><b style="color:var(--ink-soft)">Privacy.</b> Answers are scored in your browser and sent nowhere automatically. Emailing your results prepares a message in your own email app for you to send; ticking the Evolution Lab Collective option copies your results and email address to that address.</p>
       <p class="copy">© 2026 Erica Campbell. All rights reserved.</p>
     </div>
 
@@ -501,10 +538,12 @@ function score(){
 }
 function band(m){return m>=4.5?"Dominant":m>=3.5?"Active":m>=2.5?"Latent":"Dormant";}
 
+let LAST=null;
 function finish(){
   const s=score();
   const ranked=[...s].sort((x,y)=>y.mean-x.mean);
   const top3=ranked.slice(0,3);
+  LAST={s,ranked,top3};
   $("#pfill").style.width="100%";
   quizEl.style.display="none";resEl.style.display="block";window.scrollTo(0,0);
   buildMandala(s,top3.map(t=>t.key));
@@ -513,6 +552,7 @@ function finish(){
   buildProfile(ranked,top3.map(t=>t.key));
   buildCare(top3,ranked);
   buildAppendix();
+  buildSend();bindSend();showPdf();
 }
 
 /* ---- archetype wheel (signature element) ---- */
@@ -615,7 +655,187 @@ function buildAppendix(){
   });
 }
 
-function restart(){pos=0;answers.fill(null);resEl.style.display="none";startEl.style.display="block";window.scrollTo(0,0);}
+/* ============ KEEP YOUR RESULTS (email / PDF / text) ============ */
+const ELC="evolutionlabcollective@gmail.com";
+const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SEND={to:"",elc:false};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function fmtDate(){return new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});}
+
+/* clean plain-text report for the email body + text download */
+function textReport(){
+  if(!LAST)return"";
+  const {ranked,top3}=LAST;
+  const L=[];
+  L.push("THE ARCHETYPAL PATTERN INVENTORY");
+  L.push("Your archetypal profile — "+fmtDate());
+  L.push("");
+  L.push("Scores are subscale means on a 1–6 scale; higher means more active in you now.");
+  L.push("Bands: Dominant 4.50+ · Active 3.50+ · Latent 2.50+ · Dormant below 2.50");
+  L.push("");
+  L.push("YOUR THREE MOST ACTIVE ARCHETYPES");
+  top3.forEach((t,i)=>{
+    L.push(`  ${i+1}. ${t.key} — ${t.mean.toFixed(2)} (${band(t.mean)}) · ${CLUSTER[t.cluster].name} cluster`);
+    L.push(`     ${t.arch.core}`);
+  });
+  L.push("");
+  L.push("FULL PROFILE — ALL TWELVE, RANKED");
+  ranked.forEach(r=>L.push(`  ${(r.key+":").padEnd(11)} ${r.mean.toFixed(2)} (${band(r.mean)})`));
+  L.push("");
+  const agg={ego:0,soul:0,self:0};LAST.s.forEach(x=>agg[x.cluster]+=x.mean);
+  L.push("CLUSTER BALANCE (average per cluster)");
+  L.push(`  Ego · survival:     ${(agg.ego/4).toFixed(2)}`);
+  L.push(`  Soul · the journey: ${(agg.soul/4).toFixed(2)}`);
+  L.push(`  Self · wholeness:   ${(agg.self/4).toFixed(2)}`);
+  L.push("");
+  const low=ranked[ranked.length-1];
+  L.push(`Quietest pattern right now: ${low.key} — ${low.mean.toFixed(2)} (${band(low.mean)})`);
+  L.push("");
+  L.push("— — —");
+  L.push("A well-person instrument for reflection and personal growth. Not a medical,");
+  L.push("clinical, or diagnostic tool. Reliability figures are from statistical");
+  L.push("simulation, not respondent data. This is a snapshot of today, not a fixed type.");
+  L.push("© 2026 Erica Campbell. All rights reserved.");
+  return L.join("\n");
+}
+
+function mailtoHref(){
+  const me=SEND.to.trim(), cc=SEND.elc?[ELC]:[];
+  const to=me?[me]:cc, ccs=me?cc:[];
+  const q=[];
+  if(ccs.length)q.push("cc="+ccs.join(","));
+  q.push("subject="+encodeURIComponent("My Archetypal Pattern Inventory results"));
+  q.push("body="+encodeURIComponent(textReport()));
+  return "mailto:"+to.join(",")+"?"+q.join("&");
+}
+
+function buildSend(){
+  const v=SEND.to.trim(), bad=!!v&&!EMAIL_RE.test(v);
+  $("#sendMount").innerHTML=`<div class="send">
+    <div class="k">Keep your results</div>
+    <h3>Email or save your results</h3>
+    <p>Your full profile, written out — email it to yourself or save a copy.</p>
+    <div class="field">
+      <label for="em-to">Your email address</label>
+      <input id="em-to" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" value="${esc(SEND.to)}" aria-invalid="${bad}" aria-describedby="em-err">
+      <p class="err" id="em-err" ${bad?"":"hidden"}>Check the address — it should look like name@example.com.</p>
+    </div>
+    <label class="check" for="em-elc"><input id="em-elc" type="checkbox" ${SEND.elc?"checked":""}><span>Also send a copy to Evolution Lab Collective<small>${ELC}</small></span></label>
+    <div class="consent" id="em-consent" ${SEND.elc?"":"hidden"}>Ticking this adds <b>${ELC}</b> as a cc, so that address will receive <b>your results and your email address</b> when you send.</div>
+    <div class="row-btns">
+      <a class="sbtn" id="em-open" href="${esc(mailtoHref())}" aria-disabled="${bad}">Open in my email app</a>
+      <button class="sbtn ghost" type="button" id="em-copy">Copy results</button>
+      <button class="sbtn ghost" type="button" id="em-pdf" hidden>Download PDF</button>
+      <button class="sbtn ghost" type="button" id="em-txt">Download text</button>
+    </div>
+    <p class="sstatus" id="em-status" role="status"></p>
+    <p class="snote">Your email app opens with the message already written in, so you can review it before sending. Nothing is sent from this page. If no email app opens, use <b>Copy results</b> or <b>Download text</b>. A web page can't attach a file to an email, so to include the formatted report, download the PDF and attach it yourself.</p>
+    <details class="prev"><summary>Preview the full text</summary><textarea id="em-text" readonly aria-label="Full results text">${esc(textReport())}</textarea></details>
+  </div>`;
+}
+
+function bindSend(){
+  const to=$("#em-to");if(!to)return;
+  const elc=$("#em-elc"),open=$("#em-open"),consent=$("#em-consent"),err=$("#em-err"),status=$("#em-status");
+  const refresh=()=>{
+    SEND.to=to.value;SEND.elc=elc.checked;
+    const v=SEND.to.trim(),bad=!!v&&!EMAIL_RE.test(v);
+    to.setAttribute("aria-invalid",bad);err.hidden=!bad;
+    consent.hidden=!elc.checked;
+    open.setAttribute("href",mailtoHref());
+    open.setAttribute("aria-disabled", bad || (!v && !elc.checked));
+    const t=$("#em-text");if(t)t.value=textReport();
+  };
+  to.addEventListener("input",refresh);
+  elc.addEventListener("change",refresh);
+  open.addEventListener("click",e=>{if(open.getAttribute("aria-disabled")==="true"){e.preventDefault();status.textContent="Enter your email address, or tick the Evolution Lab option, first.";}});
+  $("#em-copy").addEventListener("click",async()=>{
+    try{await navigator.clipboard.writeText(textReport());status.textContent="Results copied — paste them into a new email or a note.";}
+    catch(e){const t=$("#em-text");t.closest("details").open=true;t.focus();t.select();status.textContent="Select the text below and copy it.";}
+  });
+  $("#em-txt").addEventListener("click",()=>{download(textReport(),"archetype-results.txt","text/plain");status.textContent="Text file downloaded.";});
+  $("#em-pdf").addEventListener("click",()=>{makePdf();status.textContent="PDF downloaded — attach it to your email.";});
+  refresh();
+}
+
+function download(data,name,type){
+  const blob=(data instanceof Blob)?data:new Blob([data],{type});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},1500);
+}
+
+function showPdf(){
+  const ready=!!(window.jspdf&&window.jspdf.jsPDF);
+  const b=$("#em-pdf");if(b)b.hidden=!ready;
+}
+
+/* colored-bar PDF report */
+function makePdf(){
+  if(!LAST||!(window.jspdf&&window.jspdf.jsPDF))return;
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:"pt",format:"letter"});
+  const W=doc.internal.pageSize.getWidth();
+  const M=56;let y=64;
+  const C={ego:[176,96,60],soul:[47,125,116],self:[106,86,145],indigo:[74,61,107],gold:[176,134,63],ink:[43,36,54],soft:[106,97,117],faint:[148,139,156],line:[221,214,201]};
+  const set=c=>doc.setTextColor(c[0],c[1],c[2]);
+  const fill=c=>doc.setFillColor(c[0],c[1],c[2]);
+  // header tricolor rule
+  fill(C.ego);doc.rect(M,y-14,24,4,"F");fill(C.soul);doc.rect(M+24,y-14,24,4,"F");fill(C.self);doc.rect(M+48,y-14,24,4,"F");
+  doc.setFont("times","normal");doc.setFontSize(22);set(C.ink);
+  doc.text("The Archetypal Pattern Inventory",M,y+8);y+=26;
+  doc.setFont("helvetica","normal");doc.setFontSize(10);set(C.faint);
+  doc.text("Your archetypal profile  ·  "+fmtDate(),M,y);y+=24;
+  doc.setFontSize(9);set(C.soft);
+  doc.text("Scores are subscale means on a 1–6 scale. Bands: Dominant 4.50+ · Active 3.50+ · Latent 2.50+ · Dormant <2.50",M,y);y+=22;
+
+  const {ranked,top3}=LAST;
+  // top 3
+  doc.setFont("helvetica","bold");doc.setFontSize(8.5);set(C.faint);
+  doc.text("YOUR THREE MOST ACTIVE ARCHETYPES",M,y);y+=15;
+  top3.forEach((t,i)=>{
+    set(C[t.cluster]);doc.setFont("times","normal");doc.setFontSize(14);
+    doc.text(`${i+1}.  ${t.key}`,M,y);
+    set(C.soft);doc.setFont("helvetica","normal");doc.setFontSize(9);
+    doc.text(`${t.mean.toFixed(2)} · ${band(t.mean)} · ${CLUSTER[t.cluster].name}`,W-M,y,{align:"right"});
+    y+=13;set(C.faint);doc.setFontSize(8.5);doc.text(t.arch.core,M+16,y);y+=18;
+  });
+  y+=6;
+
+  // full profile with colored bars
+  doc.setFont("helvetica","bold");doc.setFontSize(8.5);set(C.faint);
+  doc.text("FULL PROFILE — ALL TWELVE, RANKED",M,y);y+=16;
+  const barX=M+120, barW=W-M-120-46;
+  ranked.forEach(r=>{
+    set(C.ink);doc.setFont("helvetica","normal");doc.setFontSize(10);
+    doc.text(r.key,M,y+3);
+    fill(C.line);doc.roundedRect(barX,y-6,barW,8,2,2,"F");
+    fill(C[r.cluster]);const w=Math.max(2,(r.mean-1)/5*barW);doc.roundedRect(barX,y-6,w,8,2,2,"F");
+    set(C.soft);doc.setFont("courier","normal");doc.setFontSize(9);
+    doc.text(r.mean.toFixed(2),W-M,y+2,{align:"right"});
+    y+=19;
+  });
+  y+=8;
+
+  // cluster balance
+  const agg={ego:0,soul:0,self:0};LAST.s.forEach(x=>agg[x.cluster]+=x.mean);
+  doc.setFont("helvetica","bold");doc.setFontSize(8.5);set(C.faint);doc.text("CLUSTER BALANCE",M,y);y+=15;
+  [["Ego · survival","ego"],["Soul · the journey","soul"],["Self · wholeness","self"]].forEach(([lab,k])=>{
+    set(C[k]);doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text(lab,M,y);
+    set(C.soft);doc.setFont("courier","normal");doc.text((agg[k]/4).toFixed(2),M+160,y);y+=15;
+  });
+  y+=10;
+
+  // disclaimer footer
+  doc.setDrawColor(C.line[0],C.line[1],C.line[2]);doc.line(M,y,W-M,y);y+=14;
+  doc.setFont("helvetica","normal");doc.setFontSize(7.5);set(C.faint);
+  const disc="A well-person instrument for reflection and personal growth — not a medical, clinical, or diagnostic tool, and not a substitute for professional evaluation. Subscales and interpretive text derive from published constructs but are not clinically validated or normed; reliability figures are from statistical simulation, not respondent data. Results describe general tendencies, not fixed traits. This is a snapshot of today.";
+  doc.text(doc.splitTextToSize(disc,W-2*M),M,y);y+=46;
+  set(C.soft);doc.setFontSize(8);doc.text("© 2026 Erica Campbell. All rights reserved.",M,y);
+
+  download(doc.output("blob"),"archetype-results.pdf","application/pdf");
+}
+
+function restart(){pos=0;answers.fill(null);SEND.to="";SEND.elc=false;resEl.style.display="none";startEl.style.display="block";window.scrollTo(0,0);}
 $("#restartBtn").addEventListener("click",restart);
 $("#restartBtn").addEventListener("keydown",e=>{if(e.key==="Enter")restart();});
 </script>
