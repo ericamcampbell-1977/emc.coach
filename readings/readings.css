@@ -51,3 +51,18 @@
 .tmean { font-size: 1rem; line-height: 1.45; color: var(--cream); }
 .draw-note { font-style: italic; color: var(--pink); min-height: 1.6em; }
 .btn[hidden] { display: none; }
+
+/* Celtic Cross layout: 1 center, 2 just below it, 3 beneath, 4 left, 5 above, 6 right, staff 7-10 up the right side */
+@media (min-width: 46rem) {
+  .spread.celtic { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-areas: ". c5 . c10" "c4 c1 c6 c9" ". c2 . c8" ". c3 . c7"; gap: .7rem; margin-inline: -2rem; }
+  .spread.celtic .tcard { min-height: 11.5rem; padding: .7rem .6rem; gap: .4rem; }
+  .spread.celtic .tname { font-size: 1.1rem; }
+  .spread.celtic .tmean { font-size: .88rem; line-height: 1.35; }
+  .spread.celtic .ttag { display: none; }
+  .spread.celtic .tpos { font-size: .66rem; letter-spacing: .1em; }
+  .spread.celtic .tcard:nth-child(1) { grid-area: c1; } .spread.celtic .tcard:nth-child(2) { grid-area: c2; }
+  .spread.celtic .tcard:nth-child(3) { grid-area: c3; } .spread.celtic .tcard:nth-child(4) { grid-area: c4; }
+  .spread.celtic .tcard:nth-child(5) { grid-area: c5; } .spread.celtic .tcard:nth-child(6) { grid-area: c6; }
+  .spread.celtic .tcard:nth-child(7) { grid-area: c7; } .spread.celtic .tcard:nth-child(8) { grid-area: c8; }
+  .spread.celtic .tcard:nth-child(9) { grid-area: c9; } .spread.celtic .tcard:nth-child(10) { grid-area: c10; }
+}

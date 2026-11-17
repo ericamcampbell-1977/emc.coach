@@ -140,6 +140,7 @@
     var sp = SPREADS[kind];
     var cards = shuffle(DECK).slice(0, sp.positions.length);
     out.innerHTML = '';
+    out.classList.toggle('celtic', kind === 'celtic');
     out.setAttribute('aria-live', 'polite');
     note.textContent = 'Tap each card to turn it over. Read them in order.';
     var remaining = cards.length;
@@ -150,7 +151,7 @@
       el.className = 'tcard';
       el.setAttribute('aria-pressed', 'false');
       el.innerHTML =
-        '<span class="tpos">' + esc(sp.positions[i]) + '</span>' +
+        '<span class="tpos">' + (kind === 'celtic' ? (i + 1) + '. ' : '') + esc(sp.positions[i]) + '</span>' +
         '<span class="tback" aria-hidden="true"><span class="tback-glyph">✦</span></span>' +
         '<span class="tface" hidden>' +
           '<span class="tglyph" aria-hidden="true">' + card.glyph + '</span>' +
