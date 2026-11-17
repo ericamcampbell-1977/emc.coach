@@ -129,6 +129,13 @@ h4{font-family:var(--sans);font-weight:600;font-size:1.05rem;color:var(--accent)
 @media print{.reader{display:none}}
 html.no-title .hero{display:none}
 html.no-title .layout{padding-top:1.5rem}
+/* Hide-title button in red, read-aloud */
+.reader{flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 32px);border-radius:26px}
+.reader #titleBtn{background:#a63f33;color:#fff}
+.reader #titleBtn:hover{background:#8c3329}
+.reader #listenBtn{background:var(--accent);color:var(--bg)}
+.reader #listenBtn:hover{filter:brightness(1.1)}
+.speaking{background:var(--accent-soft);box-shadow:0 0 0 .35rem var(--accent-soft);border-radius:3px}
 /* Flag notepad */
 .flagpad{margin:1.25rem 0 2rem;padding:1rem;background:var(--paper);border:1px solid var(--rule);border-radius:8px;font-family:var(--sans);font-size:.95rem}
 .flagpad form{display:flex;flex-wrap:wrap;gap:.5rem;align-items:stretch}
@@ -2744,6 +2751,8 @@ try{if(localStorage.getItem("wm-notitle")==="1")d.classList.add("no-title")}catc
   <button type="button" id="zoomIn" aria-label="Larger text">A+</button>
   <button type="button" id="titleBtn" aria-pressed="false">Hide title</button>
   <button type="button" id="themeBtn" aria-label="Switch to light mode">Light</button>
+  <button type="button" id="listenBtn" aria-label="Read aloud from here">&#9654; Listen</button>
+  <button type="button" id="stopBtn" aria-label="Stop reading" hidden>&#9632; Stop</button>
 </div>
 <script>
 (function(){var d=document.documentElement,steps=[.8,.9,1,1.1,1.25,1.4,1.6,1.8];
@@ -2760,6 +2769,31 @@ document.getElementById("themeBtn").onclick=function(){var n=d.getAttribute("dat
 function paintTitle(){var off=d.classList.contains("no-title"),b=document.getElementById("titleBtn");b.textContent=off?"Show title":"Hide title";b.setAttribute("aria-pressed",off?"true":"false")}
 document.getElementById("titleBtn").onclick=function(){d.classList.toggle("no-title");save("wm-notitle",d.classList.contains("no-title")?"1":"0");paintTitle()};
 setZ(cur());paintTheme();paintTitle();})();
+</script>
+<script>
+(function(){var lb=document.getElementById("listenBtn"),sb=document.getElementById("stopBtn");
+if(!("speechSynthesis" in window)||typeof SpeechSynthesisUtterance==="undefined"){lb.hidden=true;return}
+var synth=window.speechSynthesis,blocks=[],idx=0,state="idle",cur=null,lit=null;
+function collect(){return Array.prototype.filter.call(document.querySelectorAll("main h2,main h3,main h4,main p,main li,main tr,main figcaption"),function(el){
+if(el.closest("nav,svg,form,.flagpad,.reader,thead"))return false;
+if((el.tagName==="LI"||el.tagName==="P")&&el.closest("td,th"))return false;
+if(el.tagName==="LI"&&el.querySelector("p,li"))return false;
+return el.getClientRects().length>0&&textOf(el)})}
+function textOf(el){if(el.tagName==="TR")return Array.prototype.map.call(el.cells,function(c){return c.innerText.trim()}).filter(Boolean).join(". ");return(el.innerText||"").replace(/\s+/g," ").trim()}
+function light(el){if(lit)lit.classList.remove("speaking");lit=el;if(el){el.classList.add("speaking");var r=el.getBoundingClientRect();if(r.top<70||r.bottom>window.innerHeight-90)el.scrollIntoView({block:"center",behavior:"smooth"})}}
+function paint(){lb.innerHTML=state==="playing"?"&#10074;&#10074; Pause":state==="paused"?"&#9654; Resume":"&#9654; Listen";lb.setAttribute("aria-label",state==="playing"?"Pause reading":state==="paused"?"Resume reading":"Read aloud from here");sb.hidden=state==="idle"}
+function speak(i){if(i>=blocks.length){stop();return}idx=i;var el=blocks[i];light(el);var u=new SpeechSynthesisUtterance(textOf(el));u.lang=document.documentElement.lang||"en-US";u.rate=1;cur=u;
+u.onend=function(){if(state==="playing"&&cur===u)speak(i+1)};u.onerror=function(e){if(cur===u&&e.error!=="interrupted"&&e.error!=="canceled"&&state==="playing")speak(i+1)};synth.speak(u)}
+function firstVisible(){for(var i=0;i<blocks.length;i++){if(blocks[i].getBoundingClientRect().bottom>80)return i}return 0}
+function start(){synth.cancel();blocks=collect();state="playing";paint();speak(firstVisible())}
+function pause(){state="paused";cur=null;synth.cancel();paint()}
+function resume(){state="playing";paint();speak(idx)}
+function stop(){state="idle";cur=null;synth.cancel();light(null);idx=0;paint()}
+lb.onclick=function(){if(state==="idle")start();else if(state==="playing")pause();else resume()};
+sb.onclick=stop;
+window.addEventListener("pagehide",function(){synth.cancel()});
+var lv=document.querySelector(".leave");if(lv)lv.addEventListener("click",function(){synth.cancel()});
+paint()})();
 </script>
 <script>
 (function(){var el=document.getElementById("flagpad");if(!el)return;var K="wm-flags",items=[];

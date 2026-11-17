@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Differentiation of Self — A Scored Self-Assessment</title>
+<meta name="description" content="A Bowen-informed self-reflection tool: 78 scored items across eight life domains. For educational use only; not a clinical assessment.">
+<meta name="theme-color" content="#4B4FA8">
+<meta property="og:title" content="Differentiation of Self — A Scored Self-Assessment">
+<meta property="og:description" content="A Bowen-informed self-reflection tool: 78 scored items across eight life domains. For educational use only; not a clinical assessment.">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<style>
+  :root{
+    --bg:#F3F5F9;
+    --surface:#FFFFFF;
+    --surface-2:#E9EDF5;
+    --ink:#171B26;
+    --muted:#5A6275;
+    --rule:#D3D9E6;
+    --accent:#4B4FA8;
+    --accent-ink:#FFFFFF;
+    --danger:#A63D40;
+    --danger-soft:#F7E6E6;
+    --ok:#2E7D5B;
+    --warn:#B9822B;
+    --rail-bg:#171B26;
+    --rail-ink:#F3F5F9;
+    --rail-fill:#8F93E8;
+    --c1:#3B5CA0; --c2:#A33F68; --c3:#1F7566; --c4:#9A5A17; --c5:#6A47A8;
+    --c6:#2F7A40; --c7:#A03F2C; --c8:#1F6B90; --c9:#766020;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F121A; --surface:#181C27; --surface-2:#222735; --ink:#E8EBF4; --muted:#9AA3B8;
+      --rule:#2E3446; --accent:#9A9EF0; --accent-ink:#0F121A; --danger:#E58A8C; --danger-soft:#3A2427;
+      --ok:#6CCB9F; --warn:#E3B565; --rail-bg:#0A0C12; --rail-ink:#E8EBF4; --rail-fill:#9A9EF0;
+      --c1:#8FAEE8; --c2:#E58AB0; --c3:#5FC9B5; --c4:#E8A860; --c5:#B49BE8;
+      --c6:#79C98A; --c7:#E89080; --c8:#6DB9E0; --c9:#D2B466;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F121A; --surface:#181C27; --surface-2:#222735; --ink:#E8EBF4; --muted:#9AA3B8;
+    --rule:#2E3446; --accent:#9A9EF0; --accent-ink:#0F121A; --danger:#E58A8C; --danger-soft:#3A2427;
+    --ok:#6CCB9F; --warn:#E3B565; --rail-bg:#0A0C12; --rail-ink:#E8EBF4; --rail-fill:#9A9EF0;
+    --c1:#8FAEE8; --c2:#E58AB0; --c3:#5FC9B5; --c4:#E8A860; --c5:#B49BE8;
+    --c6:#79C98A; --c7:#E89080; --c8:#6DB9E0; --c9:#D2B466;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.55;padding-bottom:5rem;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  #progress-rail{position:sticky;top:0;z-index:50;background:var(--rail-bg);color:var(--rail-ink);padding:.6rem 1rem;display:flex;align-items:center;gap:1rem;font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;}
+  #progress-rail .track{flex:1;height:4px;background:rgba(255,255,255,.18);border-radius:2px;position:relative;max-width:420px;}
+  #progress-rail .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--rail-fill);border-radius:2px;transition:width .25s ease;}
+  #theme-toggle{margin-left:auto;font:inherit;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--rail-ink);border:1px solid rgba(255,255,255,.35);border-radius:4px;padding:.2rem .55rem;cursor:pointer;}
+  #theme-toggle:hover{background:rgba(255,255,255,.12);}
+
+  header.masthead{max-width:760px;margin:2.5rem auto 0;padding:0 1.25rem;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 .6rem;}
+  h1{font-family:'Fraunces',serif;font-weight:700;font-size:2.2rem;line-height:1.12;margin:0 0 .5rem;}
+  .subhead{color:var(--muted);max-width:58ch;margin:0 0 1.75rem;}
+  hr.rule{border:none;border-top:1px solid var(--rule);max-width:760px;margin:0 auto;}
+
+  .instructions{max-width:760px;margin:1.75rem auto;padding:0 1.25rem;}
+  .scale-key{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;margin:1rem 0 1.25rem;}
+  .scale-key div{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:.5rem .4rem;text-align:center;font-size:.68rem;line-height:1.25;color:var(--muted);}
+  .scale-key div b{display:block;font-family:'IBM Plex Mono',monospace;font-size:.95rem;color:var(--accent);margin-bottom:.15rem;}
+  .note-box{background:color-mix(in srgb,var(--accent) 9%,var(--surface));border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:.85rem 1rem;font-size:.9rem;}
+  .note-box + .note-box{margin-top:.75rem;}
+
+  main{max-width:760px;margin:0 auto;padding:0 1.25rem;}
+  section.part{margin:3rem 0 2.5rem;--pc:var(--accent);}
+  .part-head{display:flex;align-items:baseline;gap:.75rem;border-bottom:2px solid var(--pc);padding-bottom:.6rem;margin-bottom:.25rem;}
+  .part-num{font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--pc);letter-spacing:.08em;}
+  .scenario{font-family:'Fraunces',serif;font-style:italic;color:var(--muted);font-size:1rem;margin:.9rem 0 1.5rem;padding:.6rem 1rem;border-left:3px solid var(--pc);background:color-mix(in srgb,var(--pc) 8%,var(--surface));border-radius:0 8px 8px 0;}
+  .skip-toggle{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--muted);margin-bottom:1.25rem;background:var(--surface-2);padding:.6rem .8rem;border-radius:8px;}
+  .skip-toggle input{width:16px;height:16px;}
+
+  .item{padding:1.1rem 0;border-bottom:1px solid var(--rule);transition:opacity .2s ease;}
+  .item.disabled{opacity:.35;}
+  .item-text{font-size:.98rem;}
+  .item-num{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--pc);margin-right:.5rem;}
+  .likert{display:flex;gap:.35rem;margin-top:.65rem;}
+  .likert-wrap{position:relative;display:flex;align-items:center;justify-content:center;}
+  .likert label{width:36px;height:36px;border:1.5px solid var(--rule);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.8rem;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .15s ease;flex-shrink:0;}
+  .likert input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;}
+  .likert label:hover{border-color:var(--pc);}
+  .likert input:checked + .radio-face{background:var(--pc);border-color:var(--pc);color:var(--accent-ink);font-weight:600;}
+  .likert input:focus-visible + .radio-face{outline:2px solid var(--ink);outline-offset:2px;}
+  .item-note{font-size:.82rem;color:var(--muted);margin-top:.7rem;background:var(--surface-2);padding:.6rem .75rem;border-radius:8px;}
+  .item-note label{display:flex;gap:.5rem;align-items:flex-start;cursor:pointer;}
+  .item-note input{margin-top:.2rem;}
+  .missing{outline:2px solid var(--danger);outline-offset:6px;border-radius:6px;}
+
+  .submit-bar{max-width:760px;margin:2.5rem auto 0;padding:0 1.25rem;text-align:center;}
+  button#submit-btn{font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;font-size:.85rem;background:var(--accent);color:var(--accent-ink);border:none;padding:.9rem 2.2rem;border-radius:8px;cursor:pointer;transition:filter .15s ease;}
+  button#submit-btn:hover{filter:brightness(1.12);}
+  #error-msg{color:var(--danger);font-size:.85rem;margin-top:.75rem;font-family:'IBM Plex Mono',monospace;display:none;}
+
+  #results{max-width:760px;margin:3rem auto;padding:0 1.25rem;display:none;}
+  .results-card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:1.75rem;}
+  .results-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
+  .pattern-headline{font-family:'Fraunces',serif;font-size:1.15rem;line-height:1.5;margin:.6rem 0 1.1rem;}
+  .pattern-headline strong{color:var(--accent);}
+  .caveat-inline{font-size:.82rem;color:var(--muted);font-style:italic;margin:0 0 1.5rem;}
+  .score-headline{display:flex;align-items:baseline;gap:.75rem;margin:.4rem 0 .3rem;flex-wrap:wrap;}
+  .score-headline .num{font-family:'Fraunces',serif;font-weight:700;font-size:2.6rem;}
+  .score-headline .band{font-family:'Fraunces',serif;font-style:italic;font-size:1.1rem;color:var(--accent);}
+  .gauge{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--danger),var(--warn),var(--ok));position:relative;margin:1rem 0 1.75rem;}
+  .gauge .marker{position:absolute;top:-5px;width:3px;height:20px;background:var(--ink);border-radius:1px;}
+  .gauge .marker::after{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--ink);}
+
+  .subscale-list{margin-top:1.5rem;display:grid;gap:.6rem;}
+  .subscale-row{--c:var(--accent);background:color-mix(in srgb,var(--c) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 28%,var(--rule));border-left:5px solid var(--c);border-radius:10px;padding:.7rem .9rem;}
+  .subscale-label{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;margin-bottom:.4rem;}
+  .subscale-label span:first-child{font-weight:600;}
+  .subscale-label span:last-child{font-family:'IBM Plex Mono',monospace;color:var(--muted);}
+  .subscale-bar-bg{height:8px;background:color-mix(in srgb,var(--c) 18%,var(--surface-2));border-radius:4px;overflow:hidden;}
+  .subscale-bar-fill{height:100%;background:var(--c);border-radius:4px;}
+
+  .gaps-box,.validity-box,.impact-box{margin-top:1.5rem;padding:1rem 1.1rem;border-radius:10px;font-size:.88rem;}
+  .gaps-box{background:color-mix(in srgb,var(--warn) 14%,var(--surface));border-left:4px solid var(--warn);}
+  .validity-box{background:var(--danger-soft);border-left:4px solid var(--danger);display:none;}
+  .impact-box{background:color-mix(in srgb,var(--accent) 9%,var(--surface));border-left:4px solid var(--accent);display:none;}
+  .gaps-title,.validity-title,.impact-title{font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin:0 0 .5rem;font-weight:600;}
+  .gaps-title{color:var(--warn);} .validity-title{color:var(--danger);} .impact-title{color:var(--accent);}
+  .gaps-intro{color:var(--muted);margin:0 0 .7rem;}
+  .gap-row{margin:.3rem 0;}
+  .insight-box{margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--rule);font-size:.92rem;}
+  .insight-box p{margin:.4rem 0;}
+  #reset-btn{margin-top:1.5rem;font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;background:none;border:1px solid var(--ink);color:var(--ink);padding:.55rem 1.2rem;border-radius:8px;cursor:pointer;}
+  #reset-btn:hover{background:var(--ink);color:var(--bg);}
+
+  footer{max-width:760px;margin:3rem auto 0;padding:0 1.25rem;font-size:.78rem;color:var(--muted);}
+
+
+  .share{margin-top:1.75rem;padding:1.2rem 1.25rem;border:1px solid var(--rule);border-radius:12px;background:color-mix(in srgb,var(--accent) 6%,var(--surface));}
+  .share h2{font-family:'Fraunces',serif;font-size:1.15rem;margin:.1rem 0 .4rem;}
+  .share .kicker{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
+  .share p{margin:.4rem 0;font-size:.88rem;color:var(--muted);}
+  .share label.fld{display:block;font-size:.85rem;font-weight:600;margin:.9rem 0 .3rem;color:var(--ink);}
+  .share input[type=email]{width:100%;font:inherit;font-size:1rem;padding:.6rem .75rem;border:1.5px solid var(--rule);border-radius:8px;background:var(--surface);color:var(--ink);}
+  .share input[type=email]:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .share input[aria-invalid="true"]{border-color:var(--danger);}
+  .share .err{color:var(--danger);font-size:.82rem;margin:.35rem 0 0;}
+  .share .check{display:flex;gap:.6rem;align-items:flex-start;margin:.9rem 0 .3rem;font-size:.88rem;color:var(--ink);cursor:pointer;}
+  .share .check input{margin-top:.25rem;width:16px;height:16px;flex-shrink:0;}
+  .share .check small{display:block;color:var(--muted);font-size:.78rem;}
+  .share .consent{font-size:.8rem;color:var(--ink);background:color-mix(in srgb,var(--warn) 16%,var(--surface));border-left:3px solid var(--warn);border-radius:0 6px 6px 0;padding:.5rem .7rem;margin:.4rem 0 0;}
+  .share .row-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem;}
+  .sbtn{font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;display:inline-block;background:var(--accent);color:var(--accent-ink);border:1.5px solid var(--accent);padding:.6rem 1rem;border-radius:8px;cursor:pointer;}
+  .sbtn.ghost{background:transparent;color:var(--accent);}
+  .sbtn:hover{filter:brightness(1.1);} .sbtn[aria-disabled="true"]{opacity:.45;cursor:not-allowed;}
+  .share .status{min-height:1.2em;font-size:.84rem;color:var(--ok);margin:.7rem 0 0;} .share .status.bad{color:var(--danger);}
+  .share details{margin-top:.8rem;} .share summary{cursor:pointer;font-size:.84rem;color:var(--accent);}
+  .share textarea{width:100%;min-height:220px;margin-top:.5rem;font-family:'IBM Plex Mono',monospace;font-size:.75rem;line-height:1.45;padding:.7rem;border:1px solid var(--rule);border-radius:8px;background:var(--surface);color:var(--ink);resize:vertical;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{transition:none !important;} }
+  @media print{
+    #progress-rail,.submit-bar,#reset-btn,#theme-toggle,.scale-key,.share{display:none !important;}
+    body{background:#fff;color:#000;} .results-card
+    #results{display:block;} .item{break-inside:avoid;}
+  }
+  @media (max-width:480px){
+    h1{font-size:1.7rem;}
+    .likert{gap:.28rem;}
+    .likert label{width:32px;height:32px;font-size:.72rem;}
+    .scale-key{grid-template-columns:repeat(3,1fr);}
+    #progress-pct{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-rail" role="status" aria-live="off">
+  <span id="progress-text">000 / 000 ANSWERED</span>
+  <div class="track"><div class="fill" id="progress-fill"></div></div>
+  <span id="progress-pct">0%</span>
+  <button id="theme-toggle" type="button" aria-label="Switch between light and dark theme">Theme</button>
+</div>
+
+<header class="masthead">
+  <p class="eyebrow">Self-Assessment — Scored Instrument</p>
+  <h1>Differentiation of Self</h1>
+  <p class="subhead">Seventy-eight scored items across eight domains, plus a validity check and an impact check. Answer from a specific, real, recent instance in each section — not from who you'd like to be.</p>
+</header>
+<hr class="rule">
+
+<div class="instructions">
+  <div class="scale-key" id="scale-key"></div>
+  <div class="note-box">
+    <strong>Before you begin:</strong> if you answer from self-image rather than the instance you recall, your score will describe your self-concept, not your actual pattern. There's no penalty for a low score here except a wasted exercise.
+  </div>
+  <div class="note-box">This is a self-reflection tool, not a clinical assessment. Your answers are scored in your browser. Nothing is sent anywhere unless you choose to email your results from your own email app.</div>
+</div>
+
+<main>
+  <noscript><p class="note-box">This page needs JavaScript to run. Please enable it and reload the page.</p></noscript>
+  <form id="audit-form" aria-label="Differentiation of Self questions"></form>
+</main>
+
+<div class="submit-bar">
+  <button id="submit-btn" type="button">Score my results</button>
+  <div id="error-msg" role="alert" aria-live="assertive"></div>
+</div>
+
+<div id="results">
+  <div class="results-card">
+    <p class="results-eyebrow">Findings</p>
+    <p class="pattern-headline" id="pattern-headline"></p>
+    <div class="score-headline">
+      <span class="num" id="score-num">0.00</span>
+      <span class="band" id="score-band">—</span>
+    </div>
+    <div class="gauge"><div class="marker" id="gauge-marker" style="left:0%"></div></div>
+    <p class="caveat-inline" id="caveat-inline"></p>
+    <div class="subscale-list" id="subscale-list"></div>
+    <div class="gaps-box" id="gaps-box"></div>
+    <div class="insight-box" id="insight-box"></div>
+    <div class="validity-box" id="validity-box"></div>
+    <div class="impact-box" id="impact-box"></div>
+    <div class="share" id="share"></div>
+    <button id="reset-btn" type="button">Retake</button>
+  </div>
+</div>
+
+<footer>
+  Domain-specific scores are the real diagnostic tool here — a high overall average can hide one collapsed domain. This instrument is self-report; like any self-report tool, it measures what you're willing and able to notice about yourself, not verified behavior.
+</footer>
+
+<script>
+const SCALE_LABELS = [
+ "Not at all true",
+ "Rarely true",
+ "Somewhat untrue",
+ "Somewhat true",
+ "Generally true",
+ "Very true"
+];
+const PARTS = [
+ {
+  "title": "Reality Testing & Triangulation",
+  "prompt": "Think of the most recent time you had real conflict with a friend or partner. Picture what you actually did in the hours afterward — who you talked to, what you said, what you needed from them.",
+  "ci": 1,
+  "items": [
+   {
+    "n": 1,
+    "t": "When I'm in a dispute with a friend or partner, my first instinct is to talk to them about it directly.",
+    "r": false
+   },
+   {
+    "n": 2,
+    "t": "When I'm genuinely confused about what actually happened during a conflict, I check my perception against a neutral source to ensure I am correct in my thinking.",
+    "r": false
+   },
+   {
+    "n": 3,
+    "t": "After a falling out, I usually talk to more than one or two people about it before I've fully talked things through with the person involved.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 4,
+    "t": "When someone upsets me, I go to them directly before I go to anyone else.",
+    "r": false
+   },
+   {
+    "n": 5,
+    "t": "I find it hard to let a disagreement about what happened go unresolved.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 6,
+    "t": "I state my needs clearly rather than hinting or expecting the other person to pick up on it.",
+    "r": false
+   },
+   {
+    "n": 7,
+    "t": "When someone sees a situation differently than I do, I start to doubt my own memory of what happened.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 8,
+    "t": "I can accept a “no” from someone without it changing how I feel about the relationship or about myself.",
+    "r": false
+   },
+   {
+    "n": 9,
+    "t": "When my opinion differs from everyone else's in a group, I feel anxious or bad until I fall back in line with them.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 10,
+    "t": "I feel more confident in my position once others agree with me than I do relying on my own reasoning alone.",
+    "r": true,
+    "mode": "fusion"
+   }
+  ]
+ },
+ {
+  "title": "Emotional Contagion, Enmeshment & Counterdependence",
+  "prompt": "Think of your current relationship, or your most recent one. Picture a moment when your partner was in a bad mood, stressed, or distant — not a moment when things were easy between you.",
+  "ci": 2,
+  "items": [
+   {
+    "n": 11,
+    "t": "My partner's foul mood tends to infect my own emotional state.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 12,
+    "t": "I can support someone in pain without feeling compelled to fix it immediately or absorb their burden.",
+    "r": false
+   },
+   {
+    "n": 13,
+    "t": "I've caught myself mirroring a partner's interests and losing track of my own tastes.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 14,
+    "t": "A partner's request for space doesn't feel like abandonment or an attack on my character.",
+    "r": false
+   },
+   {
+    "n": 15,
+    "t": "I believe I can regulate my internal state regardless of the chaos around me.",
+    "r": false
+   },
+   {
+    "n": 16,
+    "t": "I need others to commiserate with me before I feel okay about a hard situation.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 17,
+    "t": "I'll replay a hard conversation with more than one person before I feel able to let it go.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 18,
+    "t": "I can disagree with my partner about something that matters without feeling the relationship is in danger.",
+    "r": false
+   },
+   {
+    "n": 19,
+    "t": "I can trust my partner when they're away without needing to check in or monitor what they're doing or who they're with.",
+    "r": false
+   },
+   {
+    "n": 20,
+    "t": "I've caught myself comparing my relationship to a fantasy of “something better” instead of investing in the person in front of me.",
+    "r": true
+   },
+   {
+    "n": 21,
+    "t": "Once a relationship starts to feel serious or close, my instinct is to pull back or create distance.",
+    "r": true,
+    "mode": "cutoff"
+   },
+   {
+    "n": 22,
+    "t": "I feel at ease when a partner wants to talk about where the relationship is heading.",
+    "r": false,
+    "mode": "cutoff"
+   },
+   {
+    "n": 23,
+    "t": "I've told myself I just value my independence, when part of it was really about not wanting to get too close.",
+    "r": true,
+    "mode": "cutoff"
+   },
+   {
+    "n": 24,
+    "t": "When a relationship becomes more serious, my feelings about my partner stay steady or grow warmer.",
+    "r": false,
+    "mode": "cutoff"
+   },
+   {
+    "n": 25,
+    "t": "When a relationship starts to feel serious, I find myself dwelling more on my partner's flaws than I did before.",
+    "r": true,
+    "mode": "cutoff"
+   },
+   {
+    "n": 26,
+    "t": "When I'm struggling, I let my partner see it.",
+    "r": false,
+    "mode": "cutoff"
+   },
+   {
+    "n": 27,
+    "t": "I find it hard to ask a partner for help or lean on them, even when I clearly need it.",
+    "r": true,
+    "mode": "cutoff"
+   },
+   {
+    "n": 28,
+    "t": "When things get hard with a partner, I stay in contact rather than withdrawing.",
+    "r": false,
+    "mode": "cutoff"
+   }
+  ]
+ },
+ {
+  "title": "Conflict, Stonewalling & Self-Protection",
+  "prompt": "Think of the most recent argument you'd call a “real fight” — not a minor disagreement. Picture the moment it peaked.",
+  "ci": 4,
+  "items": [
+   {
+    "n": 29,
+    "t": "I stay engaged in vulnerable conversation rather than stonewalling to protect my ego.",
+    "r": false
+   },
+   {
+    "n": 30,
+    "t": "Admitting I'm wrong feels like a defeat that leaves me exposed.",
+    "r": true
+   },
+   {
+    "n": 31,
+    "t": "I prioritize the health of the relationship over protecting my image.",
+    "r": false
+   },
+   {
+    "n": 32,
+    "t": "During an argument, I find myself keeping track of things I could bring up later if I need them.",
+    "r": true,
+    "mode": "cutoff"
+   },
+   {
+    "n": 33,
+    "t": "Conflict makes me feel like I'm being erased or dismissed as a person.",
+    "r": true
+   },
+   {
+    "n": 34,
+    "t": "I can maintain a logical, objective view of a conflict even when my feelings are engaged.",
+    "r": false
+   }
+  ]
+ },
+ {
+  "title": "Work, Authority & Integrity",
+  "prompt": "Think of a recent negative situation at work with your manager or a superior — a piece of criticism, a decision you disagreed with, a moment you felt pressured.",
+  "ci": 5,
+  "items": [
+   {
+    "n": 35,
+    "t": "I hold to my word and ethics even when it costs me a promotion or a superior's favor.",
+    "r": false
+   },
+   {
+    "n": 36,
+    "t": "I feel an irresistible pull toward office politics and gossip, needing to be “in the know.”",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 37,
+    "t": "When I get negative feedback at work, my first instinct is to defend my character.",
+    "r": true
+   },
+   {
+    "n": 38,
+    "t": "I won't sacrifice a project's integrity just to avoid rocking the boat with a difficult superior.",
+    "r": false
+   },
+   {
+    "n": 39,
+    "t": "I redo or over-polish my work more out of fear of criticism than pride in getting it right.",
+    "r": true
+   },
+   {
+    "n": 40,
+    "t": "After I finish something, I feel more relief that it wasn't criticized than pride in what I made.",
+    "r": true
+   },
+   {
+    "n": 41,
+    "t": "I can say “I don’t know” at work without worrying about how it will look.",
+    "r": false
+   },
+   {
+    "n": 42,
+    "t": "My work is something I do to fund the life I've chosen, not something that defines me.",
+    "r": false
+   }
+  ]
+ },
+ {
+  "title": "Self-Regulation & Impulse Control",
+  "prompt": "Think of the last time you were bored, restless, or facing a real setback — a mistake, a failure, a piece of criticism that stung.",
+  "ci": 6,
+  "items": [
+   {
+    "n": 43,
+    "t": "When I'm bored or uncomfortable, I reach for external stimuli (spending, food, drama, screens) to change my state.",
+    "r": true
+   },
+   {
+    "n": 44,
+    "t": "A negative interaction is a brief spike for me that returns to baseline quickly.",
+    "r": false
+   },
+   {
+    "n": 45,
+    "t": "Whether I'm trying to stand out or trying to blend in, my choices are often more about how others will see me than about what I actually want.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 46,
+    "t": "I doubt that people would like me if they really saw who I am underneath.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 47,
+    "t": "When I'm upset, I can pause before I respond.",
+    "r": false
+   },
+   {
+    "n": 48,
+    "t": "I can clearly articulate where I went wrong without externalizing blame.",
+    "r": false
+   },
+   {
+    "n": 49,
+    "t": "I feel “behind in life” when I measure myself against my peers.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 50,
+    "t": "Once I've made a decision, I stick with it without repeatedly asking others whether it was the right one.",
+    "r": false
+   },
+   {
+    "n": 51,
+    "t": "When a situation gets difficult, I navigate the friction rather than abandoning ship.",
+    "r": false
+   },
+   {
+    "n": 52,
+    "t": "More of my choices are driven by “shoulds” (other people's expectations) than by what I actually want.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 53,
+    "t": "When I try to answer what I actually want, with no one else's input, my mind goes blank or I need real effort before I can answer.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 54,
+    "t": "After I make a mistake, I treat myself about as kindly as I'd treat a friend who made the same one.",
+    "r": false
+   }
+  ]
+ },
+ {
+  "title": "Family of Origin & Emotional Cutoff",
+  "prompt": "Think of a recent interaction with a parent or sibling — it doesn't have to be a fight. A phone call, a holiday, a text exchange is enough.",
+  "ci": 7,
+  "items": [
+   {
+    "n": 55,
+    "t": "When conflict comes up with a parent or sibling, I can stay in touch and work through it rather than going silent for weeks or months.",
+    "r": false
+   },
+   {
+    "n": 56,
+    "t": "Arguments with my parents or siblings from years ago can still derail my mood today.",
+    "r": true
+   },
+   {
+    "n": 57,
+    "t": "I stay in touch with my family more out of guilt or obligation than genuine desire.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 58,
+    "t": "I feel more relief after fulfilling a family obligation than I felt looking forward to it beforehand.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 59,
+    "t": "I can say no to a family member without feeling intense guilt.",
+    "r": false
+   },
+   {
+    "n": 60,
+    "t": "I feel uneasy when family gets emotionally close, even when nothing is currently wrong between us.",
+    "r": true,
+    "mode": "cutoff",
+    "exception": true,
+    "exceptionLabel": "This reflects a boundary held in response to documented, specific harm — not general discomfort with closeness. Exclude this item from my score."
+   },
+   {
+    "n": 61,
+    "t": "If I needed real support, I have at least one family member I could turn to without it costing me my sense of self.",
+    "r": false
+   },
+   {
+    "n": 62,
+    "t": "I'm noticeably more guarded around my family than I am with people I'm not related to.",
+    "r": true,
+    "mode": "cutoff"
+   },
+   {
+    "n": 63,
+    "t": "I can tell my family when I disagree with them.",
+    "r": false
+   },
+   {
+    "n": 64,
+    "t": "I can spend extended time with my family without feeling I have to defend who I've become.",
+    "r": false
+   }
+  ]
+ },
+ {
+  "title": "Parenting & Legacy",
+  "prompt": "Think of a recent moment when your child was struggling, upset, or disappointed.",
+  "skippable": true,
+  "ci": 8,
+  "items": [
+   {
+    "n": 65,
+    "t": "I catch myself repeating emotional patterns from my own parents, even ones I dislike.",
+    "r": true
+   },
+   {
+    "n": 66,
+    "t": "I let my children struggle rather than trying to “buy” their happiness to relieve my own discomfort.",
+    "r": false
+   },
+   {
+    "n": 67,
+    "t": "I hover over my children's development out of fear of looking like a bad parent.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 68,
+    "t": "I ask my child the same question about their day, homework, or friendships more than once, even after they've already answered.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 69,
+    "t": "I teach my children to self-regulate rather than taking responsibility for their emotional regulation.",
+    "r": false
+   },
+   {
+    "n": 70,
+    "t": "I've maintained a vibrant identity outside of being a parent.",
+    "r": false
+   }
+  ]
+ },
+ {
+  "title": "The Litmus Test — Core",
+  "prompt": "Think of a recent stretch of time you spent completely alone, with no plans and no one to answer to.",
+  "ci": 9,
+  "items": [
+   {
+    "n": 71,
+    "t": "When I'm alone, I feel genuinely happy, not just “not lonely.”",
+    "r": false
+   },
+   {
+    "n": 72,
+    "t": "My life feels more like a series of reactions to events than something I'm actively choosing.",
+    "r": true
+   },
+   {
+    "n": 73,
+    "t": "I have a clear sense of who I'd be on the third day if I lost my career and my relationship tomorrow.",
+    "r": false
+   },
+   {
+    "n": 74,
+    "t": "I treat my feelings as fixed truths rather than transitory data.",
+    "r": true
+   },
+   {
+    "n": 75,
+    "t": "I can be disliked by someone without it shaking my sense of who I am.",
+    "r": false
+   },
+   {
+    "n": 76,
+    "t": "When I make decisions, I prioritize the immediate comfort of others over my own long-term values.",
+    "r": true,
+    "mode": "fusion"
+   },
+   {
+    "n": 77,
+    "t": "I believe I have the power to shape my own destiny.",
+    "r": false
+   },
+   {
+    "n": 78,
+    "t": "My greatest goal is to be liked, even if it means people never truly know who I am underneath.",
+    "r": true,
+    "mode": "fusion"
+   }
+  ]
+ },
+ {
+  "title": "Validity Check",
+  "prompt": "Two quick items — there's no “good” answer here, and how you answer doesn't affect your differentiation score. These only flag whether your other answers might be shaped by wanting to look good rather than by what's actually true.",
+  "special": "validity",
+  "ci": 9,
+  "items": [
+   {
+    "n": 79,
+    "t": "I have never once felt jealous, insecure, or petty in a close relationship.",
+    "r": false
+   },
+   {
+    "n": 80,
+    "t": "I have never lost my temper with someone I care about.",
+    "r": false
+   }
+  ]
+ },
+ {
+  "title": "Real-World Impact",
+  "prompt": "Think broadly across everything you just answered — relationships, family, work, and your own sense of self.",
+  "special": "impact",
+  "ci": 9,
+  "items": [
+   {
+    "n": 81,
+    "t": "These patterns have caused real, repeated friction in at least one important relationship — a partner, family member, or close friend.",
+    "r": false
+   },
+   {
+    "n": 82,
+    "t": "These patterns have negatively affected my work or professional life.",
+    "r": false
+   },
+   {
+    "n": 83,
+    "t": "I've noticed these patterns costing me opportunities, connection, or peace of mind I wish I had.",
+    "r": false
+   },
+   {
+    "n": 84,
+    "t": "Other people in my life have specifically pointed out these patterns to me, unprompted.",
+    "r": false
+   }
+  ]
+ }
+];
+/* Reporting groups — Part II is split into its two poles here */
+const REPORT_GROUPS = [{"label":"Reality Testing & Triangulation","ci":1,"items":[1,2,3,4,5,6,7,8,9,10]},{"label":"Emotional Enmeshment","ci":2,"items":[11,12,13,14,15,16,17,18,19,20]},{"label":"Counterdependence & Avoidance","ci":3,"items":[21,22,23,24,25,26,27,28]},{"label":"Conflict & Self-Protection","ci":4,"items":[29,30,31,32,33,34]},{"label":"Work, Authority & Integrity","ci":5,"items":[35,36,37,38,39,40,41,42]},{"label":"Self-Regulation & Impulse Control","ci":6,"items":[43,44,45,46,47,48,49,50,51,52,53,54]},{"label":"Family of Origin & Emotional Cutoff","ci":7,"items":[55,56,57,58,59,60,61,62,63,64]},{"label":"Parenting & Legacy","ci":8,"items":[65,66,67,68,69,70]},{"label":"Core / Litmus","ci":9,"items":[71,72,73,74,75,76,77,78]}];
+/* Designed direct/proxy pairs */
+const PAIRS = [{"a":16,"b":17,"label":"Needing others to process a hard moment"},{"a":21,"b":23,"label":"Distancing when relationships get close"},{"a":39,"b":40,"label":"Perfectionism at work"},{"a":45,"b":46,"label":"Performing for others' perception"},{"a":52,"b":53,"label":"Knowing your own wants"},{"a":57,"b":58,"label":"Family obligation vs. desire"},{"a":67,"b":68,"label":"Parenting from fear"}];
+const VALIDITY_NS = [79,80]; const IMPACT_NS = [81,82,83,84];
+const REPORT_TITLE = "Differentiation of Self"; const MAIL_SUBJECT = "My Differentiation of Self results"; const FILE_BASE = "differentiation-of-self";
+
+const TOTAL_ITEMS = PARTS.reduce((a,p)=>a+p.items.length,0);
+
+/* ---------- Theme toggle ---------- */
+(function(){
+  const root = document.documentElement;
+  try{ const saved = localStorage.getItem('dos-theme'); if(saved==='light'||saved==='dark') root.setAttribute('data-theme', saved); }catch(e){}
+  document.getElementById('theme-toggle').addEventListener('click', ()=>{
+    const cur = root.getAttribute('data-theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur==='dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try{ localStorage.setItem('dos-theme', next); }catch(e){}
+  });
+})();
+
+/* ---------- Render scale key ---------- */
+const scaleKeyEl = document.getElementById('scale-key');
+SCALE_LABELS.forEach((label,i)=>{
+  const d = document.createElement('div');
+  d.innerHTML = `<b>${i+1}</b>${label}`;
+  scaleKeyEl.appendChild(d);
+});
+
+/* ---------- Render form ---------- */
+const form = document.getElementById('audit-form');
+
+PARTS.forEach((part, pIdx)=>{
+  const section = document.createElement('section');
+  section.className = 'part';
+  section.id = 'part-'+pIdx;
+  section.style.setProperty('--pc', `var(--c${part.ci})`);
+
+  section.innerHTML = `
+    <div class="part-head">
+      <span class="part-num mono">SECTION ${String(pIdx+1).padStart(2,'0')} / ${String(PARTS.length).padStart(2,'0')}</span>
+    </div>
+    ${part.prompt ? `<p class="scenario">${part.prompt}</p>` : ''}
+    ${part.skippable ? `
+      <div class="skip-toggle">
+        <input type="checkbox" id="skip-${pIdx}">
+        <label for="skip-${pIdx}">Not a parent, or prefer not to answer — skip this section (excluded from scoring)</label>
+      </div>` : ''}
+  `;
+
+  const itemsWrap = document.createElement('div');
+  itemsWrap.id = 'items-'+pIdx;
+
+  part.items.forEach(item=>{
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.id = 'item-'+item.n;
+
+    let likertHtml = `<div class="likert" role="radiogroup" aria-labelledby="t${item.n}">`;
+    for(let v=1; v<=6; v++){
+      likertHtml += `
+        <div class="likert-wrap">
+          <input type="radio" name="q${item.n}" id="q${item.n}-${v}" value="${v}">
+          <label class="radio-face" for="q${item.n}-${v}" aria-label="${SCALE_LABELS[v-1]}">${v}</label>
+        </div>`;
+    }
+    likertHtml += '</div>';
+
+    row.innerHTML = `
+      <div class="item-row">
+        <div class="item-text" id="t${item.n}"><span class="item-num mono">No. ${String(item.n).padStart(2,'0')}</span>${item.t}</div>
+      </div>
+      ${likertHtml}
+      ${item.exception ? `
+        <div class="item-note">
+          <label>
+            <input type="checkbox" id="exc-${item.n}">
+            <span>${item.exceptionLabel}</span>
+          </label>
+        </div>` : ''}
+    `;
+    itemsWrap.appendChild(row);
+  });
+
+  section.appendChild(itemsWrap);
+  form.appendChild(section);
+
+  if(part.skippable){
+    const skipBox = document.getElementById('skip-'+pIdx);
+    skipBox.addEventListener('change', ()=>{
+      const disabled = skipBox.checked;
+      part.items.forEach(item=>{
+        const itemEl = document.getElementById('item-'+item.n);
+        itemEl.classList.toggle('disabled', disabled);
+        itemEl.querySelectorAll('input[type=radio]').forEach(inp=> inp.disabled = disabled);
+      });
+      updateProgress();
+    });
+  }
+});
+
+/* ---------- Progress tracking ---------- */
+function isPartSkipped(part, pIdx){
+  if(!part.skippable) return false;
+  const box = document.getElementById('skip-'+pIdx);
+  return box && box.checked;
+}
+
+function updateProgress(){
+  let answered = 0, total = 0;
+  PARTS.forEach((part, pIdx)=>{
+    if(isPartSkipped(part, pIdx)) return;
+    part.items.forEach(item=>{
+      total++;
+      if(form.querySelector(`input[name="q${item.n}"]:checked`)) answered++;
+    });
+  });
+  const pct = total ? Math.round((answered/total)*100) : 0;
+  document.getElementById('progress-text').textContent = `${String(answered).padStart(3,'0')} / ${String(total).padStart(3,'0')} ANSWERED`;
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct+'%';
+}
+form.addEventListener('change', updateProgress);
+updateProgress();
+
+/* ---------- Scoring ---------- */
+document.getElementById('submit-btn').addEventListener('click', ()=>{
+  document.querySelectorAll('.item.missing').forEach(el=>el.classList.remove('missing'));
+  let firstMissing = null;
+  const scoreMap = {};   // n -> keyed value, only items counted toward differentiation
+  const specialMap = {}; // n -> raw value for Validity/Impact items, scored separately
+  const skippedItemNumbers = new Set();
+
+  PARTS.forEach((part, pIdx)=>{
+    const skipped = isPartSkipped(part, pIdx);
+    part.items.forEach(item=>{
+      if(skipped){ skippedItemNumbers.add(item.n); return; }
+      const excEl = document.getElementById('exc-'+item.n);
+      if(excEl && excEl.checked){ skippedItemNumbers.add(item.n); return; }
+
+      const checked = form.querySelector(`input[name="q${item.n}"]:checked`);
+      if(!checked){
+        if(!firstMissing) firstMissing = item.n;
+        document.getElementById('item-'+item.n).classList.add('missing');
+        return;
+      }
+      let val = parseInt(checked.value, 10);
+      if(part.special){ specialMap[item.n] = val; return; }
+      if(item.r) val = 7 - val;
+      scoreMap[item.n] = val;
+    });
+  });
+
+  if(firstMissing){
+    const errEl = document.getElementById('error-msg');
+    errEl.style.display = 'block';
+    errEl.textContent = `Item No. ${String(firstMissing).padStart(2,'0')} still needs an answer.`;
+    document.getElementById('item-'+firstMissing).scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  document.getElementById('error-msg').style.display = 'none';
+  renderResults(scoreMap, skippedItemNumbers, specialMap);
+});
+
+function bandFor(avg){
+  if(avg <= 2.25) return {label:"Low differentiation"};
+  if(avg <= 3.50) return {label:"Moderate-low"};
+  if(avg <= 4.75) return {label:"Moderate-high"};
+  return {label:"High differentiation"};
+}
+
+let impactSummary = null, LAST = null;
+function plain(h){ const d=document.createElement('div'); d.innerHTML=h.replace(/<\/p>/g,'</p> '); return (d.textContent||'').replace(/\s+/g,' ').trim(); }
+function renderResults(scoreMap, skippedItemNumbers, specialMap){
+  impactSummary = null;
+  const allScored = Object.keys(scoreMap).map(Number);
+  const grandSum = allScored.reduce((a,n)=>a+scoreMap[n], 0);
+  const overallAvg = allScored.length ? grandSum/allScored.length : 0;
+  const band = bandFor(overallAvg);
+
+  const groupResults = REPORT_GROUPS.map(g=>{
+    const scored = g.items.filter(n => scoreMap[n] !== undefined);
+    const skippedAll = g.items.length>0 && g.items.every(n => skippedItemNumbers.has(n));
+    if(skippedAll || scored.length===0) return {label:g.label, ci:g.ci, avg:null, skipped:true};
+    const sum = scored.reduce((a,n)=>a+scoreMap[n],0);
+    return {label:g.label, ci:g.ci, avg: sum/scored.length, skipped:false};
+  });
+
+  const withScores = groupResults.filter(g=>!g.skipped);
+  let lowest = null, highest = null;
+  withScores.forEach(g=>{
+    if(!lowest || g.avg < lowest.avg) lowest = g;
+    if(!highest || g.avg > highest.avg) highest = g;
+  });
+
+  /* ---- Fusion vs cutoff pattern ---- */
+  const fusionItems = [], cutoffItems = [];
+  PARTS.forEach(part=>part.items.forEach(item=>{
+    if(scoreMap[item.n] === undefined) return;
+    if(item.mode==='fusion') fusionItems.push(scoreMap[item.n]);
+    if(item.mode==='cutoff') cutoffItems.push(scoreMap[item.n]);
+  }));
+  const mean = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+  const fusionAvg = mean(fusionItems), cutoffAvg = mean(cutoffItems);
+
+  let patternHeadline = '';
+  if(fusionAvg!==null && cutoffAvg!==null){
+    const diff = fusionAvg - cutoffAvg;
+    if(diff < -0.5){
+      patternHeadline = `Your answers lean more toward <strong>fusion patterns</strong> — needing closeness, agreement, or approval to feel steady — than toward cutoff or avoidance.`;
+    } else if(diff > 0.5){
+      patternHeadline = `Your answers lean more toward <strong>cutoff and avoidance patterns</strong> — managing closeness through distance — than toward fusion. This instrument has fewer items measuring cutoff than fusion, so treat this as a starting signal rather than a precise reading.`;
+    } else {
+      patternHeadline = `Your answers show a <strong>mix of fusion and cutoff patterns</strong> — some pull toward closeness and approval, some pull toward distance and self-protection, rather than one dominant style.`;
+    }
+  }
+  if(lowest && highest && lowest.label !== highest.label){
+    patternHeadline += ` It's most concentrated in <strong>${lowest.label}</strong>${withScores.length>2 ? `, with ${highest.label} as your steadiest domain` : ''}.`;
+  }
+
+  document.getElementById('pattern-headline').innerHTML = patternHeadline;
+  document.getElementById('score-num').textContent = overallAvg.toFixed(2) + ' / 6.00';
+  document.getElementById('score-band').textContent = band.label;
+  document.getElementById('gauge-marker').style.left = (((overallAvg - 1) / 5) * 100) + '%';
+  document.getElementById('caveat-inline').textContent =
+    "This score reflects what you were willing and able to notice about yourself just now — not verified behavior. Self-report has limits no wording can fully close.";
+
+  /* ---- Domain bars ---- */
+  const listEl = document.getElementById('subscale-list');
+  listEl.innerHTML = '';
+  groupResults.forEach(g=>{
+    const row = document.createElement('div');
+    row.className = 'subscale-row';
+    row.style.setProperty('--c', `var(--c${g.ci})`);
+    if(g.skipped){
+      row.innerHTML = `
+        <div class="subscale-label"><span>${g.label}</span><span>N/A</span></div>
+        <div class="subscale-bar-bg"><div class="subscale-bar-fill" style="width:0%"></div></div>`;
+    } else {
+      const barPct = ((g.avg-1)/5)*100;
+      row.innerHTML = `
+        <div class="subscale-label"><span>${g.label}</span><span>${g.avg.toFixed(2)}</span></div>
+        <div class="subscale-bar-bg"><div class="subscale-bar-fill" style="width:${barPct}%"></div></div>`;
+    }
+    listEl.appendChild(row);
+  });
+
+  /* ---- Pair gaps ---- */
+  const gapsBox = document.getElementById('gaps-box');
+  const notableGaps = [];
+  PAIRS.forEach(p=>{
+    if(scoreMap[p.a]===undefined || scoreMap[p.b]===undefined) return;
+    const gap = Math.abs(scoreMap[p.a] - scoreMap[p.b]);
+    if(gap >= 3) notableGaps.push({...p, gap});
+  });
+  if(notableGaps.length){
+    let html = `<p class="gaps-title">Where your answers disagree with themselves</p>`;
+    html += `<p class="gaps-intro">A few pairs of items measure the same pattern two different ways — a direct question and a more behavioral one. A large gap between them is often more informative than either answer alone, since it can mean the direct version was easier to answer flatteringly.</p>`;
+    notableGaps.forEach(g=>{
+      html += `<p class="gap-row">— <strong>${g.label}</strong> (items ${g.a} &amp; ${g.b})</p>`;
+    });
+    gapsBox.innerHTML = html;
+    gapsBox.style.display = 'block';
+  } else {
+    gapsBox.style.display = 'none';
+  }
+
+  /* ---- Starting point ---- */
+  const insightEl = document.getElementById('insight-box');
+  let insight = '';
+  if(lowest && highest && lowest.label !== highest.label){
+    insight += `<p><strong>Strongest domain:</strong> ${highest.label} (${highest.avg.toFixed(2)}).</p>`;
+    insight += `<p><strong>Start here:</strong> ${lowest.label} (${lowest.avg.toFixed(2)}) is where your answers show the most fusion or cutoff activity — that's usually a more useful place to focus than the overall average.</p>`;
+  } else if(withScores.length){
+    insight += `<p>Your scores are fairly even across domains — a distinctive pattern in itself, either of consistent self-authorship or of a well-defended narrative. Only you know which, and the pair-gap section above (if it appears) is the best next place to check.</p>`;
+  }
+  insightEl.innerHTML = insight;
+
+  /* ---- Validity flag ---- */
+  const validityBox = document.getElementById('validity-box');
+  const validityFlagged = VALIDITY_NS.some(n => specialMap[n] !== undefined && specialMap[n] >= 5);
+  if(validityFlagged){
+    validityBox.innerHTML = `<p class="validity-title">A note on your validity check</p>
+      <p>One or both of your Validity Check answers claimed something very few people can honestly claim without exception. That's not a judgment — it's a flag that your other answers here may be shaped by wanting to look good rather than by what actually happened. Worth a second honest pass through your answers if that resonates.</p>`;
+    validityBox.style.display = 'block';
+  } else {
+    validityBox.style.display = 'none';
+  }
+
+  /* ---- Impact Index ---- */
+  const impactBox = document.getElementById('impact-box');
+  const impactItems = IMPACT_NS.map(n=>specialMap[n]).filter(v=>v!==undefined);
+  if(impactItems.length){
+    const impactAvg = mean(impactItems);
+    let impactNote;
+    if(impactAvg <= 2.5){
+      impactNote = "low — these patterns don't appear to be causing much real disruption yet, whatever your differentiation score shows.";
+    } else if(impactAvg <= 4){
+      impactNote = "moderate — these patterns are showing up as real friction in at least some parts of your life.";
+    } else {
+      impactNote = "high — these patterns appear to be actively costing you something real, not just present in the abstract.";
+    }
+    impactSummary = {avg:impactAvg, note:impactNote};
+    impactBox.innerHTML = `<p class="impact-title">Real-World Impact Index: ${impactAvg.toFixed(2)} / 6.00</p>
+      <p>This is ${impactNote} This number is separate from your differentiation score on purpose — a pattern can exist without yet causing damage, or it can already be costing you something. Both are useful to know, and they don't always move together.</p>`;
+    impactBox.style.display = 'block';
+  } else {
+    impactBox.style.display = 'none';
+  }
+
+  LAST = {overall:overallAvg, band:band.label, headline:plain(patternHeadline), groups:groupResults,
+    gaps:notableGaps.map(g=>g.label), insight:plain(insight), validity:validityFlagged, impact:impactSummary};
+  renderShare();
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+
+/* ---------- Keep your results: email (reader's own app), copy, PDF, text ---------- */
+const ELC = 'evolutionlabcollective@gmail.com';
+const EMAIL_RE = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]{2,}$/;
+const SEND = {to:'', elc:false};
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dashed = s => s.replace(/[—–]/g,'-').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/©/g,'(c)');
+function textReport(compact){
+  const L=[REPORT_TITLE.toUpperCase(), 'Overall: '+LAST.overall.toFixed(2)+' / 6.00 ('+LAST.band+')',''];
+  L.push('DOMAINS (1-6; higher = more differentiated)');
+  LAST.groups.forEach(g=>L.push((g.skipped?'  N/A  ':'  '+g.avg.toFixed(2)+'  ')+g.label));
+  if(compact){ L.push('','Use Download PDF on the results page for the full report.'); return L.join('\n'); }
+  L.push('','PATTERN',LAST.headline);
+  if(LAST.insight) L.push('', LAST.insight);
+  if(LAST.gaps.length){ L.push('','WHERE ANSWERS DISAGREE WITH THEMSELVES'); LAST.gaps.forEach(x=>L.push('  - '+x)); }
+  if(LAST.impact) L.push('','REAL-WORLD IMPACT INDEX: '+LAST.impact.avg.toFixed(2)+' / 6.00 ('+LAST.impact.note.split(' —')[0]+')');
+  if(LAST.validity) L.push('','VALIDITY NOTE: a validity-check answer suggested your other answers may be shaped by wanting to look good.');
+  L.push('','Self-report reflection tool - not a clinical assessment, not a diagnosis, not professional advice.','© 2026 Erica Campbell. All rights reserved.');
+  return L.join('\n');
+}
+function mailtoHref(){
+  const me=SEND.to.trim(), cc=SEND.elc?[ELC]:[];
+  const to=me?[me]:cc, ccs=me?cc:[]; const q=[];
+  if(ccs.length) q.push('cc='+ccs.join(','));
+  q.push('subject='+encodeURIComponent(MAIL_SUBJECT));
+  q.push('body='+encodeURIComponent(textReport(true)));
+  return 'mailto:'+to.join(',')+'?'+q.join('&');
+}
+function renderShare(){
+  const box=document.getElementById('share'); if(!box||!LAST) return;
+  box.innerHTML=`<div class="kicker">Keep your results</div><h2>Email or save your results</h2>
+  <p>Email them to yourself, copy them, or save a PDF. Everything happens on your device &mdash; this page sends nothing on its own.</p>
+  <label class="fld" for="em-to">Your email address</label>
+  <input id="em-to" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com" aria-describedby="em-err" value="${esc(SEND.to)}">
+  <p class="err" id="em-err" hidden>Check the address. It should look like name@example.com.</p>
+  <label class="check" for="em-elc"><input id="em-elc" type="checkbox" ${SEND.elc?'checked':''}><span>Also send a copy to Evolution Lab Collective<small>${ELC}</small></span></label>
+  <div class="consent" id="em-consent" ${SEND.elc?'':'hidden'}>Ticking this adds <b>${ELC}</b> to the email, so that address will receive <b>your results and your email address</b> when you send. Leave it unticked to keep them to yourself.</div>
+  <div class="row-btns">
+    <a class="sbtn" id="em-open" href="#" target="_top" rel="noopener">Open in my email app</a>
+    <button class="sbtn ghost" type="button" id="em-copy">Copy results</button>
+    <button class="sbtn ghost" type="button" id="em-pdf">Download PDF</button>
+    <button class="sbtn ghost" type="button" id="em-txt">Download text</button>
+  </div>
+  <p class="status" id="em-status" role="status" aria-live="polite"></p>
+  <p>Your email app opens with the message filled in, so you can review it before you send. <b>Nothing is sent from this page.</b> The email has your scores; the PDF has the full report. If no email app opens, use Copy results or Download text.</p>
+  <details><summary>Preview the full text</summary><textarea id="em-text" readonly aria-label="Full results text">${esc(textReport(false))}</textarea></details>`;
+  const to=box.querySelector('#em-to'), elc=box.querySelector('#em-elc'), a=box.querySelector('#em-open'), err=box.querySelector('#em-err'), st=box.querySelector('#em-status');
+  const setSt=(m,bad)=>{st.textContent=m; st.className='status'+(bad?' bad':'');};
+  const state=()=>{ SEND.to=to.value; SEND.elc=elc.checked; const v=SEND.to.trim(); const bad=!!v&&!EMAIL_RE.test(v); const empty=!v&&!SEND.elc;
+    to.setAttribute('aria-invalid',bad); err.hidden=!bad; box.querySelector('#em-consent').hidden=!SEND.elc;
+    a.setAttribute('aria-disabled',bad||empty); a.href=(bad||empty)?'#':mailtoHref(); return {bad,empty}; };
+  to.addEventListener('input',state); elc.addEventListener('change',state); state();
+  a.addEventListener('click',e=>{ const s=state(); if(s.bad){e.preventDefault(); setSt("That email address doesn't look complete. Check it and try again.",true);} else if(s.empty){e.preventDefault(); setSt('Enter your email address, or tick the Evolution Lab box, so the message has somewhere to go.',true);} else setSt('Your email app should open with the message filled in. Press Send there to deliver it.'); });
+  box.querySelector('#em-copy').addEventListener('click',async()=>{ const txt=textReport(false); try{ await navigator.clipboard.writeText(txt); setSt('Results copied. Paste them anywhere.'); }catch(e){ const ta=box.querySelector('#em-text'); ta.focus(); ta.select(); try{ document.execCommand('copy'); setSt('Results copied. Paste them anywhere.'); }catch(e2){ setSt('Copy was blocked. Open "Preview the full text", select it and copy.',true);} } });
+  box.querySelector('#em-txt').addEventListener('click',()=>{ const url=URL.createObjectURL(new Blob([textReport(false)],{type:'text/plain'})); const d=document.createElement('a'); d.href=url; d.download=FILE_BASE+'-results.txt'; document.body.appendChild(d); d.click(); d.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000); setSt('Text file downloaded.'); });
+  box.querySelector('#em-pdf').addEventListener('click',()=>{ try{ makePdf(); setSt('PDF downloaded.'); }catch(e){ setSt('The PDF could not be made here. Use Download text or Copy results instead.',true); } });
+}
+const PDF_COL = ['#3B5CA0','#A33F68','#1F7566','#9A5A17','#6A47A8','#2F7A40','#A03F2C','#1F6B90','#766020'];
+function makePdf(){
+  if(!(window.jspdf&&window.jspdf.jsPDF)) throw new Error('jsPDF not loaded');
+  const doc=new window.jspdf.jsPDF({unit:'pt',format:'letter'}); const W=612,H=792,M=54,CW=W-2*M; let y=M;
+  const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  const need=n=>{ if(y+n>H-M){ doc.addPage(); y=M; } };
+  const para=(txt,size,bold,color,gap)=>{ doc.setFont('helvetica',bold?'bold':'normal'); doc.setFontSize(size); doc.setTextColor(...(color||[30,30,40])); doc.splitTextToSize(dashed(txt),CW).forEach(l=>{ need(size*1.4); doc.text(l,M,y); y+=size*1.4; }); y+=(gap||0); };
+  para(REPORT_TITLE,20,true,[23,27,38],4); para('Self-reflection results - '+new Date().toLocaleDateString(),9,false,[90,98,117],10);
+  para('Overall: '+LAST.overall.toFixed(2)+' / 6.00  -  '+LAST.band,13,true,[75,79,168],8);
+  para('Domain scores (1-6; higher = more differentiated)',11,true,null,4);
+  LAST.groups.forEach((g,i)=>{ need(30); doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(30,30,40); doc.text(dashed(g.label),M,y); doc.text(g.skipped?'N/A':g.avg.toFixed(2),W-M,y,{align:'right'}); y+=6;
+    doc.setFillColor(225,229,238); doc.roundedRect(M,y,CW,7,3,3,'F'); if(!g.skipped){ doc.setFillColor(...rgb(PDF_COL[g.ci-1])); doc.roundedRect(M,y,Math.max(6,CW*((g.avg-1)/5)),7,3,3,'F'); } y+=20; });
+  y+=4; para('Pattern',11,true,null,2); para(LAST.headline,10,false,null,6);
+  if(LAST.insight) para(LAST.insight,10,false,null,6);
+  if(LAST.gaps.length){ para('Where your answers disagree with themselves',11,true,null,2); LAST.gaps.forEach(x=>para('- '+x,10,false,null,0)); y+=6; }
+  if(LAST.impact) para('Real-World Impact Index: '+LAST.impact.avg.toFixed(2)+' / 6.00',11,true,null,6);
+  if(LAST.validity) para('Validity note: a validity-check answer suggested your other answers may be shaped by wanting to look good.',10,false,null,6);
+  y+=6; para('Self-report reflection tool - not a clinical assessment, not a diagnosis, not professional advice. Scores describe tendencies, not fixed traits.',8.5,false,[90,98,117],4);
+  para('© 2026 Erica Campbell. All rights reserved.',8.5,false,[90,98,117],0);
+  doc.save(FILE_BASE+'-results.pdf');
+}
+
+document.getElementById('reset-btn').addEventListener('click', ()=>{
+  form.reset();
+  document.querySelectorAll('.item.missing').forEach(el=>el.classList.remove('missing'));
+  document.querySelectorAll(".item.disabled").forEach(el=>el.classList.remove("disabled"));
+  document.querySelectorAll("#audit-form input[type=radio]").forEach(i=>{ i.disabled = false; });
+  document.getElementById('results').style.display = 'none';
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+</script>
+</body>
+</html>
