@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Activation &amp; Conflict Pattern Inventories</title>
+<title>The Five F's</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -97,6 +97,10 @@ h1{
   font-size:clamp(30px,5.4vw,46px);line-height:1.08;letter-spacing:-.015em;margin:0 0 14px
 }
 h1 em{font-style:italic;color:var(--accent)}
+.fiveline{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint);margin:0 0 16px
+}
 .standfirst{color:var(--muted);font-size:16.5px;max-width:60ch;margin:0}
 
 /* ---------- tabs ---------- */
@@ -222,6 +226,14 @@ figcaption{
   font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;
   color:var(--faint);text-align:center;margin-top:12px;text-transform:uppercase
 }
+.idLine{
+  font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:20px;line-height:1.4;
+  text-align:center;margin:18px auto 0;max-width:46ch;letter-spacing:-.005em
+}
+.idLine .idPct{
+  display:block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:400;
+  letter-spacing:.06em;color:var(--faint);text-transform:uppercase;margin-top:6px
+}
 
 .careNote{
   border:1px solid var(--accent);border-left-width:3px;border-radius:var(--r);background:var(--accent-soft);
@@ -335,8 +347,9 @@ footer.foot p b{color:var(--muted);font-weight:600}
     <p class="eyebrow">Pattern Inventories · Series IV</p>
     <button class="themeToggle" id="themeToggle" type="button" aria-label="Toggle light or dark theme">Theme</button>
   </div>
-  <h1>When you get <em>activated</em>,<br>what do you actually do?</h1>
-  <p class="standfirst">Four self-report instruments covering the survival response you default to, the communication patterns that show up in conflict, the strategy you use to handle disagreement, and the regulation capacity you can access while it's happening.</p>
+  <h1>The <em>Five F's</em></h1>
+  <p class="fiveline">Fight · Flight · Freeze · Fawn · Fix</p>
+  <p class="standfirst">When you get activated, what do you actually do? Four self-report instruments covering the survival response you default to, the communication patterns that show up in conflict, the strategy you use to handle disagreement, and the regulation capacity you can access while it's happening.</p>
 </header>
 
 <nav class="tabs" role="tablist">
@@ -354,12 +367,7 @@ footer.foot p b{color:var(--muted);font-weight:600}
 <section class="panel" id="p-syn"></section>
 
 <footer class="foot">
-  <p class="discTitle">Disclaimer</p>
-  <p><b>Not a diagnostic or clinical instrument.</b> These four inventories are educational self-reflection tools. They describe tendencies you report about yourself; they do not identify, diagnose, screen for, or rule out any mental-health condition, disorder, or impairment, and a high or low score is not a clinical finding.</p>
-  <p><b>Not clinically validated or normed.</b> The inventories are modeled on published research frameworks but have not been validated, normed, or tested for reliability in any human sample. The reliability figures shown are from computer simulation of the item structure only and do not describe performance with real respondents. Results have no established predictive, diagnostic, or comparative meaning.</p>
-  <p><b>Not professional advice, and no substitute for it.</b> Nothing here is medical, psychological, psychiatric, or therapeutic advice, and use of these tools creates no therapist–client, clinician–patient, or other professional relationship. For any concern about your mental health, relationships, or safety, consult a qualified, licensed professional. If you may be in crisis or at risk of harm, contact your local emergency services or a crisis line in your area.</p>
-  <p><b>Your results and privacy.</b> Everything you answer stays in your browser; this page has no server and sends nothing on its own. The "Keep your results" option opens your own email app with your results written into the message — you decide whether to send it. If you tick "Also send a copy to Evolution Lab Collective," your results and the email address you send from will go to that organization as well; leave it unticked to keep your results to yourself.</p>
-  <p><b>Use at your own discretion.</b> The inventories are provided "as is," without warranty of any kind. The author accepts no liability for any decision made or action taken in reliance on them. The underlying frameworks remain the intellectual property of their respective authors; all items here are original wordings written independently and are not reproductions of any published scale.</p>
+  <p>A self-reflection tool, not a clinical or diagnostic instrument — scores describe tendencies you report, not a condition. If you're in crisis, call or text 988 (US) or your local crisis line. © 2026 Erica Campbell.</p>
 </footer>
 </div>
 
@@ -381,7 +389,7 @@ const ANCHORS = [
    ~N(0.72,0.07), reverse-worded item modeled with negative loading and
    a 0.13 method-effect penalty, reverse scoring applied before alpha). */
 const ALPHA = {
-  Fight:0.793, Flight:0.795, Freeze:0.792, Fawn:0.795,
+  Fight:0.793, Flight:0.795, Freeze:0.792, Fawn:0.795, Fix:0.791,
   Criticism:0.791, Contempt:0.793, Defensiveness:0.793,
   Stonewalling:0.788, Flooding:0.791, Repair:0.791,
   Integrating:0.794, Obliging:0.796, Dominating:0.789,
@@ -395,8 +403,8 @@ const ALPHA = {
 const ARP = {
   id:"arp", key:"ARP",
   title:"Activation Response Profile",
-  sub:"24 items · four survival responses · profile scoring",
-  frame:"Pete Walker's 4F typology — fight, flight, freeze, fawn — describes the defensive structures that form around repeated threat. Everyone has all four. The question is which one your nervous system reaches for first, and whether you can still get to the others.",
+  sub:"30 items · five survival responses · profile scoring",
+  frame:"Pete Walker's 4F typology — fight, flight, freeze, fawn — describes the defensive structures that form around repeated threat, with a fifth added here: <em>fix</em>, meeting threat by taking control and over-functioning. Everyone runs all five. The question is which one your nervous system reaches for first, and whether you can still get to the others.",
   bullets:[
     "Answer for how you are in <em>close, charged</em> situations — with a partner, family, a boss, someone whose opinion lands.",
     "There is no midpoint. Pick the side you lean toward.",
@@ -411,7 +419,9 @@ const ARP = {
     Freeze:{label:"Freeze", color:"#3f4a58",
       blurb:"Dorsal vagal immobilization. Threat is met with stillness, blankness, or dissociation. In balance this is stopping a futile struggle; over-relied on, it becomes collapse and disappearance."},
     Fawn:{label:"Fawn", color:"#5f6b52",
-      blurb:"The social engagement system recruited for safety rather than connection. Threat is met with appeasement and merging. In balance this is genuine listening and compromise; over-relied on, it becomes self-erasure."}
+      blurb:"The social engagement system recruited for safety rather than connection. Threat is met with appeasement and merging. In balance this is genuine listening and compromise; over-relied on, it becomes self-erasure."},
+    Fix:{label:"Fix", color:"#6b5b74",
+      blurb:"Sympathetic activation aimed at the problem. Threat is met by taking charge — solving, managing, over-functioning until it feels contained. In balance this is competent, steadying action; over-relied on, it becomes compulsive control and carrying work that isn't yours. Distinct from fawn: fawn lowers the self to appease, fix takes charge to neutralize."}
   },
   items:[
     ["Fight","When I feel threatened in a conversation, my first impulse is to push back hard.",0],
@@ -440,7 +450,14 @@ const ARP = {
     ["Fawn","When there's a disagreement, I abandon my position rather than hold it.",0],
     ["Fawn","I can hold my own position even when the other person is displeased with me.",1],
     ["Fawn","I say what I actually think even when it might not keep the peace.",1],
-    ["Fawn","I can stay aware of my own feelings even when someone near me is upset.",1]
+    ["Fawn","I can stay aware of my own feelings even when someone near me is upset.",1],
+
+    ["Fix","When something feels threatening, my first instinct is to take control and start managing the situation.",0],
+    ["Fix","When someone is upset, I move straight to fixing the problem rather than sitting with them in it.",0],
+    ["Fix","I handle anxiety by over-functioning — doing, planning, and fixing until the threat feels contained.",0],
+    ["Fix","When a problem comes up, I can leave it unsolved for a while without needing to jump on it.",1],
+    ["Fix","When I feel threatened, I can let the situation unfold without stepping in to control it.",1],
+    ["Fix","When someone's struggling, I can be with them without trying to fix it.",1]
   ]
 };
 
@@ -698,7 +715,7 @@ function doneIds(){ return Object.keys(RESULTS); }
 /* plain-text report — used for the email body, copy, text download, preview */
 function reportText(){
   const L = [];
-  L.push("ACTIVATION & CONFLICT PATTERN INVENTORIES");
+  L.push("THE FIVE F'S — FIGHT · FLIGHT · FREEZE · FAWN · FIX");
   L.push("My results — " + new Date().toLocaleDateString());
   L.push("");
   doneIds().forEach(id=>{
@@ -729,7 +746,7 @@ function mailtoHref(){
   const ccs = me ? cc : [];
   const q = [];
   if(ccs.length) q.push("cc=" + encodeURIComponent(ccs.join(",")));
-  q.push("subject=" + encodeURIComponent("My results — Activation & Conflict Pattern Inventories"));
+  q.push("subject=" + encodeURIComponent("My results — The Five F's"));
   q.push("body=" + encodeURIComponent(reportText()));
   return "mailto:" + to.map(encodeURIComponent).join(",").replace(/%40/g,"@") + "?" + q.join("&");
 }
@@ -752,7 +769,9 @@ function buildPDF(){
   let y = M;
   const need = h => { if(y + h > H - M){ doc.addPage(); y = M; } };
   doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.setTextColor(30);
-  doc.text("Activation & Conflict Pattern Inventories", M, y); y += 20;
+  doc.text("The Five F's", M, y); y += 20;
+  doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(150);
+  doc.text("Fight · Flight · Freeze · Fawn · Fix", M, y); y += 14;
   doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(120);
   doc.text("My results — " + new Date().toLocaleDateString(), M, y); y += 26;
   doneIds().forEach(id=>{
@@ -876,11 +895,11 @@ function bindSend(){
   document.getElementById("em-pdf").addEventListener("click", async ()=>{
     const doc = buildPDF();
     if(!doc){ setStatus("The PDF library didn't load (it needs a network connection). Use Download text instead.", true); return; }
-    const ok = await saveFile("conflict-pattern-results.pdf", doc.output("blob"));
+    const ok = await saveFile("five-fs-results.pdf", doc.output("blob"));
     setStatus(ok ? "PDF ready." : "Couldn't save the PDF here. Use Download text, or try on your own device.", !ok);
   });
   document.getElementById("em-txt").addEventListener("click", async ()=>{
-    const ok = await saveFile("conflict-pattern-results.txt", reportText());
+    const ok = await saveFile("five-fs-results.txt", reportText());
     setStatus(ok ? "Text file ready." : "Couldn't save the file here. Use Copy results instead.", !ok);
   });
 }
@@ -993,32 +1012,51 @@ function score(inst){
 }
 
 /* ============================================================
-   SIGNATURE VISUAL 1 — 4F quadrant on Walker's two spectrums
+   SIGNATURE VISUAL 1 — 5F composition pentagon
+   Each response as a share of the total ((score − 1), summed to 100%).
    ============================================================ */
-function quadrantSVG(m){
-  const x = m.Fight - m.Fawn;      /* −5 … +5 */
-  const y = m.Flight - m.Freeze;   /* −5 … +5 */
-  const W = 460, H = 460, P = 54, S = W - P*2, C = P + S/2;
-  const px = C + (x/5) * (S/2) * 0.9;
-  const py = C - (y/5) * (S/2) * 0.9;
-  const grid = [];
-  for(let i=1;i<=4;i++){
-    const r = (S/2) * (i/4) * 0.9;
-    grid.push(`<rect x="${C-r}" y="${C-r}" width="${r*2}" height="${r*2}" fill="none" stroke="var(--line)" stroke-width="1"/>`);
-  }
-  const lbl = (tx,ty,t,anchor)=>`<text x="${tx}" y="${ty}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.4" fill="var(--faint)">${t}</text>`;
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Position on the fawn-to-fight and freeze-to-flight spectrums">
-    <rect x="${P}" y="${P}" width="${S}" height="${S}" fill="var(--panel)" stroke="var(--line)"/>
-    ${grid.join("")}
-    <line x1="${P}" y1="${C}" x2="${P+S}" y2="${C}" stroke="var(--faint)" stroke-width="1"/>
-    <line x1="${C}" y1="${P}" x2="${C}" y2="${P+S}" stroke="var(--faint)" stroke-width="1"/>
-    ${lbl(C, P-20, "FLIGHT", "middle")}
-    ${lbl(C, P+S+32, "FREEZE", "middle")}
-    ${lbl(P-12, C+4, "FAWN", "end")}
-    ${lbl(P+S+12, C+4, "FIGHT", "start")}
-    <circle cx="${px}" cy="${py}" r="17" fill="var(--accent)" opacity="0.16"/>
-    <circle cx="${px}" cy="${py}" r="6.5" fill="var(--accent)"/>
-    <circle cx="${px}" cy="${py}" r="6.5" fill="none" stroke="var(--panel)" stroke-width="1.6"/>
+function arpShares(m){
+  const order = ["Fight","Flight","Freeze","Fawn","Fix"];
+  const adj = order.map(k=>Math.max(m[k]-1,0));
+  const sum = adj.reduce((a,b)=>a+b,0);
+  return order.map((k,i)=>({
+    k, label: ARP.subscales[k].label, color: ARP.subscales[k].color,
+    pct: sum>0 ? (adj[i]/sum)*100 : 20, mean: m[k]
+  }));
+}
+function pentagonSVG(m){
+  const order = ["Fight","Fix","Fawn","Freeze","Flight"];   /* agentic cluster up top */
+  const adj = order.map(k=>Math.max(m[k]-1,0));
+  const sum = adj.reduce((a,b)=>a+b,0);
+  const pct = order.map((_,i)=> sum>0 ? adj[i]/sum : 0.2);
+  const maxp = Math.max(...pct, 1e-6);
+  const W=560,H=472,Cx=280,Cy=232,Rmax=150;
+  const ang = i => (-90 + i*72) * Math.PI/180;
+  const pt  = (i,r) => [Cx + Math.cos(ang(i))*r, Cy + Math.sin(ang(i))*r];
+  let grid="";
+  [0.34,0.67,1].forEach(f=>{
+    const pts = order.map((_,i)=>pt(i,Rmax*f).map(n=>n.toFixed(1)).join(",")).join(" ");
+    grid += `<polygon points="${pts}" fill="${f===1?'var(--panel)':'none'}" stroke="var(--line)" stroke-width="1"/>`;
+  });
+  let spokes="";
+  order.forEach((_,i)=>{ const [x,y]=pt(i,Rmax); spokes += `<line x1="${Cx}" y1="${Cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--line)" stroke-width="1"/>`; });
+  const rad = i => Rmax*(0.12 + 0.88*(pct[i]/maxp));
+  const dpts = order.map((_,i)=>pt(i,rad(i)).map(n=>n.toFixed(1)).join(",")).join(" ");
+  const domIdx = pct.indexOf(Math.max(...pct));
+  let marks="";
+  order.forEach((k,i)=>{
+    const [x,y] = pt(i,rad(i));
+    const dom = i===domIdx;
+    marks += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${dom?6:4}" fill="${dom?ARP.subscales[k].color:'var(--faint)'}"/>`;
+    const [lx,ly] = pt(i,Rmax+20);
+    const anchor = Math.abs(lx-Cx)<8 ? "middle" : (lx>Cx ? "start" : "end");
+    const ty = ly < Cy ? ly-2 : ly+12;
+    marks += `<text x="${lx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${anchor}" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing=".5" fill="${dom?ARP.subscales[k].color:'var(--faint)'}">${ARP.subscales[k].label.toUpperCase()} ${Math.round(pct[i]*100)}%</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Your five survival responses as a percentage composition">
+    ${grid}${spokes}
+    <polygon points="${dpts}" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/>
+    ${marks}
   </svg>`;
 }
 
@@ -1073,10 +1111,16 @@ function renderResults(inst, m){
     </div>`;
   }).join("");
 
-  let sig = "", sigCap = "";
+  let sig = "", sigCap = "", identity = "";
   if(inst.id === "arp"){
-    sig = quadrantSVG(m);
-    sigCap = "Walker's two spectrums · fawn ↔ fight and freeze ↔ flight";
+    sig = pentagonSVG(m);
+    sigCap = "Composition of your five responses · each as a share of your total activation";
+    const sh = arpShares(m).sort((x,y)=>y.pct-x.pct);
+    const a1 = sh[0], a2 = sh[1];
+    const blend = (a1.pct - a2.pct) < 6;
+    identity = `<p class="idLine">You most identify with ${blend
+      ? `a <strong style="color:${a1.color}">${a1.label}</strong> / <strong style="color:${a2.color}">${a2.label}</strong> blend <span class="idPct">${Math.round(a1.pct)}% · ${Math.round(a2.pct)}%</span>`
+      : `<strong style="color:${a1.color}">${a1.label}</strong> <span class="idPct">${Math.round(a1.pct)}% of your mix</span>`}.</p>`;
   } else if(inst.id === "ces"){
     sig = dualConcernSVG(m);
     sigCap = "Dual-concern position · derived from your five style scores";
@@ -1092,7 +1136,7 @@ function renderResults(inst, m){
       : `<p>Your highest scale is <strong>${inst.subscales[top].label}</strong>, ahead of ${inst.subscales[second].label} by ${gap.toFixed(2)}. That's the response your system reaches for first — not the only one available to you, but the one that arrives before you've decided anything.</p>`;
     if(inst.id === "arp"){
       const lowest = ordered[ordered.length-1];
-      read += `<p>Your least-accessible response is <strong>${inst.subscales[lowest].label}</strong> (${m[lowest].toFixed(2)}). In Walker's framing, the recovery direction isn't away from your primary — it's toward whatever you can't currently reach. All four have a healthy form.</p>`;
+      read += `<p>Your least-accessible response is <strong>${inst.subscales[lowest].label}</strong> (${m[lowest].toFixed(2)}). In Walker's framing, the recovery direction isn't away from your primary — it's toward whatever you can't currently reach. All five have a healthy form.</p>`;
     }
   } else if(inst.type === "skill"){
     const lowest = ordered[ordered.length-1];
@@ -1133,13 +1177,15 @@ function renderResults(inst, m){
     <h2>${inst.title}</h2>
     <p class="subtitle">Results · ${Object.keys(inst.subscales).length} subscales</p>
     ${sig ? `<figure class="sig">${sig}<figcaption>${sigCap}</figcaption></figure>` : ""}
-    <div style="margin-top:${sig?"34px":"22px"}">${bars}</div>
+    ${identity}
+    <div style="margin-top:${sig?"28px":"22px"}">${bars}</div>
     <h3>Reading it</h3>
     ${read}
     ${care}
     <details class="appendix">
       <summary>Psychometric appendix</summary>
       <p style="margin-top:16px;font-size:14px;color:var(--muted)">Items are scored on a 6-point forced-choice scale with no neutral midpoint. Reverse-keyed items are recoded as 7 minus the raw response before aggregation. Subscale scores are item means, so all scales share a 1.00–6.00 range regardless of item count. Bands: below 3.00, 3.00–4.24, and 4.25 and above. Every subscale is balanced three forward / three reverse, so uniform responding — answering every item the same — lands at the 3.50 midpoint on every scale rather than inflating the score. This zeroes out acquiescence bias at the cost of roughly 0.03 of alpha relative to an all-forward design, a trade this suite takes everywhere.</p>
+      ${inst.id==="arp"?`<p style="font-size:14px;color:var(--muted)">The fifth response, <strong>Fix</strong> (compulsive over-functioning and control under threat), extends Walker's four-response model and is included as phenomenology, not as an established category: the 4F typology is Walker's documented framework, whereas proposed fifth responses — fix, flop, friend — circulate in trauma-informed clinical and coaching literature but are not yet normed. In a Monte Carlo discriminant check (Fix and Fawn planted as separate traits, true r = .35), the scored subscales recovered a Fix–Fawn correlation of .20–.31 even under heavy item cross-loading — well below the .60 collapse line — and a planted fighter/fixer/low-fawn profile recovered with both Fight and Fix outranking Fawn in 100% of cases. The design separates Fix from Fawn when they are genuinely distinct; true discriminant validity still requires human data. The pentagon reports each response as a share of total activation ((score − 1), normalized to 100%) — which responses dominate your mix — while the bars preserve absolute intensity.</p>`:""}
       <table class="psy">
         <thead><tr><th>Subscale</th><th>Items</th><th>Reverse</th><th>α (sim.)</th></tr></thead>
         <tbody>${alphas}</tbody>
@@ -1181,19 +1227,20 @@ function renderSynthesis(){
         Freeze:["Freeze → Stonewalling","Stonewalling",`A freeze-primary system produces stonewalling that isn't chosen. Your freeze score is ${a.Freeze.toFixed(2)} and your stonewalling score is ${c.Stonewalling.toFixed(2)}. If those track together, the useful intervention isn't "stay engaged" — it's getting a break named out loud before the shutdown lands, since a dorsal-vagal drop can't be willed away mid-conversation.`],
         Fight:["Fight → Criticism and contempt","Criticism",`Fight-primary systems tend to route through criticism and, at the sharp end, contempt. Your fight score is ${a.Fight.toFixed(2)}; criticism sits at ${c.Criticism.toFixed(2)} and contempt at ${c.Contempt.toFixed(2)}. The distinction worth holding is between a complaint about behavior and a verdict about character — the first is assertion, the second is the horseman.`],
         Fawn:["Fawn → Repair, or the appearance of it","Repair",`Fawn-primary systems often score well on repair, but the two aren't the same thing. Your fawn score is ${a.Fawn.toFixed(2)} and repair is ${c.Repair.toFixed(2)}. Real repair requires that you still be in the room with your own position; appeasement ends the conflict by removing one of the parties from it. Worth checking which one you're doing.`],
-        Flight:["Flight → Withdrawal that looks like composure","Stonewalling",`Flight-primary systems exit early, and it can read as being the calm one. Your flight score is ${a.Flight.toFixed(2)} against stonewalling at ${c.Stonewalling.toFixed(2)}. The question is whether your exits are announced and time-bound, or whether the conversation simply stops happening.`]
+        Flight:["Flight → Withdrawal that looks like composure","Stonewalling",`Flight-primary systems exit early, and it can read as being the calm one. Your flight score is ${a.Flight.toFixed(2)} against stonewalling at ${c.Stonewalling.toFixed(2)}. The question is whether your exits are announced and time-bound, or whether the conversation simply stops happening.`],
+        Fix:["Fix → Problem-solving that skips the person","Defensiveness",`Fix-primary systems jump to the solution, which can land as not hearing the complaint. Your fix score is ${a.Fix.toFixed(2)}; defensiveness sits at ${c.Defensiveness.toFixed(2)} and repair at ${c.Repair.toFixed(2)}. Moving to fix a feeling can read as skipping past it — worth checking whether your repairs solve the problem or actually meet the person.`]
       };
       if(map[t]) cards.push({h:map[t][0], p:map[t][2]});
     }
     if(a && s){
       const t = topOf(a);
-      const pairs = {Fight:"Dominating", Fawn:"Obliging", Flight:"Avoiding", Freeze:"Avoiding"};
+      const pairs = {Fight:"Dominating", Fawn:"Obliging", Flight:"Avoiding", Freeze:"Avoiding", Fix:"Dominating"};
       const p = pairs[t];
       cards.push({h:`Reflex and strategy`, p:`Your primary activation response is <strong>${t}</strong>, and the style theory would predict <strong>${p}</strong> as its strategic expression. Yours came in at ${s[p].toFixed(2)}, against an integrating score of ${s.Integrating.toFixed(2)}. Where integrating is comfortably higher, it suggests you've built a deliberate strategy that overrides the reflex — which is exactly the gap that training targets.`});
     }
     if(a && r){
       const t = topOf(a);
-      cards.push({h:`The second layer`, p:`Your acceptance score is ${r.Acceptance.toFixed(2)}, against a ${t.toLowerCase()} response of ${a[t].toFixed(2)}. Nonacceptance is the judgment that lands on top of the feeling rather than after it — which is what converts a survival response into a shame cycle, since the response itself becomes further evidence against you. Where acceptance runs low and any 4F score runs high, the reaction and the self-attack are usually arriving together.`});
+      cards.push({h:`The second layer`, p:`Your acceptance score is ${r.Acceptance.toFixed(2)}, against a ${t.toLowerCase()} response of ${a[t].toFixed(2)}. Nonacceptance is the judgment that lands on top of the feeling rather than after it — which is what converts a survival response into a shame cycle, since the response itself becomes further evidence against you. Where acceptance runs low and any of the five responses runs high, the reaction and the self-attack are usually arriving together.`});
     }
     if(c && r){
       cards.push({h:`Capacity against pattern`, p:`Flooding sits at ${c.Flooding.toFixed(2)} while your access to regulation strategies is ${r.Strategies.toFixed(2)} and impulse control is ${r.Impulse.toFixed(2)}. Flooding is the load; those two are the brakes. When the load exceeds the brakes, the horsemen show up — which is why the more tractable target is usually the capacity side, not the pattern side.`});
