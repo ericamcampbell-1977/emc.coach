@@ -5,7 +5,10 @@
 (function () {
   // Books are by other authors (pen names), so the Books page doesn't speak as the author
   var isBooks = /\/books\//.test(location.pathname);
-  var intro = isBooks
+  var isReadings = /\/readings\//.test(location.pathname);
+  var intro = isReadings
+    ? '<p><b>Please read before you begin.</b> Tarot and astrology readings are offered for reflection and entertainment. They are not predictions, and they are not therapy, diagnosis, or medical, legal, or financial advice. I am a certified coach, not a therapist. You are the expert on your life, and nothing here replaces your own judgment or professional care.</p>'
+    : isBooks
     ? '<p><b>Please read before you begin.</b> The books shared here reflect their authors&rsquo; own experiences and opinions. They are for reflection and personal growth. They are not therapy, diagnosis, or treatment, and they are not a substitute for professional mental health care.</p>'
     : '<p><b>Please read before you begin.</b> I am a certified coach, not a therapist. The thoughts and opinions in these assessments and hypnosis recordings are for reflection and personal growth. They are not therapy, diagnosis, or treatment, and they are not a substitute for professional mental health care. The assessments are not clinical or diagnostic tools.</p>';
   var html =

@@ -1,0 +1,53 @@
+/* Readings pages: uses the site's palette from ../styles.css */
+.lead-in { font-size: 1.15rem; color: var(--text); max-width: 46rem; margin: 0 0 2rem; }
+.subpage h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); margin: 2.5rem 0 1rem; color: var(--cream); }
+.eyebrow { font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--pink); margin: 0 0 .75rem; display: block; }
+
+/* the six-step method list */
+.steps { list-style: none; counter-reset: step; margin: 0 0 2rem; padding: 0; display: grid; gap: .9rem; }
+.steps li { counter-increment: step; border: 1px solid var(--edge); border-radius: 14px; padding: 1rem 1.3rem 1rem 3.6rem; background: rgba(102, 34, 73, .3); position: relative; }
+.steps li::before { content: counter(step); position: absolute; left: 1.15rem; top: .95rem; font-family: var(--serif); font-size: 1.6rem; color: var(--pink); }
+.steps b { font-family: var(--serif); font-size: 1.2rem; color: var(--cream); font-weight: 500; display: block; }
+.steps span { color: var(--text); font-size: 1rem; line-height: 1.5; display: block; }
+
+/* forms */
+.order { border: 1px solid var(--edge); border-radius: 14px; padding: 1.6rem 1.5rem; background: rgba(68, 23, 78, .45); margin: 1rem 0 2rem; }
+.order .row { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+@media (max-width: 40rem) { .order .row { grid-template-columns: 1fr; } }
+.order label { display: block; margin: 0 0 1.1rem; font-size: .95rem; color: var(--cream); }
+.order label small { display: block; color: var(--text); opacity: .85; font-size: .85rem; margin-top: .15rem; }
+.order input[type=text], .order input[type=email], .order input[type=date], .order input[type=time], .order select, .order textarea {
+  display: block; width: 100%; margin-top: .35rem; font: inherit; color: var(--cream); background: rgba(27, 25, 49, .85);
+  border: 1px solid var(--edge); border-radius: 10px; padding: .7rem .85rem; }
+.order textarea { min-height: 7rem; resize: vertical; }
+.order input:focus, .order select:focus, .order textarea:focus { outline: 2px solid var(--pink); outline-offset: 1px; }
+.order .check { display: flex; gap: .7rem; align-items: flex-start; font-size: .92rem; }
+.order .check input { margin-top: .3rem; accent-color: var(--rose); }
+.order .hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+.order .price { font-family: var(--serif); font-size: 1.5rem; color: var(--pink); margin: 0 0 1rem; }
+.order button.btn { border: 0; cursor: pointer; font-family: inherit; }
+.form-msg { margin-top: 1rem; padding: .9rem 1.1rem; border-radius: 10px; border: 1px solid var(--pink); background: rgba(232, 163, 175, .1); }
+.form-msg[hidden] { display: none; }
+.warn { border-left: 3px solid var(--rose); padding: .2rem 0 .2rem 1rem; margin: 0 0 1.5rem; color: var(--cream); }
+
+/* tarot draw */
+.draw-opts { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; align-items: center; margin: 0 0 1.2rem; }
+.draw-opts label { display: flex; gap: .5rem; align-items: center; cursor: pointer; }
+.draw-opts input { accent-color: var(--rose); }
+.spread { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 1.5rem 0; }
+.tcard { font: inherit; text-align: center; color: var(--cream); cursor: pointer; border: 1px solid var(--edge); border-radius: 14px;
+  background: rgba(102, 34, 73, .35); padding: 1rem; min-height: 15rem; display: flex; flex-direction: column; gap: .6rem; transition: border-color .2s, background .2s; }
+.tcard:hover, .tcard:focus-visible { border-color: var(--pink); }
+.tcard.open { background: rgba(102, 34, 73, .6); cursor: default; }
+.tpos { font-size: .75rem; letter-spacing: .16em; text-transform: uppercase; color: var(--pink); }
+.tback { flex: 1; display: grid; place-items: center; border: 1px dashed var(--edge); border-radius: 10px; }
+.tback[hidden], .tface[hidden] { display: none; }
+.tback-glyph { font-size: 3rem; color: var(--pink); opacity: .7; }
+.tface { display: flex; flex-direction: column; gap: .5rem; align-items: center; }
+.tglyph { font-size: 2.2rem; color: var(--pink); line-height: 1; }
+.tname { font-family: var(--serif); font-size: 1.35rem; line-height: 1.15; }
+.tname em { font-size: .95rem; color: var(--pink); }
+.ttag { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text); opacity: .8; }
+.tmean { font-size: 1rem; line-height: 1.45; color: var(--cream); }
+.draw-note { font-style: italic; color: var(--pink); min-height: 1.6em; }
+.btn[hidden] { display: none; }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Series VII · Character</title>
+<title>Series XIV · Virtues &amp; the Dark Tetrad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -191,13 +191,13 @@ details.preview pre{white-space:pre-wrap;word-break:break-word;font-family:var(-
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <div class="brand"><span class="no">VII</span><span class="full">Character</span></div>
+  <div class="brand"><span class="no">XIV</span><span class="full">Virtues &amp; the Dark Tetrad</span></div>
   <nav class="tabs" id="tabs" role="tablist"></nav>
 </div></header>
 <main class="wrap" id="main"></main>
 <div class="wrap">
   <div class="legal" id="legal"></div>
-  <div class="footer">Series VII · Character — a self-assessment instrument · clean-room items · not a clinical or diagnostic tool</div>
+  <div class="footer">Series XIV · Virtues &amp; the Dark Tetrad — a self-assessment instrument · clean-room items · not a clinical or diagnostic tool</div>
 </div>
 
 <script>
@@ -403,7 +403,7 @@ function instComplete(inst){return ORDER[inst].every(o=>STATE.ans[inst][o.id]!=n
 function answered(inst){return ORDER[inst].filter(o=>STATE.ans[inst][o.id]!=null).length;}
 
 /* ---------- state ---------- */
-const STORE="seriesVII-character-v1";
+const STORE="seriesXIV-virtues-dark-tetrad-v1";
 let STATE={tab:"home", phase:{VSP:"intro",DTI:"intro",LTI:"intro",HHP:"intro"}, pos:{VSP:0,DTI:0,LTI:0,HHP:0}, ans:{VSP:{},DTI:{},LTI:{},HHP:{}}, email:"", cc:false};
 const LAB="evolutionlabcollective@gmail.com";
 try{const raw=localStorage.getItem(STORE); if(raw){const p=JSON.parse(raw); if(p&&p.ans)STATE=Object.assign(STATE,p);}}catch(e){}
@@ -437,7 +437,7 @@ function render(){
 function home(){
   const done=ORDER_K.filter(instComplete).length;
   M.innerHTML=`<section class="view active"><div class="hero">
-    <div class="eyebrow">Series VII · Character</div>
+    <div class="eyebrow">Series XIV · Virtues &amp; the Dark Tetrad</div>
     <h1>Four lenses on the same person: your strengths, your <em>shadow</em>, and the grain in between.</h1>
     <p class="lede">Most character quizzes name a virtue or a flaw and stop there. This one measures four validated construct families side by side — so you can see, on one page, the strengths you lead with, the antagonistic edge you'd rather not, and how the two actually coexist.</p>
   </div><div class="grain"></div>
@@ -601,7 +601,7 @@ function appendix(){
   const tot=ORDER_K.reduce((a,c)=>a+ORDER[c].length,0),nsub=ORDER_K.reduce((a,c)=>a+Object.keys(BANK[c].subs).length,0);
   M.innerHTML=`<section class="view active appx"><div class="eyebrow">Method &amp; psychometrics</div>
     <h2 style="margin-top:10px">How this suite is built — and where it stops</h2>
-    <p style="margin-top:14px">Series VII covers four construct families in ${tot} items across ${nsub} subscales. Every item is <b>clean-room</b>: original wording composed to each construct's published definition, so nothing here reproduces a copyrighted instrument. That keeps the suite free to publish, but it also means these are <b>adaptations, not the validated scales</b> — scores can't be read against published norms or cutoffs, and the reliabilities below are simulated, not established on human samples.</p>
+    <p style="margin-top:14px">Series XIV covers four construct families in ${tot} items across ${nsub} subscales. Every item is <b>clean-room</b>: original wording composed to each construct's published definition, so nothing here reproduces a copyrighted instrument. That keeps the suite free to publish, but it also means these are <b>adaptations, not the validated scales</b> — scores can't be read against published norms or cutoffs, and the reliabilities below are simulated, not established on human samples.</p>
     <div class="tblwrap"><table><thead><tr><th>Code</th><th>Subscale</th><th>Items</th><th>Keying</th><th>α mean</th><th>α 5th pct</th></tr></thead><tbody>${rows}</tbody></table></div>
     <h3>Response format &amp; keying</h3>
     <p>A house 6-point forced-choice agreement scale with no neutral midpoint. Each subscale runs <b>3 forward / 3 reverse</b> items, blind-interleaved across subscales. Reverse items are scored 7 − x. Straight-line agreement on every item lands a subscale at the <b>3.50 midpoint</b>, not the top band, so acquiescence can't masquerade as a high score. The four source scales natively use 5-point formats; the shift to the house 6-point is a documented deviation, taken because clean-room items already forgo item-level norm comparability and the forced choice buys a cleaner acquiescence check in return.</p>
@@ -619,7 +619,7 @@ function appendix(){
     </ul>
     <h3>Where it stops</h3>
     <p>This is a reflective self-assessment, not a diagnosis, a screen, or a hiring or forensic tool. Character self-report is uniquely prone to self-favourable distortion; the strongest available check is observer report, which remains the natural next build — most of all for the dark and light lenses, where the gap between self-image and how others experience a person is widest.</p>
-    <p class="cite" style="margin-top:22px">Constructs: Peterson &amp; Seligman (2004) · Jones &amp; Paulhus (2014) · Paulhus / Buckels et al. (everyday sadism) · Kaufman, Yaden, Hyde &amp; Tsukayama (2019) · Ashton &amp; Lee (HEXACO). Items original to Series VII.</p>
+    <p class="cite" style="margin-top:22px">Constructs: Peterson &amp; Seligman (2004) · Jones &amp; Paulhus (2014) · Paulhus / Buckels et al. (everyday sadism) · Kaufman, Yaden, Hyde &amp; Tsukayama (2019) · Ashton &amp; Lee (HEXACO). Items original to Series XIV.</p>
   </section>`;
 }
 
@@ -659,7 +659,7 @@ function reportData(){
 }
 function reportText(){
   const r=reportData(),L=[];
-  L.push("SERIES VII · CHARACTER","Your results · "+r.date,"");
+  L.push("SERIES XIV · VIRTUES & THE DARK TETRAD","Your results · "+r.date,"");
   L.push("Scores run 1.00–6.00; the midpoint is 3.50. Bands: Very low / Low / Moderate / High / Very high.","");
   r.secs.forEach(sec=>{
     L.push(sec.title.toUpperCase());
@@ -679,7 +679,7 @@ function mailtoHref(){
   const to=STATE.email.trim(),parts=[];
   const toList=to?to:(STATE.cc?LAB:"");
   if(to&&STATE.cc)parts.push("cc="+encodeURIComponent(LAB));
-  parts.push("subject="+encodeURIComponent("My Series VII results: Character"));
+  parts.push("subject="+encodeURIComponent("My Series XIV results: Virtues & the Dark Tetrad"));
   parts.push("body="+encodeURIComponent(reportText()));
   return "mailto:"+encodeURIComponent(toList).replace(/%40/g,"@")+"?"+parts.join("&");
 }
@@ -735,7 +735,7 @@ function buildPDF(){
   const ink=[42,36,31],muted=[110,98,85],rule=[216,205,185],soft=[235,228,213];
   const accent={VSP:[154,106,31],DTI:[140,59,69],LTI:[71,102,83],HHP:[63,86,107]};
   const page=need=>{if(y+need>792-M){doc.addPage();y=M;}};
-  doc.setFont("times","bold");doc.setFontSize(23);doc.setTextColor(...ink);doc.text("Series VII · Character",M,y+10);y+=30;
+  doc.setFont("times","bold");doc.setFontSize(23);doc.setTextColor(...ink);doc.text("Series XIV · Virtues & the Dark Tetrad",M,y+10);y+=30;
   doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(...muted);
   doc.text("Your results · "+r.date,M,y);y+=15;
   doc.text("Scores run 1.00 to 6.00; the midpoint is 3.50. Bands: Very low / Low / Moderate / High / Very high.",M,y);y+=22;
@@ -768,7 +768,7 @@ function buildPDF(){
 async function pdfClick(){
   const doc=buildPDF();
   if(!doc){setStatus("The PDF tool didn't load — check your connection, or use Save as text or Copy results instead.",true);return;}
-  await saveFile("series-vii-character-results.pdf",doc.output("blob"));
+  await saveFile("series-xiv-virtues-and-the-dark-tetrad-results.pdf",doc.output("blob"));
 }
 function bindShare(root){
   const em=root.querySelector("#shareEmail");if(!em)return;
@@ -777,7 +777,7 @@ function bindShare(root){
   root.querySelector("#emailBtn").onclick=emailClick;
   root.querySelector("#copyBtn").onclick=copyClick;
   root.querySelector("#pdfBtn").onclick=pdfClick;
-  root.querySelector("#txtBtn").onclick=()=>saveFile("series-vii-character-results.txt",reportText());
+  root.querySelector("#txtBtn").onclick=()=>saveFile("series-xiv-virtues-and-the-dark-tetrad-results.txt",reportText());
 }
 
 /* ---------- binding ---------- */
