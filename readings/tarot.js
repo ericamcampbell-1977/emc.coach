@@ -135,14 +135,14 @@
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   function draw() {
-    var kind = form.elements['spread'].value;
+    var kind = 'celtic';
     var useRev = form.elements['reversals'].checked;
     var sp = SPREADS[kind];
     var cards = shuffle(DECK).slice(0, sp.positions.length);
     out.innerHTML = '';
     out.classList.toggle('celtic', kind === 'celtic');
     out.setAttribute('aria-live', 'polite');
-    note.textContent = 'Tap each card to turn it over. Read them in order.';
+    note.textContent = 'Your Celtic Cross for ' + form.elements['focus'].value.toLowerCase().replace(/^my /, 'your ') + '. Tap each card to turn it over and read them in order.';
     var remaining = cards.length;
     cards.forEach(function (card, i) {
       var reversed = useRev && coin();
