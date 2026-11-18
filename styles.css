@@ -170,7 +170,7 @@ h3 { font-size: clamp(1.6rem, 2.4vw, 2rem); line-height: 1.15; }
 .weeks { list-style: none; padding: 0; margin: 0 0 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: .9rem; counter-reset: wk; }
 .weeks li { counter-increment: wk; border-top: 1px solid var(--edge); padding-top: .7rem; font-size: .9rem; color: var(--text); }
 .weeks b { display: block; font-family: var(--serif); font-weight: 500; font-size: 1.3rem; color: var(--cream); }
-.weeks b::before { content: "Week " counter(wk) " · "; font-family: var(--sans); font-size: .72rem; font-weight: 400; letter-spacing: .08em; color: var(--pink); vertical-align: middle; }
+.weeks b::before { content: "Class " counter(wk) " · "; font-family: var(--sans); font-size: .72rem; font-weight: 400; letter-spacing: .08em; color: var(--pink); vertical-align: middle; }
 .circle-meta { font-weight: 600; }
 .stamp {
   position: absolute; z-index: 3; top: 50%; left: 50%;
